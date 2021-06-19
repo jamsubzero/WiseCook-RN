@@ -14,7 +14,7 @@ const PantryScreen = () => {
     {name: 'natives', id: '6'},
   ];
   return (
-    <ScrollView>
+    <ScrollView style={styles.scrollView}>
       {arr.map(item => (
         <IngredientCategory title={item.name} key={item.id} />
       ))}
@@ -29,7 +29,9 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
   },
-  scrollView: {},
+  scrollView: {
+    paddingTop: 2
+  },
 });
 
 export default PantryScreen;

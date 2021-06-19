@@ -42,7 +42,8 @@ const styles = StyleSheet.create({
   },
   categoryName: {
       fontSize: 13,
-      fontWeight: 'bold'
+      fontWeight: 'bold',
+      color: Colors.primaryColor
   },
   ingCount: {
       fontSize: 9,
