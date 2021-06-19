@@ -20,6 +20,7 @@ const IngredientChip = props => {
         onPress={onToggleHandler}
         containerStyle={styles.containerStyle}
         buttonStyle={styles.buttonSelectedStyle}
+        titleStyle={styles.titleStyleSelected}
         icon={{
           name: 'checkmark',
           type: 'ionicon',
@@ -47,13 +48,18 @@ const styles = StyleSheet.create({
   },
   buttonNotSelectedStyle: {
     backgroundColor: 'white',
-    borderWidth: 2,
+    borderWidth: 0.8,
     borderColor: Colors.gray,
     overflow: 'hidden'
   },
   titleStyleNotSelected:{
-      color: Colors.gray
+      color: Colors.gray,
+      fontSize: 11
   },
+  titleStyleSelected:{
+    color: 'white',
+    fontSize: 11
+},
   containerStyle: {
     marginHorizontal: 3,
     marginVertical: 3,
