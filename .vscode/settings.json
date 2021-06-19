@@ -1,0 +1,9 @@
+{
+    "files.exclude": {
+        "**/__tests__": true,
+        "**/.history": true,
+        "**/.vscode": true,
+        "**/ios": true,
+        "**/node_modules": true
+    }
+}
