@@ -9,6 +9,7 @@ import {
 import {FAB} from 'react-native-elements';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Snackbar from 'react-native-snackbar';
+import {Icon} from 'react-native-elements';
 
 import IngredientCategory from '../components/IngredientCategory';
 import IngredientListFooter from '../components/IngredientListFooter';
@@ -30,13 +31,13 @@ const PantryScreen = () => {
         setIngredients(json);
       })
       .catch(error => {
-        console.error(error);
+        console.log(error);
         Snackbar.show({
           text: 'Please check your internet connection',
           duration: Snackbar.LENGTH_INDEFINITE,
           action: {
             text: 'Retry',
-            textColor: 'green',
+            textColor: Colors.primaryColor,
             onPress: () => { 
               setIsLoading(true);
               getIngredientsFromWiseCookApi();
@@ -60,7 +61,7 @@ const PantryScreen = () => {
     return (
       <View
         style={{flex: 1, justifyContent: 'center', backgroundColor: 'white'}}>
-        <ActivityIndicator title="connecting" size="large" color={Colors.primaryColor} />
+        <ActivityIndicator size="large" color={Colors.primaryColor} />
       </View>
     );
   }
@@ -69,10 +70,19 @@ const PantryScreen = () => {
     return (
       <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
         <Text style={styles.infoText}>
-          Oh no! Something's really wrong here.
+          Oh no! Something's really wrong here. {'\n'}
+          If it's not you, perhaps WiseCook is down at the moment. {'\n'}
+          Please try again later. {'\n'}
         </Text>
+         <Icon name='coffee-off' size={24} color={Colors.primaryColor} type='material-community'/> 
       </View>
     );
+  }
+
+  const onRefreshHandler = () => {
+    setIngredients([]);
+    setIsLoading(true);
+    getIngredientsFromWiseCookApi();
   }
 
   return (
@@ -81,6 +91,8 @@ const PantryScreen = () => {
         data={ingredients}
         renderItem={renderIngredient}
         ListFooterComponent={<IngredientListFooter />}
+        onRefresh={onRefreshHandler}
+        refreshing={isLoading}
         initialNumToRender={10}
         windowSize={5}
         maxToRenderPerBatch={5}
@@ -127,6 +139,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: Colors.primaryColor,
     paddingHorizontal: 10,
+    paddingVertical: 5
   },
 });
 
