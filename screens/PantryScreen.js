@@ -70,8 +70,8 @@ const PantryScreen = () => {
     return (
       <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
         <Text style={styles.infoText}>
-          Oh no! Something's really wrong here. {'\n'}
-          If it's not you, perhaps WiseCook is down at the moment. {'\n'}
+          Oh no! Something's really wrong here. {"\n"}
+          If it's not you, perhaps WiseCook is down at the moment. {"\n"}
           Please try again later. {'\n'}
         </Text>
          <Icon name='coffee-off' size={24} color={Colors.primaryColor} type='material-community'/> 

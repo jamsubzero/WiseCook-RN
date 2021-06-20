@@ -1,26 +1,45 @@
-import React, {PureComponent} from 'react';
+import React, {PureComponent, useState} from 'react';
 import {View, StyleSheet, Text} from 'react-native';
-import {Icon} from 'react-native-elements';
+import {Button, Icon} from 'react-native-elements';
 import {titleCase} from '../utils/StringUtil';
 
 import Card from '../components/Card';
 import IngredientChip from '../components/IngredientChip';
 import Colors from '../constants/Colors';
 export default class IngredientCategory extends PureComponent {
+  state = {
+    isFullList: false,
+  };
   render() {
     const ingredientList = this.props.ingredientCodes;
+    const partialList = ingredientList.slice(0, 8);
+    const {isFullList} = this.state;
+    var currentList = isFullList ? ingredientList : partialList;
+
+    const toggleFullListHandler = () => {
+      this.setState({isFullList: !isFullList})
+    }
+
     return (
       <Card style={styles.cardStyle}>
         <View style={styles.categoryHeader}>
           <View style={styles.categoryDetails}>
-            <Text style={styles.categoryName}>{titleCase(this.props.title)}</Text>
-            <Text style={styles.ingCount}>2/20</Text>
+            <Text style={styles.categoryName}>
+              {titleCase(this.props.title)}
+            </Text>
+            <Text style={styles.ingCount}>0/{ingredientList.length}</Text>
           </View>
-          <Icon
-            name="chevron-down-outline"
-            size={20}
-            color="black"
-            type="ionicon"
+          <Button
+            type="clear"
+            onPress={toggleFullListHandler}
+            icon={
+              <Icon
+                name={isFullList ? "chevron-up-outline" : "chevron-down-outline" }
+                size={20}
+                color="black"
+                type="ionicon"
+              />
+            }
           />
         </View>
 
@@ -28,7 +47,7 @@ export default class IngredientCategory extends PureComponent {
           {/* TODO check here if an ingredient is selected from the asyncstorage or redux.
               Then add is to the isSelected prop of the chip*/}
           {/* <IngredientChip title="salt" isSelected={true} /> */}
-          {ingredientList.map(ingredient => (
+          {currentList.map(ingredient => (
             <IngredientChip title={ingredient.name} key={ingredient.id} />
           ))}
         </View>
