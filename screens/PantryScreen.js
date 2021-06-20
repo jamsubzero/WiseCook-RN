@@ -3,14 +3,14 @@ import {
   StyleSheet,
   Text,
   View,
-  ScrollView,
+  FlatList,
   ActivityIndicator,
 } from 'react-native';
-import {FAB, Button} from 'react-native-elements';
+import {FAB} from 'react-native-elements';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import IngredientCategory from '../components/IngredientCategory';
-import Card from '../components/Card';
+import IngredientListFooter from '../components/IngredientListFooter';
 import Colors from '../constants/Colors';
 import APIUrls from '../constants/APIUrls';
 
@@ -23,7 +23,7 @@ const PantryScreen = () => {
     {name: 'poultry', id: '5'},
     {name: 'natives', id: '6', isLast: true},
   ];
-  
+
   const [isLoading, setIsLoading] = useState(true);
   const [ingredients, setIngredients] = useState([]);
 
@@ -52,25 +52,28 @@ const PantryScreen = () => {
     );
   }
 
+  const renderIngredient = itemData => {
+    return (
+      <IngredientCategory
+        title={itemData.item.name}
+        ingredientCodes={itemData.item.ingredientCodes}
+      />
+    );
+  };
+
   return (
     <View style={styles.screen}>
-      <ScrollView style={styles.scrollView}>
-        {ingredients.map(item => {
-          return (
-            <IngredientCategory
-              title={item.name}
-              key={item.id}
-              ingredientCodes={item.ingredientCodes}
-              isLast={item.isLast}
-            />
-          );
-        })}
-        <View style={styles.endOfIngContainer}>
-          <Text style={styles.endOfIngMessage}>
-            That's all the ingredients we have for now.
-          </Text>
-        </View>
-      </ScrollView>
+      <FlatList
+        data={ingredients}
+        renderItem={renderIngredient}
+        ListFooterComponent={<IngredientListFooter />}
+        initialNumToRender={10}
+        windowSize={5}
+        maxToRenderPerBatch={5}
+        updateCellsBatchingPeriod={30}
+        removeClippedSubviews={false}
+        onEndReachedThreshold={0.1}
+      />
 
       <FAB
         title="I have(10)"
@@ -104,17 +107,6 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     paddingTop: 2,
-  },
-  endOfIngContainer: {
-    width: '100%',
-    height: 55,
-    backgroundColor: Colors.primaryColor,
-    elevation: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  endOfIngMessage: {
-    color: 'white',
   },
 });
 

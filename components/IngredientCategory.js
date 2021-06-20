@@ -1,40 +1,41 @@
-import React from 'react';
-import {View, StyleSheet, Text, Button} from 'react-native';
+import React, {PureComponent} from 'react';
+import {View, StyleSheet, Text} from 'react-native';
 import {Icon} from 'react-native-elements';
 import {titleCase} from '../utils/StringUtil';
 
 import Card from '../components/Card';
 import IngredientChip from '../components/IngredientChip';
 import Colors from '../constants/Colors';
-
-const IngredientCategory = props => {
-  const ingredientList = props.ingredientCodes;
-  return (
-    <Card style={styles.cardStyle}>
-      <View style={styles.categoryHeader}>
-        <View style={styles.categoryDetails}>
-          <Text style={styles.categoryName}>{titleCase(props.title)}</Text>
-          <Text style={styles.ingCount}>2/20</Text>
+export default class IngredientCategory extends PureComponent {
+  render() {
+    const ingredientList = this.props.ingredientCodes;
+    return (
+      <Card style={styles.cardStyle}>
+        <View style={styles.categoryHeader}>
+          <View style={styles.categoryDetails}>
+            <Text style={styles.categoryName}>{titleCase(this.props.title)}</Text>
+            <Text style={styles.ingCount}>2/20</Text>
+          </View>
+          <Icon
+            name="chevron-down-outline"
+            size={20}
+            color="black"
+            type="ionicon"
+          />
         </View>
-        <Icon
-          name="chevron-down-outline"
-          size={20}
-          color="black"
-          type="ionicon"
-        />
-      </View>
 
-      <View style={styles.chipsContainer}>
-        {/* TODO check here if an ingredient is selected from the asyncstorage or redux.
+        <View style={styles.chipsContainer}>
+          {/* TODO check here if an ingredient is selected from the asyncstorage or redux.
               Then add is to the isSelected prop of the chip*/}
-        {/* <IngredientChip title="salt" isSelected={true} /> */}
-        {ingredientList.map(ingredient => (
-          <IngredientChip title={ingredient.name} key={ingredient.id} />
-        ))}
-      </View>
-    </Card>
-  );
-};
+          {/* <IngredientChip title="salt" isSelected={true} /> */}
+          {ingredientList.map(ingredient => (
+            <IngredientChip title={ingredient.name} key={ingredient.id} />
+          ))}
+        </View>
+      </Card>
+    );
+  }
+}
 
 const styles = StyleSheet.create({
   cardStyle: {
@@ -71,5 +72,3 @@ const styles = StyleSheet.create({
     margin: 17,
   },
 });
-
-export default IngredientCategory;
