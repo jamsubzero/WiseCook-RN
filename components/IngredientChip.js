@@ -1,4 +1,4 @@
-import React, {useState,} from 'react';
+import React, {useState} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {Chip} from 'react-native-elements';
 
@@ -6,21 +6,14 @@ import Colors from '../constants/Colors';
 
 const IngredientChip = props => {
 
-  const [isSelected, setIsSelected] = useState(false);
-   
-  const onToggleHandler = () => {
-    // use props.id to check if it exists in asyncstorage
-    setIsSelected(!isSelected);
-  }
-
-  if (isSelected) {
+  if (props.isSelected) {
     return (
       <Chip
         title={props.title}
-        onPress={onToggleHandler}
+        onPress={props.onToggleIngredient}
         containerStyle={styles.containerStyle}
         buttonStyle={styles.buttonSelectedStyle}
-        titleStyle={styles.titleStyleSelected}
+        titleStyle={styles.titleStyle}
         icon={{
           name: 'checkmark',
           type: 'ionicon',
@@ -34,10 +27,10 @@ const IngredientChip = props => {
   return (
     <Chip
       title={props.title}
-      onPress={onToggleHandler}
+      onPress={props.onToggleIngredient}
       containerStyle={styles.containerStyle}
       buttonStyle={styles.buttonNotSelectedStyle}
-      titleStyle={styles.titleStyleNotSelected}
+      titleStyle={styles.titleStyle}
     />
   );
 };
@@ -47,23 +40,15 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primaryColor,
   },
   buttonNotSelectedStyle: {
-    backgroundColor: 'white',
-    borderWidth: 0.8,
-    borderColor: Colors.gray,
-    overflow: 'hidden'
+    backgroundColor: Colors.gray,
   },
-  titleStyleNotSelected:{
-      color: Colors.gray,
-      fontSize: 11
+  titleStyle: {
+    fontSize: 11,
   },
-  titleStyleSelected:{
-    color: 'white',
-    fontSize: 11
-},
   containerStyle: {
     marginHorizontal: 3,
     marginVertical: 3,
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
 });
 

@@ -17,8 +17,8 @@ export default class IngredientCategory extends PureComponent {
     var currentList = isFullList ? ingredientList : partialList;
 
     const toggleFullListHandler = () => {
-      this.setState({isFullList: !isFullList})
-    }
+      this.setState({isFullList: !isFullList});
+    };
 
     return (
       <Card style={styles.cardStyle}>
@@ -34,7 +34,9 @@ export default class IngredientCategory extends PureComponent {
             onPress={toggleFullListHandler}
             icon={
               <Icon
-                name={isFullList ? "chevron-up-outline" : "chevron-down-outline" }
+                name={
+                  isFullList ? 'chevron-up-outline' : 'chevron-down-outline'
+                }
                 size={20}
                 color="black"
                 type="ionicon"
@@ -48,7 +50,15 @@ export default class IngredientCategory extends PureComponent {
               Then add is to the isSelected prop of the chip*/}
           {/* <IngredientChip title="salt" isSelected={true} /> */}
           {currentList.map(ingredient => (
-            <IngredientChip title={ingredient.name} key={ingredient.id} />
+            <IngredientChip
+              title={ingredient.name}
+              key={ingredient.id}
+              isSelected={this.props.selectedIngs.includes(ingredient.id)}
+              onToggleIngredient={this.props.onToggleIngredient.bind(
+                this,
+                ingredient.id,
+              )}
+            />
           ))}
         </View>
       </Card>
