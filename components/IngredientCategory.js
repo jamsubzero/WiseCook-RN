@@ -1,4 +1,4 @@
-import React, {PureComponent, useState} from 'react';
+import React, {PureComponent} from 'react';
 import {View, StyleSheet, Text} from 'react-native';
 import {Button, Icon} from 'react-native-elements';
 import {titleCase} from '../utils/StringUtil';
@@ -53,11 +53,7 @@ export default class IngredientCategory extends PureComponent {
             <IngredientChip
               title={ingredient.name}
               key={ingredient.id}
-              isSelected={this.props.selectedIngs.includes(ingredient.id)}
-              onToggleIngredient={this.props.onToggleIngredient.bind(
-                this,
-                ingredient.id,
-              )}
+              id={ingredient.id}
             />
           ))}
         </View>

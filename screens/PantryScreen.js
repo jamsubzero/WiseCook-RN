@@ -15,21 +15,10 @@ import IngredientCategory from '../components/IngredientCategory';
 import IngredientListFooter from '../components/IngredientListFooter';
 import Colors from '../constants/Colors';
 import APIUrls from '../constants/APIUrls';
-import {
-  saveSelectedIngredients,
-  getSelectedIngredients,
-} from '../components/asyncStorage/selectedIngredients';
 
 const PantryScreen = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [ingredients, setIngredients] = useState([]);
-  const [selectedIngredients, setSelectedIngredients] = useState([]);
-
-  useEffect(() => {
-    getSelectedIngredients(selectIngredientsFromStorage => {
-      setSelectedIngredients(selectIngredientsFromStorage); // setting the initial
-    });
-  }, []);
 
   useEffect(() => {
     getIngredientsFromWiseCookApi();
@@ -59,27 +48,11 @@ const PantryScreen = () => {
       .finally(() => setIsLoading(false));
   };
 
-  const onIngToggleHandler = (ingId) => {
-    console.log('==>' + ingId);
-
-    let ingList = selectedIngredients.slice(); //copy the state
-    const selectedIngIndex = ingList.indexOf(ingId);
-    if (selectedIngIndex >= 0) {
-      ingList.splice(selectedIngIndex, 1);
-    } else {
-      ingList.push(ingId);
-    }
-    setSelectedIngredients(ingList); // save to state
-    saveSelectedIngredients(ingList); // save to storage
-  };
-
   const renderIngredient = itemData => {
     return (
       <IngredientCategory
         title={itemData.item.name}
         ingredientCodes={itemData.item.ingredientCodes}
-        onToggleIngredient={onIngToggleHandler}
-        selectedIngs={selectedIngredients}
       />
     );
   };
@@ -123,7 +96,6 @@ const PantryScreen = () => {
         data={ingredients}
         renderItem={renderIngredient}
         ListFooterComponent={<IngredientListFooter />}
-        extraData={selectedIngredients}
         onRefresh={onRefreshHandler}
         refreshing={isLoading}
         initialNumToRender={10}

@@ -18,7 +18,7 @@ export async function getSelectedIngredients(selectedIngredientsRetrieved) {
 
 export async function saveSelectedIngredients(selectedIngArr) {
   try {
-    await AsyncStorage.setItem("@selected_ing", JSON.stringify(selectedIngArr)); //save to string when saving
+    AsyncStorage.setItem("@selected_ing", JSON.stringify(selectedIngArr)); //save to string when saving
   } catch (e) {
     console.log("Error saving selected ingredients.");
   }
