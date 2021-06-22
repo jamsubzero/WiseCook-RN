@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {StyleSheet} from 'react-native';
 import {Chip} from 'react-native-elements';
 
@@ -10,12 +10,23 @@ import {
 
 const IngredientChip = props => {
   const [isSelected, setIsSelected] = useState();
+  const mountedRef = useRef(true);
 
   useEffect(() => {
     getSelectedIngredients(selectIngredientsFromStorage => {
+      if (!mountedRef.current) { // so it will return if component is not mounted
+        return null
+      }
+      
       setIsSelected(selectIngredientsFromStorage.includes(props.id)); // setting the initial
     });
-  });
+  }, []);
+
+  useEffect(() => {
+    return () => { 
+      mountedRef.current = false
+    }
+  }, []);
 
   const onIngToggleHandler = () => {
     console.log('=> ' + props.id);
