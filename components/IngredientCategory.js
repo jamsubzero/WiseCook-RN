@@ -6,10 +6,21 @@ import {titleCase} from '../utils/StringUtil';
 import Card from '../components/Card';
 import IngredientChip from '../components/IngredientChip';
 import Colors from '../constants/Colors';
+import {
+getSelectedIngredients,
+} from '../components/asyncStorage/selectedIngredients';
 export default class IngredientCategory extends PureComponent {
   state = {
     isFullList: false,
+    selectionCount: 0
   };
+
+  componentDidMount() {
+    getSelectedIngredients(this.props.catId, selectIngredientsFromStorage => {
+      this.setState({selectionCount: selectIngredientsFromStorage.length});
+    });
+  }
+
   render() {
     const ingredientList = this.props.ingredientCodes;
     const partialList = ingredientList.slice(0, 8);
@@ -20,6 +31,12 @@ export default class IngredientCategory extends PureComponent {
       this.setState({isFullList: !isFullList});
     };
 
+    const onCountChangeHandler = (change) => {
+      console.log("count change: " + change);
+      var newCount = this.state.selectionCount + (change);
+      this.setState({selectionCount: newCount});
+    }
+
     return (
       <Card style={styles.cardStyle}>
         <View style={styles.categoryHeader}>
@@ -27,7 +44,7 @@ export default class IngredientCategory extends PureComponent {
             <Text style={styles.categoryName}>
               {titleCase(this.props.title)}
             </Text>
-            <Text style={styles.ingCount}>0/{ingredientList.length}</Text>
+            <Text style={styles.ingCount}>{this.state.selectionCount}/{ingredientList.length}</Text>
           </View>
           <Button
             type="clear"
@@ -51,9 +68,11 @@ export default class IngredientCategory extends PureComponent {
           {/* <IngredientChip title="salt" isSelected={true} /> */}
           {currentList.map(ingredient => (
             <IngredientChip
+              catId={this.props.catId}
               title={ingredient.name}
               key={ingredient.id}
               id={ingredient.id}
+              onCountChange={onCountChangeHandler}
             />
           ))}
         </View>

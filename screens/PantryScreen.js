@@ -53,6 +53,7 @@ const PantryScreen = () => {
       <IngredientCategory
         title={itemData.item.name}
         ingredientCodes={itemData.item.ingredientCodes}
+        catId={itemData.item.id}
       />
     );
   };

@@ -13,11 +13,11 @@ const IngredientChip = props => {
   const mountedRef = useRef(true);
 
   useEffect(() => {
-    getSelectedIngredients(selectIngredientsFromStorage => {
+    getSelectedIngredients(props.catId, selectIngredientsFromStorage => {
       if (!mountedRef.current) { // so it will return if component is not mounted
         return null
       }
-      
+
       setIsSelected(selectIngredientsFromStorage.includes(props.id)); // setting the initial
     });
   }, []);
@@ -30,7 +30,7 @@ const IngredientChip = props => {
 
   const onIngToggleHandler = () => {
     console.log('=> ' + props.id);
-    getSelectedIngredients(selectIngredientsFromStorage => {
+    getSelectedIngredients(props.catId, selectIngredientsFromStorage => {
       const selectedIngIndex = selectIngredientsFromStorage.indexOf(props.id);
       if (selectedIngIndex >= 0) {
         selectIngredientsFromStorage.splice(selectedIngIndex, 1);
@@ -38,9 +38,10 @@ const IngredientChip = props => {
         selectIngredientsFromStorage.push(props.id);
       }
 
-      saveSelectedIngredients(selectIngredientsFromStorage);
+      saveSelectedIngredients(props.catId, selectIngredientsFromStorage);
     });
 
+    props.onCountChange(isSelected ? -1 : 1);
     setIsSelected(!isSelected);
   };
 
