@@ -9,28 +9,31 @@ import {
 } from '../components/asyncStorage/selectedIngredients';
 
 const IngredientChip = props => {
-  const [selectedIngredients, setSelectedIngredients] = useState([]);
+  const [isSelected, setIsSelected] = useState();
 
   useEffect(() => {
     getSelectedIngredients(selectIngredientsFromStorage => {
-      setSelectedIngredients(selectIngredientsFromStorage); // setting the initial
+      setIsSelected(selectIngredientsFromStorage.includes(props.id)); // setting the initial
     });
-  }, []);
+  });
 
   const onIngToggleHandler = () => {
+    console.log('=> ' + props.id);
+    getSelectedIngredients(selectIngredientsFromStorage => {
+      const selectedIngIndex = selectIngredientsFromStorage.indexOf(props.id);
+      if (selectedIngIndex >= 0) {
+        selectIngredientsFromStorage.splice(selectedIngIndex, 1);
+      } else {
+        selectIngredientsFromStorage.push(props.id);
+      }
 
-    let ingList = selectedIngredients.slice(); //copy the state
-    const selectedIngIndex = ingList.indexOf(props.id);
-    if (selectedIngIndex >= 0) {
-      ingList.splice(selectedIngIndex, 1);
-    } else {
-      ingList.push(props.id);
-    }
-    setSelectedIngredients(ingList); // save to state
-    saveSelectedIngredients(ingList); // save to storage
+      saveSelectedIngredients(selectIngredientsFromStorage);
+    });
+
+    setIsSelected(!isSelected);
   };
 
-  if (selectedIngredients.includes(props.id)) {
+  if (isSelected) {
     return (
       <Chip
         title={props.title}
