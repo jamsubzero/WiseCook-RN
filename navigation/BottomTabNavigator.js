@@ -42,7 +42,7 @@ const BottomTabNavigator = () => {
         }}
       >
         <Tab.Screen name="Pantry" component={PantryScreen} />
-        <Tab.Screen name="Recipe" component={RecipeScreen} />
+        <Tab.Screen name="Recipe" component={RecipeScreen} initialParams={{isGo: false}}/>
         <Tab.Screen name="Shopping List" component={ShoppingListScreen} />
         <Tab.Screen name="Favorites" component={FavoritesScreen} />
       </Tab.Navigator>

@@ -1,25 +1,66 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export async function getSelectedIngredients(catId, selectedIngredientsRetrieved) {
+export async function getSelectedIngredients(
+  catId,
+  selectedIngredientsRetrieved,
+) {
   try {
-    var savedIngredientsStr = await AsyncStorage.getItem("@selected_ing_" + catId);
+    var savedIngredientsStr = await AsyncStorage.getItem(
+      '@selected_ing_' + catId,
+    );
   } catch (e) {
-    console.log("Error getting selected ingredients.");
+    console.log('Error getting selected ingredients.');
   }
 
   var selectedIngArr = [];
 
-  if(savedIngredientsStr) {
+  if (savedIngredientsStr) {
     selectedIngArr = JSON.parse(savedIngredientsStr);
   }
-   
+
   selectedIngredientsRetrieved(selectedIngArr); //parse back to array
 }
 
 export async function saveSelectedIngredients(catId, selectedIngArr) {
   try {
-    await AsyncStorage.setItem("@selected_ing_" + catId, JSON.stringify(selectedIngArr)); //save to string when saving
+    await AsyncStorage.setItem(
+      '@selected_ing_' + catId,
+      JSON.stringify(selectedIngArr),
+    ); //save to string when saving
   } catch (e) {
-    console.log("Error saving selected ingredients.");
+    console.log('Error saving selected ingredients.');
   }
+}
+
+export async function getAllSelectedIngredients(allIngsRetrieved) {
+  var allSelectedIngArr = [];
+  try {
+    const keys = await AsyncStorage.getAllKeys();
+
+    for (const key of keys) {
+      if (!key.includes('@selected_ing_')) {
+        console.log('skipped');
+        continue;
+      }
+
+      var items = await AsyncStorage.getItem(key);
+      if (items) {
+        var selectedIngs = [];
+        try {
+          selectedIngs = JSON.parse(items);
+        } catch (e) {
+          console.log('JSON parsing error: ' + e);
+        }
+        for (const selected of selectedIngs) {
+          allSelectedIngArr.push(selected);
+        }
+      }
+    }
+  } catch (e) {
+    console.log(e);
+  }
+
+  console.log(allSelectedIngArr);
+
+  allIngsRetrieved(allSelectedIngArr); //parse back to array
 }

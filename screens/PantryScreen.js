@@ -16,7 +16,7 @@ import IngredientListFooter from '../components/IngredientListFooter';
 import Colors from '../constants/Colors';
 import APIUrls from '../constants/APIUrls';
 
-const PantryScreen = () => {
+const PantryScreen = props => {
   const [isLoading, setIsLoading] = useState(true);
   const [ingredients, setIngredients] = useState([]);
 
@@ -71,8 +71,8 @@ const PantryScreen = () => {
     return (
       <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
         <Text style={styles.infoText}>
-          Oh no! Something's really wrong here. {"\n"}
-          If it's not you, perhaps WiseCook is down at the moment. {"\n"}
+          Oh no! Something's really wrong here. {'\n'}
+          If it's not you, perhaps WiseCook is down at the moment. {'\n'}
           Please try again later. {'\n'}
         </Text>
         <Icon
@@ -89,6 +89,10 @@ const PantryScreen = () => {
     setIngredients([]);
     setIsLoading(true);
     getIngredientsFromWiseCookApi();
+  };
+
+  const onRecipeSearchHandler = () => {
+    props.navigation.navigate('Recipe');
   };
 
   return (
@@ -120,6 +124,7 @@ const PantryScreen = () => {
       />
 
       <FAB
+        onPress={onRecipeSearchHandler}
         title="Let's cook"
         placement="right"
         style={{bottom: 8}}
@@ -136,9 +141,6 @@ const PantryScreen = () => {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-  },
-  scrollView: {
-    paddingTop: 2,
   },
   infoText: {
     fontSize: 12,
