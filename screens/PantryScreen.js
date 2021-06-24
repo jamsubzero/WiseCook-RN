@@ -9,10 +9,10 @@ import {
 import {FAB} from 'react-native-elements';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Snackbar from 'react-native-snackbar';
-import {Icon} from 'react-native-elements';
 
 import IngredientCategory from '../components/IngredientCategory';
 import IngredientListFooter from '../components/IngredientListFooter';
+import ConnectionErrorMessage from '../components/ConnectionErrorMessage';
 import Colors from '../constants/Colors';
 import APIUrls from '../constants/APIUrls';
 
@@ -69,19 +69,7 @@ const PantryScreen = props => {
 
   if (!ingredients || ingredients.length <= 0) {
     return (
-      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-        <Text style={styles.infoText}>
-          Oh no! Something's really wrong here. {'\n'}
-          If it's not you, perhaps WiseCook is down at the moment. {'\n'}
-          Please try again later. {'\n'}
-        </Text>
-        <Icon
-          name="coffee-off"
-          size={24}
-          color={Colors.primaryColor}
-          type="material-community"
-        />
-      </View>
+      <ConnectionErrorMessage />
     );
   }
 

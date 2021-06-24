@@ -23,6 +23,7 @@ export default class RecipeItem extends PureComponent {
       TouchableCmp = TouchableNativeFeedback;
     }
 
+    TouchableCmp = TouchableNativeFeedback;
     return (
       <Card style={styles.cardStyle}>
         <TouchableCmp
