@@ -12,6 +12,8 @@ import Snackbar from 'react-native-snackbar';
 import Card from '../components/Card';
 import Colors from '../constants/Colors';
 import APIUrls from '../constants/APIUrls';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {getAllSelectedIngredients} from '../components/asyncStorage/selectedIngredients';
 
 const RecipeScreen = props => {
@@ -65,18 +67,51 @@ const RecipeScreen = props => {
         <View style={styles.recipeItemContainer}>
           <Image source={{uri: itemData.item.imageUrl}} style={styles.image} />
           <View style={styles.infoContainer}>
-            <Text style={styles.title}>
-              {itemData.item.title}
-            </Text>
-            <Text>
-              hits: {itemData.item.hits}
-            </Text>
-            <Text>
-             servings: {itemData.item.servings}
-            </Text>
-            <Text>
-            time:  {itemData.item.time}
-            </Text>
+            <View style={styles.titleContainer}>
+              <Text style={styles.title} numberOfLines={2}>
+                {itemData.item.title}
+              </Text>
+            </View>
+
+            <View style={styles.detailsContainer}>
+
+              <View style={styles.infoItem}>
+                <FontAwesome5
+                  name="carrot"
+                  size={15}
+                  color={Colors.primaryColor}
+                />
+                <Text numberOfLines={1} style={styles.info}>
+                 Using your {itemData.item.hits} ingredients
+                </Text>
+              </View>
+
+              {itemData.item.servings.length > 0 ? (
+                <View style={styles.infoItem}>
+                  <MaterialCommunityIcons
+                    name="bread-slice-outline"
+                    size={15}
+                    color={Colors.primaryColor}
+                  />
+                  <Text numberOfLines={1} style={styles.info}>
+                    {itemData.item.servings}
+                  </Text>
+                </View>
+              ) : null}
+
+              {itemData.item.time.length > 0 ? (
+                <View style={styles.infoItem}>
+                  <FontAwesome5
+                    name="clock"
+                    size={15}
+                    color={Colors.primaryColor}
+                  />
+                  <Text numberOfLines={1} style={styles.info}>
+                    {itemData.item.time}
+                  </Text>
+                </View>
+              ) : null}
+            </View>
           </View>
         </View>
       </Card>
@@ -99,7 +134,7 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     padding: 0,
     height: 150,
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   recipeItemContainer: {
     flexDirection: 'row',
@@ -114,12 +149,43 @@ const styles = StyleSheet.create({
   infoContainer: {
     flex: 1,
     margin: 5,
+    marginLeft: 7,
     justifyContent: 'flex-start',
     alignItems: 'flex-start',
-    alignContent: 'flex-start'
+    alignContent: 'flex-start',
   },
   title: {
     flexWrap: 'wrap',
+    fontWeight: 'bold',
+    fontSize: 15,
+    color: Colors.primaryColor,
+  },
+  info: {
+    fontSize: 13,
+    color: Colors.gray,
+    padding: 0,
+    marginLeft: 5,
+    flexWrap: 'wrap',
+  },
+  titleContainer: {
+    borderBottomWidth: 0.3,
+    alignContent: 'center',
+    paddingBottom: 5,
+    marginRight: 10,
+    width: '95%',
+    borderBottomColor: Colors.gray,
+  },
+  infoItem: {
+    paddingVertical: 2,
+    marginRight: 8,
+    marginLeft: 3,
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+  },
+  detailsContainer: {
+    flex: 1,
+    marginTop: 3,
   },
 });
 
