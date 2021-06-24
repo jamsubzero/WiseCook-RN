@@ -106,7 +106,7 @@ const PantryScreen = props => {
         color="white"
         containerStyle={{elevation: 25}}
         // buttonStyle={{borderWidth: 5, borderColor: '#4285f4'}}
-        titleStyle={{color: '#4285f4'}}
+        titleStyle={{color: Colors.blue}}
         size="large"
         //knife, pot, pot mix, pot-steam,pot-steam-outline
       />
@@ -116,7 +116,7 @@ const PantryScreen = props => {
         title="Let's cook"
         placement="right"
         style={{bottom: 8}}
-        color="#4285f4"
+        color={Colors.blue}
         containerStyle={{elevation: 25}}
         size="large"
         icon={<MaterialCommunityIcons name="knife" size={25} color="white" />}

@@ -126,6 +126,14 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     flexWrap: 'wrap',
   },
+  hitsInfo: {
+    fontSize: 13,
+    color: Colors.primaryColor,
+    padding: 0,
+    marginLeft: 5,
+    fontWeight: 'bold',
+    flexWrap: 'wrap',
+  },
   titleContainer: {
     borderBottomWidth: 0.3,
     alignContent: 'center',
