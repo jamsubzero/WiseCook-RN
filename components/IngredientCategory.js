@@ -1,18 +1,17 @@
 import React, {PureComponent} from 'react';
 import {View, StyleSheet, Text} from 'react-native';
 import {Button, Icon} from 'react-native-elements';
-import {titleCase} from '../utils/StringUtil';
+import {Chip} from 'react-native-elements';
 
+import {titleCase} from '../utils/StringUtil';
 import Card from '../components/Card';
 import IngredientChip from '../components/IngredientChip';
 import Colors from '../constants/Colors';
-import {
-getSelectedIngredients,
-} from '../components/asyncStorage/selectedIngredients';
+import {getSelectedIngredients} from '../components/asyncStorage/selectedIngredients';
 export default class IngredientCategory extends PureComponent {
   state = {
     isFullList: false,
-    selectionCount: 0
+    selectionCount: 0,
   };
 
   componentDidMount() {
@@ -31,11 +30,11 @@ export default class IngredientCategory extends PureComponent {
       this.setState({isFullList: !isFullList});
     };
 
-    const onCountChangeHandler = (change) => {
-      console.log("count change: " + change);
-      var newCount = this.state.selectionCount + (change);
+    const onCountChangeHandler = change => {
+      console.log('count change: ' + change);
+      var newCount = this.state.selectionCount + change;
       this.setState({selectionCount: newCount});
-    }
+    };
 
     return (
       <Card style={styles.cardStyle}>
@@ -44,7 +43,9 @@ export default class IngredientCategory extends PureComponent {
             <Text style={styles.categoryName}>
               {titleCase(this.props.title)}
             </Text>
-            <Text style={styles.ingCount}>{this.state.selectionCount}/{ingredientList.length}</Text>
+            <Text style={styles.ingCount}>
+              {this.state.selectionCount}/{ingredientList.length}
+            </Text>
           </View>
           <Button
             type="clear"
@@ -75,6 +76,16 @@ export default class IngredientCategory extends PureComponent {
               onCountChange={onCountChangeHandler}
             />
           ))}
+
+        {isFullList ? null :
+          <Chip
+            title={"More..."}
+            onPress={toggleFullListHandler}
+            containerStyle={styles.lastChipContainer}
+            buttonStyle={styles.lastChipButton}
+            titleStyle={styles.lastChipTitle}
+          />
+        }
         </View>
       </Card>
     );
@@ -114,5 +125,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     margin: 17,
+  },
+  lastChipButton: {
+    backgroundColor: Colors.lightGray,
+  },
+  lastChipTitle: {
+    fontSize: 11,
+  },
+  lastChipContainer: {
+    marginHorizontal: 3,
+    marginVertical: 3,
+    overflow: 'hidden',
   },
 });
