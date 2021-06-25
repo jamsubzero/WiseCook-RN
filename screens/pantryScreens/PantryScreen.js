@@ -10,11 +10,11 @@ import {FAB} from 'react-native-elements';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Snackbar from 'react-native-snackbar';
 
-import IngredientCategory from '../components/IngredientCategory';
-import IngredientListFooter from '../components/IngredientListFooter';
-import ConnectionErrorMessage from '../components/ConnectionErrorMessage';
-import Colors from '../constants/Colors';
-import APIUrls from '../constants/APIUrls';
+import IngredientCategory from '../../components/IngredientCategory';
+import IngredientListFooter from '../../components/IngredientListFooter';
+import ConnectionErrorMessage from '../../components/ConnectionErrorMessage';
+import Colors from '../../constants/Colors';
+import APIUrls from '../../constants/APIUrls';
 
 const PantryScreen = props => {
   const [isLoading, setIsLoading] = useState(true);
@@ -80,7 +80,7 @@ const PantryScreen = props => {
   };
 
   const onRecipeSearchHandler = () => {
-    props.navigation.navigate('Recipe');
+   // TODO props.navigation.navigate('Recipe');
   };
 
   return (

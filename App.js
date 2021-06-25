@@ -1,11 +1,11 @@
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
-import StackNavigator from './navigation/StackNavigator';
+import BottomTabNavigator from './navigation/BottomTabNavigator';
 
 const App = () => {
   return (
     <View style={styles.screen}>
-     <StackNavigator />
+     <BottomTabNavigator />
     </View>
   );
 };

@@ -26,8 +26,7 @@ export default class RecipeItem extends PureComponent {
     TouchableCmp = TouchableNativeFeedback;
     return (
       <Card style={styles.cardStyle}>
-        <TouchableCmp
-          onPress={this.props.onSelectRecipe}>
+        <TouchableCmp onPress={this.props.onSelectRecipe}>
           <View style={styles.recipeItemContainer}>
             <Image
               source={{uri: itemData.item.imageUrl}}
@@ -49,7 +48,9 @@ export default class RecipeItem extends PureComponent {
                     color={Colors.primaryColor}
                   />
                   <Text numberOfLines={1} style={styles.info}>
-                    Using your {itemData.item.hits} ingredients
+                    <Text>Using your </Text>
+                    <Text style={{fontWeight: 'bold'}}>{itemData.item.hits}</Text>
+                    <Text> ingredients</Text>
                   </Text>
                 </View>
 

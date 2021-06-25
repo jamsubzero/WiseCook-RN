@@ -3,20 +3,18 @@ import {Button} from 'react-native-elements';
 import {HeaderButtons} from 'react-navigation-header-buttons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import Colors from '../constants/Colors';
+import PantryScreen from '../screens/pantryScreens/PantryScreen';
 
-import BottomTabNavigator from './BottomTabNavigator';
-
-const StackNavigator = () => {
+const PantryStackNavigator = () => {
   const Stack = createStackNavigator();
   return (
-    <NavigationContainer>
+  
       <Stack.Navigator screenOptions>
         <Stack.Screen
           name="WiseCook"
-          component={BottomTabNavigator}
+          component={PantryScreen}
           options={{
             headerTintColor: 'white',
             headerStyle: {backgroundColor: Colors.primaryColor},
@@ -42,8 +40,7 @@ const StackNavigator = () => {
           }}
         />
       </Stack.Navigator>
-    </NavigationContainer>
   );
 };
 
-export default StackNavigator;
+export default PantryStackNavigator;

@@ -2,14 +2,13 @@ import React, {useEffect, useState} from 'react';
 import {StyleSheet, View, ActivityIndicator, FlatList} from 'react-native';
 import Snackbar from 'react-native-snackbar';
 
-import Colors from '../constants/Colors';
-import APIUrls from '../constants/APIUrls';
-import {getAllSelectedIngredients} from '../components/asyncStorage/selectedIngredients';
-import RecipeItem from '../components/RecipeItem';
+import Colors from '../../constants/Colors';
+import APIUrls from '../../constants/APIUrls';
+import {getAllSelectedIngredients} from '../../components/asyncStorage/selectedIngredients';
+import RecipeItem from '../../components/RecipeItem';
+import ConnectionErrorMessage from '../../components/ConnectionErrorMessage';
 
-import ConnectionErrorMessage from '../components/ConnectionErrorMessage';
-
-const RecipeScreen = props => {
+const RecipeListScreen = props => {
   const [isLoading, setIsLoading] = useState(true);
   const [recipes, setRecipes] = useState([]);
 
@@ -101,4 +100,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default RecipeScreen;
+export default RecipeListScreen;
