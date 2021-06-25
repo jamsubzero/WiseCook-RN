@@ -79,7 +79,7 @@ export default class IngredientCategory extends PureComponent {
 
         {isFullList ? null :
           <Chip
-            title={"More..."}
+            title={"Show more..."}
             onPress={toggleFullListHandler}
             containerStyle={styles.lastChipContainer}
             buttonStyle={styles.lastChipButton}
