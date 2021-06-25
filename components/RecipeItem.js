@@ -5,8 +5,6 @@ import {
   View,
   Image,
   TouchableOpacity,
-  TouchableNativeFeedback,
-  Platform,
 } from 'react-native';
 import Card from '../components/Card';
 import Colors from '../constants/Colors';
@@ -17,16 +15,9 @@ export default class RecipeItem extends PureComponent {
   render() {
     const itemData = this.props.itemData;
 
-    let TouchableCmp = TouchableOpacity;
-
-    if (Platform.OS === 'android' && Platform.Version >= 21) {
-      TouchableCmp = TouchableNativeFeedback;
-    }
-
-    TouchableCmp = TouchableNativeFeedback;
     return (
       <Card style={styles.cardStyle}>
-        <TouchableCmp onPress={this.props.onSelectRecipe}>
+        <TouchableOpacity onPress={this.props.onSelectRecipe}>
           <View style={styles.recipeItemContainer}>
             <Image
               source={{uri: itemData.item.imageUrl}}
@@ -82,7 +73,7 @@ export default class RecipeItem extends PureComponent {
               </View>
             </View>
           </View>
-        </TouchableCmp>
+        </TouchableOpacity>
       </Card>
     );
   }
