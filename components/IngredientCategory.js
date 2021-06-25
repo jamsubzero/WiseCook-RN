@@ -55,7 +55,7 @@ export default class IngredientCategory extends PureComponent {
                   isFullList ? 'chevron-up-outline' : 'chevron-down-outline'
                 }
                 size={20}
-                color="black"
+                color={Colors.primaryColor}
                 type="ionicon"
               />
             }
@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
   },
   ingCount: {
     fontSize: 9,
-    color: Colors.gray,
+    color: Colors.primaryColor,
   },
   categoryHeader: {
     flexDirection: 'row',
@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderBottomWidth: 0.3,
-    borderBottomColor: Colors.gray,
+    borderBottomColor: Colors.primaryColor,
     alignContent: 'space-between',
     justifyContent: 'space-between',
     width: '100%',

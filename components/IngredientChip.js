@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primaryColor,
   },
   buttonNotSelectedStyle: {
-    backgroundColor: '#b0b0b0',
+    backgroundColor: Colors.lightGray
   },
   titleStyle: {
     fontSize: 11,

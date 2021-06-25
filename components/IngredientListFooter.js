@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
   endOfIngContainer: {
     width: '100%',
     height: 55,
-    backgroundColor: Colors.primaryColor,
+    backgroundColor: Colors.gray,
     elevation: 20,
     justifyContent: 'center',
     alignItems: 'center',

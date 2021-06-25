@@ -80,7 +80,7 @@ const PantryScreen = props => {
   };
 
   const onRecipeSearchHandler = () => {
-   // TODO props.navigation.navigate('Recipe');
+    props.navigation.navigate('Recipe');
   };
 
   return (
@@ -100,13 +100,13 @@ const PantryScreen = props => {
       />
 
       <FAB
-        title="I have(10)"
+        title="My pantry"
         placement="left"
         style={{bottom: 8}}
-        color="white"
+        color={Colors.lightBlue}
         containerStyle={{elevation: 25}}
         // buttonStyle={{borderWidth: 5, borderColor: '#4285f4'}}
-        titleStyle={{color: Colors.blue}}
+        titleStyle={{color: 'white'}}
         size="large"
         //knife, pot, pot mix, pot-steam,pot-steam-outline
       />
