@@ -62,8 +62,20 @@ const RecipeViewerScreen = props => {
     return <ConnectionErrorMessage />;
   }
 
+  const onScrollHandler = event => {
+    if (event.nativeEvent.contentOffset.y > 300) {
+      props.navigation.setOptions({
+        headerTransparent: false,
+      });
+    } else {
+      props.navigation.setOptions({
+        headerTransparent: true,
+      });
+    }
+  };
+
   return (
-    <ScrollView style={styles.screen}>
+    <ScrollView style={styles.screen} onScroll={onScrollHandler}>
       <View style={styles.mealHeader}>
         <ImageBackground
           style={styles.recipeImage}
@@ -124,7 +136,6 @@ const RecipeViewerScreen = props => {
                   }}>
                   {instruction.step}
                 </Text>
-               
               </View>
               <Text>{'  '}</Text>
               <Text>{instruction.ins}</Text>

@@ -53,6 +53,7 @@ const RecipeStackNavigator = () => {
         component={RecipeViewerScreen}
         options={{
           headerTintColor: 'white',
+          headerStyle: {backgroundColor: Colors.primaryColor},
           headerShown: true,
           headerTransparent: true,
           headerTitle: '',
