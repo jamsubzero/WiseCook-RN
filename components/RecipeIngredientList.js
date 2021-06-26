@@ -36,6 +36,7 @@ const RecipeIngredientList = props => {
           key={ingredient.id}
           ingredient={ingredient}
           isOnPantry={selectedRecipes.includes(ingredient.ingredientCode)}
+          ingCode={ingredient.ingredientCode}
         />
       ))}
     </View>
