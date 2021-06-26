@@ -1,26 +1,42 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {View, StyleSheet, Text} from 'react-native';
 
 import Colors from '../constants/Colors';
+import {getAllSelectedIngredients} from './asyncStorage/selectedIngredients';
+import RecipeIngredientItem from './RecipeIngredientItem';
 
 const RecipeIngredientList = props => {
   const ingredients = props.ingredients;
   const searchHits = props.searchHits;
+  const [selectedRecipes, setSelectedRecipes] = useState([]);
+  var ingHits = 0;
+  ingredients.map(ingredient => {
+      if(selectedRecipes.includes(ingredient.ingredientCode)){
+          ingHits++;
+      }
+  })
+
+  useEffect(() => {
+    getAllSelectedIngredients(allSelectIngredientsFromStorage => {
+      setSelectedRecipes(allSelectIngredientsFromStorage);
+    });
+  }, []);
+
   return (
     <View style={styles.ingredientContainer}>
       <View style={styles.sectionTitleContainer}>
         <Text style={styles.ingredientTitle}>Ingredients</Text>
-        <Text>{searchHits}</Text>
+        <Text style={styles.hits}>
+          You have {ingHits} of these in your pantry
+        </Text>
       </View>
 
       {ingredients.map(ingredient => (
-        <View key={ingredient.id} style={styles.ingredientRowContainer}>
-          <Text style={styles.ingredientEntry}>
-            <Text style={{fontWeight: 'bold'}}>{ingredient.quantity}</Text>
-            <Text>{ingredient.quantity.length > 0 ? ' ' : ''}</Text>
-            <Text>{ingredient.name}</Text>
-          </Text>
-        </View>
+        <RecipeIngredientItem
+          key={ingredient.id}
+          ingredient={ingredient}
+          isOnPantry={selectedRecipes.includes(ingredient.ingredientCode)}
+        />
       ))}
     </View>
   );
@@ -39,22 +55,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginRight: 5
+    alignContent: 'center',
+    marginRight: 5,
+    marginBottom: 8,
   },
   ingredientTitle: {
     color: Colors.primaryColor,
-    marginBottom: 10,
     fontSize: 20,
     fontWeight: 'bold',
   },
-  ingredientRowContainer: {
-    paddingVertical: 10,
-    marginHorizontal: 10,
-    borderColor: Colors.gray,
-    borderStyle: 'dashed',
-    borderRadius: 1,
-    borderWidth: 0,
-    borderTopWidth: 0.2,
+  hits: {
+    color: Colors.primaryColor,
+    fontSize: 11
+
   },
 });
 
