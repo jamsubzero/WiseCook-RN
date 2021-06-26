@@ -52,9 +52,10 @@ const RecipeStackNavigator = () => {
         name="ViewRecipe"
         component={RecipeViewerScreen}
         options={{
-          headerTintColor: 'white',
-          headerStyle: {backgroundColor: Colors.primaryColor},
-          headerTitle: 'View Recipe',
+          headerTintColor: Colors.primaryColor,
+          headerShown: true,
+          headerTransparent: true,
+          headerTitle: '',
         }}
       />
     </Stack.Navigator>
