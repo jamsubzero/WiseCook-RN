@@ -13,15 +13,18 @@ import APIUrls from '../../constants/APIUrls';
 import Colors from '../../constants/Colors';
 import ConnectionErrorMessage from '../../components/ConnectionErrorMessage';
 import RecipeInfo from '../../components/RecipeInfo';
+import RecipeIngredientList from '../../components/RecipeIngredientList';
+import RecipeDirectionList from '../../components/RecipeDirectionList';
 
 const RecipeViewerScreen = props => {
   const {selectedRecipeId} = props.route.params;
+  const {searchHits} = props.route.params;
   const URL = APIUrls.RECIPE_DETAILS_URL + selectedRecipeId;
   const [isLoading, setIsLoading] = useState(true);
   const [recipe, setRecipe] = useState('');
 
   useEffect(() => {
-    console.log(selectedRecipeId);
+    console.log(selectedRecipeId + " searchHits: " +searchHits);
     getRecipeDetailsFromWiseCookApi();
   }, []);
 
@@ -93,56 +96,11 @@ const RecipeViewerScreen = props => {
         <RecipeInfo iconName="bread-slice-outline" info={recipe.servings} />
       </View>
 
-      <View style={styles.ingredientContainer}>
-        <Text style={styles.ingredientTitle}>Ingredients</Text>
-        {recipe.ingredients.map(ingredient => (
-          <View key={ingredient.id} style={styles.ingredientRowContainer}>
-            <Text style={styles.ingredientEntry}>
-              <Text style={{fontWeight: 'bold'}}>{ingredient.quantity}</Text>
-              <Text>{ingredient.quantity.length > 0 ? ' ' : ''}</Text>
-              <Text>{ingredient.name}</Text>
-            </Text>
-          </View>
-        ))}
-      </View>
+      <RecipeIngredientList ingredients={recipe.ingredients} searchHits={searchHits} />
 
-      <View style={styles.ingredientContainer}>
-        <Text style={styles.ingredientTitle}>Steps</Text>
-        {recipe.instructions.map(instruction => (
-          <View key={instruction.id} style={styles.ingredientRowContainer}>
-            {/* <Text
-              style={{
-                textAlign: 'center',
-                backgroundColor: 'green',
-                fontSize: 10 - 2 * 5, //... One for top and one for bottom alignment
-                lineHeight: 5 - ( 2 * 5), //... One for top and one for bottom alignment
-              }}>
-              1
-            </Text> */}
-            <Text style={styles.ingredientEntry}>
-              <View
-                style={{
-                  width: 18,
-                  height: 18,
-                  justifyContent: 'center',
-                  borderRadius: 18 / 2,
-                  backgroundColor: Colors.primaryColor,
-                }}>
-                <Text
-                  style={{
-                    alignSelf: 'center',
-                    color: 'white',
-                    fontSize: 12,
-                  }}>
-                  {instruction.step}
-                </Text>
-              </View>
-              <Text>{'  '}</Text>
-              <Text>{instruction.ins}</Text>
-            </Text>
-          </View>
-        ))}
-      </View>
+      <RecipeDirectionList directions={recipe.instructions} />
+
+      
     </ScrollView>
   );
 };
@@ -184,38 +142,6 @@ const styles = StyleSheet.create({
     height: 22,
     alignItems: 'center',
     backgroundColor: '#ebe4e4',
-  },
-  ingredientContainer: {
-    marginHorizontal: 10,
-    marginTop: 8,
-    borderBottomWidth: 0.2,
-    borderBottomColor: Colors.gray,
-    paddingBottom: 20,
-    marginBottom: 10,
-  },
-  ingredientTitle: {
-    marginBottom: 10,
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  ingredientRowContainer: {
-    paddingVertical: 10,
-    marginHorizontal: 10,
-    borderColor: Colors.gray,
-    borderStyle: 'dashed',
-    borderRadius: 1,
-    borderWidth: 0,
-    borderTopWidth: 0.2,
-  },
-  stepNumContainer: {
-    alignContent: 'center',
-    backgroundColor: Colors.primaryColor,
-    width: 50,
-    height: 50,
-    borderRadius: 5,
-  },
-  stepNum: {
-    color: 'white',
   },
 });
 
