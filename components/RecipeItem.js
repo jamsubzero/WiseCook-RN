@@ -1,16 +1,10 @@
 import React, {PureComponent} from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  TouchableOpacity,
-} from 'react-native';
+import {StyleSheet, Text, View, Image, TouchableOpacity} from 'react-native';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+
 import Card from '../components/Card';
 import Colors from '../constants/Colors';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-
+import RecipeInfo from './RecipeInfo';
 export default class RecipeItem extends PureComponent {
   render() {
     const itemData = this.props.itemData;
@@ -40,36 +34,21 @@ export default class RecipeItem extends PureComponent {
                   />
                   <Text numberOfLines={1} style={styles.info}>
                     <Text>Using your </Text>
-                    <Text style={{fontWeight: 'bold'}}>{itemData.item.hits}</Text>
+                    <Text style={{fontWeight: 'bold'}}>
+                      {itemData.item.hits}
+                    </Text>
                     <Text> ingredients</Text>
                   </Text>
                 </View>
 
-                {itemData.item.servings.length > 0 ? (
-                  <View style={styles.infoItem}>
-                    <MaterialCommunityIcons
-                      name="bread-slice-outline"
-                      size={15}
-                      color={Colors.primaryColor}
-                    />
-                    <Text numberOfLines={1} style={styles.info}>
-                      {itemData.item.servings}
-                    </Text>
-                  </View>
-                ) : null}
-
-                {itemData.item.time.length > 0 ? (
-                  <View style={styles.infoItem}>
-                    <FontAwesome5
-                      name="clock"
-                      size={15}
-                      color={Colors.primaryColor}
-                    />
-                    <Text numberOfLines={1} style={styles.info}>
-                      {itemData.item.time}
-                    </Text>
-                  </View>
-                ) : null}
+                <RecipeInfo
+                  iconName="bread-slice-outline"
+                  info={itemData.item.servings}
+                />
+                <RecipeInfo
+                  iconName="clock-outline"
+                  info={itemData.item.time}
+                />
               </View>
             </View>
           </View>

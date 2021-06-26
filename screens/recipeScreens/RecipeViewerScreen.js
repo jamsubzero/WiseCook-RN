@@ -7,10 +7,12 @@ import {
   ImageBackground,
   ScrollView,
 } from 'react-native';
+import Snackbar from 'react-native-snackbar';
 
 import APIUrls from '../../constants/APIUrls';
 import Colors from '../../constants/Colors';
 import ConnectionErrorMessage from '../../components/ConnectionErrorMessage';
+import RecipeInfo from '../../components/RecipeInfo';
 
 const RecipeViewerScreen = props => {
   const {selectedRecipeId} = props.route.params;
@@ -61,15 +63,33 @@ const RecipeViewerScreen = props => {
   }
 
   return (
-    <View style={styles.screen}>
-      {/* <ScrollView> */}
+    <ScrollView style={styles.screen}>
+      <View style={styles.mealHeader}>
         <ImageBackground
-          style={styles.container}
-          source={{uri: recipe.imageUrl}}
-        />
-        <Text>{recipe.title}</Text>
-      {/* </ScrollView> */}
-    </View>
+          style={styles.recipeImage}
+          source={{uri: recipe.imageUrl}}>
+          <View style={styles.titleContainer}>
+            <Text style={styles.title} numberOfLines={1}>
+              {recipe.title}
+            </Text>
+          </View>
+        </ImageBackground>
+      </View>
+      <View style={styles.mealDetailContainer}>
+        <RecipeInfo iconName="clock-outline" info={recipe.time} />
+        <RecipeInfo iconName="bread-slice-outline" info={recipe.servings} />
+      </View>
+
+      {/* <View>
+        <Text>Ingredients</Text>
+      </View> */}
+      <Text>Ingredients</Text>
+      <View>
+        {recipe.ingredients.map(ingredient => (
+          <Text key={ingredient.id}>{ingredient.name}</Text>
+        ))}
+      </View>
+    </ScrollView>
   );
 };
 
@@ -77,8 +97,39 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
   },
-  container: {
-   height: 300
+  parent: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  detailText: {
+    color: Colors.primaryColor,
+  },
+  mealHeader: {
+    height: '85%',
+    flex: 1,
+  },
+  recipeImage: {
+    width: '100%',
+    height: 300,
+    justifyContent: 'flex-end',
+  },
+  titleContainer: {
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    paddingVertical: 10,
+    paddingHorizontal: 13,
+  },
+  title: {
+    fontSize: 20,
+    color: 'white',
+    textAlign: 'center',
+  },
+  mealDetailContainer: {
+    flexDirection: 'row',
+    paddingHorizontal: 10,
+    justifyContent: 'space-around',
+    height: 22,
+    alignItems: 'center',
+    backgroundColor: '#ebe4e4',
   },
 });
 
