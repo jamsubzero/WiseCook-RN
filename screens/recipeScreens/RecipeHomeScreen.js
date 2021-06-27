@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
   },
   topControlsContainer: {
     backgroundColor: 'white',
-    height: '14%',
+    height: 85,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 10,
