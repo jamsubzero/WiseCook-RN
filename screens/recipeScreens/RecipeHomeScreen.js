@@ -25,11 +25,15 @@ import ConnectionErrorMessage from '../../components/ConnectionErrorMessage';
 
 const RecipeHomeScreen = props => {
   const [isLoading, setIsLoading] = useState(true);
-  const [homeContents, setHomeContents] = useState('');
+  const [homeContents, setHomeContents] = useState([]);
 
   const mountedRef = useRef(true);
 
   useEffect(() => {
+    getPreviewContents();
+  }, []);
+
+  const getPreviewContents = () => {
     const favKeys = [
       '@selected_ing_' + IngredientCategories.MEAT, // Check meat first
       '@selected_ing_' + IngredientCategories.VEGETABLES,
@@ -50,7 +54,7 @@ const RecipeHomeScreen = props => {
 
       getRecipeByIngredientsFromWiseCookApi(URL);
     });
-  }, []);
+  };
 
   const getRecipeByIngredientsFromWiseCookApi = URL => {
     console.log(URL);
@@ -106,7 +110,18 @@ const RecipeHomeScreen = props => {
   }
 
   const renderPreviews = itemData => {
-    return <PreviewSectionItem preview={itemData.item} navigation={props.navigation}/>;
+    return (
+      <PreviewSectionItem
+        preview={itemData.item}
+        navigation={props.navigation}
+      />
+    );
+  };
+
+  const onRefreshHandler = () => {
+    setHomeContents([]);
+    setIsLoading(true);
+    getPreviewContents();
   };
 
   return (
@@ -130,6 +145,8 @@ const RecipeHomeScreen = props => {
           data={homeContents.previews}
           keyExtractor={item => item.ingredientId}
           renderItem={renderPreviews}
+          refreshing={isLoading}
+          onRefresh={onRefreshHandler}
         />
       </View>
     </View>

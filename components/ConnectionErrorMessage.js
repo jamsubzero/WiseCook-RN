@@ -14,7 +14,7 @@ const ConnectionErrorMessage = () => {
       </Text>
       <Icon
         name="coffee-off"
-        size={24}
+        size={25}
         color={Colors.primaryColor}
         type="material-community"
       />
