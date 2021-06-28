@@ -8,6 +8,7 @@ import {
   Platform,
   TouchableOpacity,
   TouchableNativeFeedback,
+  FlatList,
 } from 'react-native';
 import Snackbar from 'react-native-snackbar';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
@@ -24,7 +25,7 @@ import ConnectionErrorMessage from '../../components/ConnectionErrorMessage';
 
 const RecipeHomeScreen = props => {
   const [isLoading, setIsLoading] = useState(true);
-  const [recipes, setRecipes] = useState('');
+  const [homeContents, setHomeContents] = useState('');
 
   const mountedRef = useRef(true);
 
@@ -56,7 +57,7 @@ const RecipeHomeScreen = props => {
     return fetch(URL)
       .then(response => response.json())
       .then(json => {
-        setRecipes(json);
+        setHomeContents(json);
       })
       .catch(error => {
         console.log(error);
@@ -100,9 +101,13 @@ const RecipeHomeScreen = props => {
     );
   }
 
-  if (!recipes || recipes.length <= 0) {
+  if (!homeContents || homeContents.length <= 0) {
     return <ConnectionErrorMessage />;
   }
+
+  const renderPreviews = itemData => {
+    return <WithOneIngredientPreview preview={itemData.item} />;
+  };
 
   return (
     <View style={styles.screen}>
@@ -120,7 +125,13 @@ const RecipeHomeScreen = props => {
         </View>
       </View>
 
-      <WithOneIngredientPreview />
+      <View style={styles.listContainer}>
+        <FlatList
+          data={homeContents.previews}
+          keyExtractor={item => item.ingredientId}
+          renderItem={renderPreviews}
+        />
+      </View>
     </View>
   );
 };
@@ -162,6 +173,11 @@ const styles = StyleSheet.create({
   topMessage: {
     color: Colors.primaryColor,
   },
+  listContainer: {
+    flex: 1,
+    marginTop: 10,
+    width: '100%'
+  }
 });
 
 export default RecipeHomeScreen;
