@@ -175,7 +175,6 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     flex: 1,
-    marginTop: 10,
     width: '100%'
   }
 });
