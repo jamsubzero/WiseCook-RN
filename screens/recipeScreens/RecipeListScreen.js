@@ -67,7 +67,7 @@ const RecipeListScreen = props => {
     });
   };
 
-  const onSelectRecipeHandler = (id, hits) => {
+  const onSelectRecipeHandler = id => {
     props.navigation.navigate('ViewRecipe', {selectedRecipeId: id});
   };
 
@@ -75,11 +75,7 @@ const RecipeListScreen = props => {
     return (
       <RecipeItem
         itemData={itemData}
-        onSelectRecipe={onSelectRecipeHandler.bind(
-          this,
-          itemData.item.id,
-          itemData.item.hits,
-        )}
+        onSelectRecipe={onSelectRecipeHandler.bind(this, itemData.item.id)}
       />
     );
   };
