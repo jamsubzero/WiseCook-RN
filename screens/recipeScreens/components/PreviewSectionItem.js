@@ -6,24 +6,46 @@ import {
   Image,
   FlatList,
   ImageBackground,
+  Platform,
+  TouchableOpacity,
+  TouchableNativeFeedback,
 } from 'react-native';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 
 import Colors from '../../../constants/Colors';
 import Card from '../../../components/Card';
 
-const WithOneIngredientPreview = props => {
+const PreviewSectionItem = props => {
   const preview = props.preview;
   const previewRecipeList = preview.previewRecipes;
   const [firstRecipe, ...rest] = previewRecipeList;
 
+  let TouchableCmp = TouchableOpacity;
+  if (Platform.Version >= 21) {
+    TouchableCmp = TouchableNativeFeedback;
+  }
+
+  const onSelectRecipeHandler = id => {
+    console.log(id);
+    props.navigation.navigate('ViewRecipe', {selectedRecipeId: id});
+  };
+
   const renderRest = dataItem => {
     return (
       <Card style={styles.cardStyle}>
-        <Image
-          source={{uri: dataItem.item.imageUrl}}
-          style={styles.restImage}
-        />
+        <TouchableCmp
+          onPress={onSelectRecipeHandler.bind(this, dataItem.item.id)}
+          useForeground={true}>
+          <View>
+            <ImageBackground
+              source={{uri: dataItem.item.imageUrl}}
+              style={styles.restImage}>
+              <Text style={styles.restTitle} numberOfLines={2}>
+                {dataItem.item.title}
+              </Text>
+            </ImageBackground>
+          </View>
+        </TouchableCmp>
       </Card>
     );
   };
@@ -47,11 +69,19 @@ const WithOneIngredientPreview = props => {
       </View>
       <View style={styles.firstImageContainer}>
         <Card style={styles.firstImageCard}>
-          <ImageBackground
-            source={{uri: firstRecipe.imageUrl}}
-            style={styles.firstImage}>
-            <Text style={styles.firstImageTitle} numberOfLines={2}>{firstRecipe.title}</Text>
-          </ImageBackground>
+          <TouchableCmp
+            onPress={onSelectRecipeHandler.bind(this, firstRecipe.id)}
+            useForeground={true}>
+            <View>
+              <ImageBackground
+                source={{uri: firstRecipe.imageUrl}}
+                style={styles.firstImage}>
+                <Text style={styles.firstImageTitle} numberOfLines={2}>
+                  {firstRecipe.title}
+                </Text>
+              </ImageBackground>
+            </View>
+          </TouchableCmp>
         </Card>
       </View>
       <FlatList
@@ -70,7 +100,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginHorizontal: 12,
     marginTop: 7,
-    marginBottom: 13
+    marginBottom: 13,
   },
   sectionContainer: {
     flexDirection: 'row',
@@ -87,15 +117,15 @@ const styles = StyleSheet.create({
     height: 150,
     marginVertical: 10,
     alignContent: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
-  firstImageCard:{
+  firstImageCard: {
     padding: 0,
     width: '88%',
     height: 150,
     borderRadius: 4,
-    elevation: 2,
-    overflow: 'hidden'
+    elevation: 0,
+    overflow: 'hidden',
   },
   firstImage: {
     width: '100%',
@@ -103,7 +133,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   firstImageTitle: {
-    fontSize: 20,
+    fontSize: 18,
     color: 'white',
     textAlign: 'left',
     marginLeft: 8,
@@ -124,17 +154,18 @@ const styles = StyleSheet.create({
     height: 100,
     width: 100,
     overflow: 'hidden',
-    borderRadius: 4,
+    borderRadius: 7,
   },
   restImage: {
     width: 100,
     height: 100,
-  },
-  recipeImage: {
-    width: '100%',
-    height: 300,
     justifyContent: 'flex-end',
+    padding: 5,
+  },
+  restTitle: {
+    color: 'white',
+    fontSize: 12,
   },
 });
 
-export default WithOneIngredientPreview;
+export default PreviewSectionItem;

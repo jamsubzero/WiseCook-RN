@@ -7,7 +7,6 @@ import RecipeIngredientItem from './RecipeIngredientItem';
 
 const RecipeIngredientList = props => {
   const ingredients = props.ingredients;
-  const searchHits = props.searchHits;
   const [selectedRecipes, setSelectedRecipes] = useState([]);
   var ingHits = 0;
   ingredients.map(ingredient => {

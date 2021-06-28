@@ -18,13 +18,12 @@ import RecipeDirectionList from '../../components/RecipeDirectionList';
 
 const RecipeViewerScreen = props => {
   const {selectedRecipeId} = props.route.params;
-  const {searchHits} = props.route.params;
   const URL = APIUrls.RECIPE_DETAILS_URL + selectedRecipeId;
   const [isLoading, setIsLoading] = useState(true);
   const [recipe, setRecipe] = useState('');
 
   useEffect(() => {
-    console.log(selectedRecipeId + " searchHits: " +searchHits);
+    console.log(selectedRecipeId);
     getRecipeDetailsFromWiseCookApi();
   }, []);
 
@@ -96,7 +95,7 @@ const RecipeViewerScreen = props => {
         <RecipeInfo iconName="bread-slice-outline" info={recipe.servings} />
       </View>
 
-      <RecipeIngredientList ingredients={recipe.ingredients} searchHits={searchHits} />
+      <RecipeIngredientList ingredients={recipe.ingredients} />
 
       <RecipeDirectionList directions={recipe.instructions} />
 

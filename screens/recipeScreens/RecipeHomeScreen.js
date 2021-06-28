@@ -17,7 +17,7 @@ import {
   getSelectedIngredients,
   getMultipleSelectedIngs,
 } from '../../components/asyncStorage/selectedIngredients';
-import WithOneIngredientPreview from './components/WithOneIngredientPreview';
+import PreviewSectionItem from './components/PreviewSectionItem';
 import IngredientCategories from '../../constants/IngredientCategories';
 import APIUrls from '../../constants/APIUrls';
 import Colors from '../../constants/Colors';
@@ -106,7 +106,7 @@ const RecipeHomeScreen = props => {
   }
 
   const renderPreviews = itemData => {
-    return <WithOneIngredientPreview preview={itemData.item} />;
+    return <PreviewSectionItem preview={itemData.item} navigation={props.navigation}/>;
   };
 
   return (
@@ -175,8 +175,8 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     flex: 1,
-    width: '100%'
-  }
+    width: '100%',
+  },
 });
 
 export default RecipeHomeScreen;

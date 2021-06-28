@@ -70,7 +70,7 @@ const RecipeListScreen = props => {
   };
 
   const onSelectRecipeHandler = (id, hits) => {
-    props.navigation.navigate("ViewRecipe", {selectedRecipeId: id, searchHits: hits });
+    props.navigation.navigate("ViewRecipe", {selectedRecipeId: id});
   };
 
   const renderRecipes = itemData => {
