@@ -13,9 +13,10 @@ const IngredientChip = props => {
   const mountedRef = useRef(true);
 
   useEffect(() => {
-    getSelectedIngredients(props.catId, selectIngredientsFromStorage => {
-      if (!mountedRef.current) { // so it will return if component is not mounted
-        return null
+    getSelectedIngredients(props.catId).then(selectIngredientsFromStorage => {
+      if (!mountedRef.current) {
+        // so it will return if component is not mounted
+        return null;
       }
 
       setIsSelected(selectIngredientsFromStorage.includes(props.id)); // setting the initial
@@ -23,14 +24,14 @@ const IngredientChip = props => {
   }, []);
 
   useEffect(() => {
-    return () => { 
-      mountedRef.current = false
-    }
+    return () => {
+      mountedRef.current = false;
+    };
   }, []);
 
   const onIngToggleHandler = () => {
     console.log('=> ' + props.id);
-    getSelectedIngredients(props.catId, selectIngredientsFromStorage => {
+    getSelectedIngredients(props.catId).then(selectIngredientsFromStorage => {
       const selectedIngIndex = selectIngredientsFromStorage.indexOf(props.id);
       if (selectedIngIndex >= 0) {
         selectIngredientsFromStorage.splice(selectedIngIndex, 1);
@@ -79,7 +80,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primaryColor,
   },
   buttonNotSelectedStyle: {
-    backgroundColor: Colors.lightGray
+    backgroundColor: Colors.lightGray,
   },
   titleStyle: {
     fontSize: 11,

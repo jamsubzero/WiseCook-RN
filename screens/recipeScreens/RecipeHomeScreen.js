@@ -13,15 +13,13 @@ import {
 import Snackbar from 'react-native-snackbar';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 
-import {
-  getSelectedIngredients,
-  getMultipleSelectedIngs,
-} from '../../components/asyncStorage/selectedIngredients';
+import {getSelectedIngredients} from '../../components/asyncStorage/selectedIngredients';
 import PreviewSectionItem from './components/PreviewSectionItem';
 import IngredientCategories from '../../constants/IngredientCategories';
 import APIUrls from '../../constants/APIUrls';
 import Colors from '../../constants/Colors';
 import ConnectionErrorMessage from '../../components/ConnectionErrorMessage';
+import Preferences from '../../constants/Preferences';
 
 const RecipeHomeScreen = props => {
   const [isLoading, setIsLoading] = useState(true);
@@ -33,27 +31,34 @@ const RecipeHomeScreen = props => {
     getPreviewContents();
   }, []);
 
-  const getPreviewContents = () => {
-    const favKeys = [
-      '@selected_ing_' + IngredientCategories.MEAT, // Check meat first
-      '@selected_ing_' + IngredientCategories.VEGETABLES,
-      '@selected_ing_' + IngredientCategories.FISH,
-      '@selected_ing_' + IngredientCategories.DAIRY,
-    ];
-    getMultipleSelectedIngs(favKeys, selectedIngs => {
-      console.log(selectedIngs);
+  const getPreviewContents = async () => {
+    var previewIngs = [];
 
-      var URL = APIUrls.HOME_CONTENT_URL;
+    const meatIngs = await getSelectedIngredients(IngredientCategories.MEAT);
+    if (meatIngs.length > 0) {
+      previewIngs.push(meatIngs.slice(0, Preferences.FEED_INGS_PER_CATEGORY));
+    }
 
-      if (selectedIngs.length > 0) {
-        URL = `${URL}/${selectedIngs[0]}`;
-        if (selectedIngs.length > 1) {
-          URL = `${URL}/${selectedIngs[1]}`;
-        }
-      }
+    const vegeIngs = await getSelectedIngredients(
+      IngredientCategories.VEGETABLES,
+    );
+    if (vegeIngs.length > 0) {
+      previewIngs.push(vegeIngs.slice(0, Preferences.FEED_INGS_PER_CATEGORY));
+    }
 
-      getRecipeByIngredientsFromWiseCookApi(URL);
-    });
+    const fishIngs = await getSelectedIngredients(IngredientCategories.FISH);
+    if (fishIngs.length > 0) {
+      previewIngs.push(fishIngs.slice(0, Preferences.FEED_INGS_PER_CATEGORY));
+    }
+
+    const dairyIngs = await getSelectedIngredients(IngredientCategories.DAIRY);
+    if (dairyIngs.length > 0) {
+      previewIngs.push(dairyIngs.slice(0, Preferences.FEED_INGS_PER_CATEGORY));
+    }
+
+    var URL = `${APIUrls.HOME_CONTENT_URL}${previewIngs.toString()}`;
+
+    getRecipeByIngredientsFromWiseCookApi(URL);
   };
 
   const getRecipeByIngredientsFromWiseCookApi = URL => {
@@ -140,8 +145,8 @@ const RecipeHomeScreen = props => {
         </View>
       </View>
       <Text style={styles.tipMessage}>
-         Wise tip: Pull down to refresh the recipe feed.
-       </Text>
+        Wise tip: Pull down to refresh the recipe feed.
+      </Text>
 
       <View style={styles.listContainer}>
         <FlatList
@@ -161,7 +166,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   topControlsContainer: {
     backgroundColor: 'white',
@@ -201,7 +206,7 @@ const styles = StyleSheet.create({
     color: Colors.primaryColor,
     fontWeight: '200',
     fontSize: 10,
-    marginBottom: 3
+    marginBottom: 3,
   },
   listContainer: {
     flex: 1,

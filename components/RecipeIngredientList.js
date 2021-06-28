@@ -10,13 +10,13 @@ const RecipeIngredientList = props => {
   const [selectedRecipes, setSelectedRecipes] = useState([]);
   var ingHits = 0;
   ingredients.map(ingredient => {
-      if(selectedRecipes.includes(ingredient.ingredientCode)){
-          ingHits++;
-      }
-  })
+    if (selectedRecipes.includes(ingredient.ingredientCode)) {
+      ingHits++;
+    }
+  });
 
   useEffect(() => {
-    getAllSelectedIngredients(allSelectIngredientsFromStorage => {
+    getAllSelectedIngredients().then(allSelectIngredientsFromStorage => {
       setSelectedRecipes(allSelectIngredientsFromStorage);
     });
   }, []);
@@ -66,8 +66,7 @@ const styles = StyleSheet.create({
   },
   hits: {
     color: Colors.primaryColor,
-    fontSize: 11
-
+    fontSize: 11,
   },
 });
 

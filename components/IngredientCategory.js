@@ -15,7 +15,8 @@ export default class IngredientCategory extends PureComponent {
   };
 
   componentDidMount() {
-    getSelectedIngredients(this.props.catId, selectIngredientsFromStorage => {
+    getSelectedIngredients(this.props.catId)
+    .then(selectIngredientsFromStorage => {
       this.setState({selectionCount: selectIngredientsFromStorage.length});
     });
   }

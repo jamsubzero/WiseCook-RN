@@ -1,8 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export async function getSelectedIngredients(
-  catId,
-  selectedIngredientsRetrieved,
+  catId
 ) {
   try {
     var savedIngredientsStr = await AsyncStorage.getItem(
@@ -18,7 +17,7 @@ export async function getSelectedIngredients(
     selectedIngArr = JSON.parse(savedIngredientsStr);
   }
 
-  selectedIngredientsRetrieved(selectedIngArr); //parse back to array
+  return selectedIngArr;
 }
 
 export async function saveSelectedIngredients(catId, selectedIngArr) {
@@ -32,7 +31,7 @@ export async function saveSelectedIngredients(catId, selectedIngArr) {
   }
 }
 
-export async function getAllSelectedIngredients(allIngsRetrieved) {
+export async function getAllSelectedIngredients() {
   var allSelectedIngArr = [];
   try {
     const keys = await AsyncStorage.getAllKeys();
@@ -62,13 +61,10 @@ export async function getAllSelectedIngredients(allIngsRetrieved) {
 
   console.log(allSelectedIngArr);
 
-  allIngsRetrieved(allSelectedIngArr); //parse back to array
+  return allSelectedIngArr;
 }
 
-export async function getMultipleSelectedIngs(
-  catIdArr,
-  selectedIngredientsRetrieved,
-) {
+export async function getMultipleSelectedIngs(catIdArr) {
   var allSelectedIngArr = [];
   try {
     var savedIngredients = await AsyncStorage.multiGet(catIdArr);
@@ -92,5 +88,5 @@ export async function getMultipleSelectedIngs(
     console.log('Error getting selected ingredients.');
   }
 
-  selectedIngredientsRetrieved(allSelectedIngArr); //parse back to array
+ return allSelectedIngArr; //parse back to array
 }

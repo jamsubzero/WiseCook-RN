@@ -13,7 +13,7 @@ const RecipeListScreen = props => {
   const [recipes, setRecipes] = useState([]);
 
   useEffect(() => {
-    getAllSelectedIngredients(allSelectIngredientsFromStorage => {
+    getAllSelectedIngredients().then(allSelectIngredientsFromStorage => {
       const selectIngsStr = allSelectIngredientsFromStorage.toString();
       const URL = APIUrls.RECIPE_BY_INGREDIENT_URL + selectIngsStr;
       getRecipeByIngredientsFromWiseCookApi(URL);
@@ -54,15 +54,13 @@ const RecipeListScreen = props => {
   }
 
   if (!recipes || recipes.length <= 0) {
-    return (
-      <ConnectionErrorMessage />
-    );
+    return <ConnectionErrorMessage />;
   }
 
   const onRefreshHandler = () => {
     setRecipes([]);
     setIsLoading(true);
-    getAllSelectedIngredients(allSelectIngredientsFromStorage => {
+    getAllSelectedIngredients().then(allSelectIngredientsFromStorage => {
       const selectIngsStr = allSelectIngredientsFromStorage.toString();
       const URL = APIUrls.RECIPE_BY_INGREDIENT_URL + selectIngsStr;
       getRecipeByIngredientsFromWiseCookApi(URL);
@@ -70,14 +68,18 @@ const RecipeListScreen = props => {
   };
 
   const onSelectRecipeHandler = (id, hits) => {
-    props.navigation.navigate("ViewRecipe", {selectedRecipeId: id});
+    props.navigation.navigate('ViewRecipe', {selectedRecipeId: id});
   };
 
   const renderRecipes = itemData => {
     return (
       <RecipeItem
         itemData={itemData}
-        onSelectRecipe={onSelectRecipeHandler.bind(this, itemData.item.id, itemData.item.hits)}
+        onSelectRecipe={onSelectRecipeHandler.bind(
+          this,
+          itemData.item.id,
+          itemData.item.hits,
+        )}
       />
     );
   };
