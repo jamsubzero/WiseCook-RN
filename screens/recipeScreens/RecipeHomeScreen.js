@@ -139,6 +139,9 @@ const RecipeHomeScreen = props => {
           </TouchableCmp>
         </View>
       </View>
+      <Text style={styles.tipMessage}>
+         Wise tip: Pull down to refresh the recipe feed.
+       </Text>
 
       <View style={styles.listContainer}>
         <FlatList
@@ -156,10 +159,14 @@ const RecipeHomeScreen = props => {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
+    justifyContent: 'center',
+    alignContent: 'center',
+    alignItems: 'center'
   },
   topControlsContainer: {
     backgroundColor: 'white',
     height: 85,
+    width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 10,
@@ -189,6 +196,12 @@ const styles = StyleSheet.create({
   },
   topMessage: {
     color: Colors.primaryColor,
+  },
+  tipMessage: {
+    color: Colors.primaryColor,
+    fontWeight: '200',
+    fontSize: 10,
+    marginBottom: 3
   },
   listContainer: {
     flex: 1,
