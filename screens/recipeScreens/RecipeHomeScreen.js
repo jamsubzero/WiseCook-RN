@@ -1,33 +1,115 @@
-import React from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   StyleSheet,
   Text,
   Button,
   View,
+  ActivityIndicator,
   Platform,
   TouchableOpacity,
   TouchableNativeFeedback,
 } from 'react-native';
+import Snackbar from 'react-native-snackbar';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
-// import {Button} from 'react-native-elements/dist/buttons/Button';
 
+import {
+  getSelectedIngredients,
+  getMultipleSelectedIngs,
+} from '../../components/asyncStorage/selectedIngredients';
+import WithOneIngredientPreview from './components/WithOneIngredientPreview';
+import IngredientCategories from '../../constants/IngredientCategories';
+import APIUrls from '../../constants/APIUrls';
 import Colors from '../../constants/Colors';
+import ConnectionErrorMessage from '../../components/ConnectionErrorMessage';
 
 const RecipeHomeScreen = props => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [recipes, setRecipes] = useState('');
+
+  const mountedRef = useRef(true);
+
+  useEffect(() => {
+    const favKeys = [
+      '@selected_ing_' + IngredientCategories.MEAT, // Check meat first
+      '@selected_ing_' + IngredientCategories.VEGETABLES,
+      '@selected_ing_' + IngredientCategories.FISH,
+      '@selected_ing_' + IngredientCategories.DAIRY,
+    ];
+    getMultipleSelectedIngs(favKeys, selectedIngs => {
+      console.log(selectedIngs);
+
+      var URL = APIUrls.HOME_CONTENT_URL;
+
+      if (selectedIngs.length > 0) {
+        URL = `${URL}/${selectedIngs[0]}`;
+        if (selectedIngs.length > 1) {
+          URL = `${URL}/${selectedIngs[1]}`;
+        }
+      }
+
+      getRecipeByIngredientsFromWiseCookApi(URL);
+    });
+  }, []);
+
+  const getRecipeByIngredientsFromWiseCookApi = URL => {
+    console.log(URL);
+    return fetch(URL)
+      .then(response => response.json())
+      .then(json => {
+        setRecipes(json);
+      })
+      .catch(error => {
+        console.log(error);
+        Snackbar.show({
+          text: 'Please check your internet connection',
+          duration: Snackbar.LENGTH_INDEFINITE,
+          action: {
+            text: 'Retry',
+            textColor: Colors.primaryColor,
+            onPress: () => {
+              setIsLoading(true);
+              getRecipeByIngredientsFromWiseCookApi(URL);
+            },
+          },
+        });
+      })
+      .finally(() => setIsLoading(false));
+  };
+
+  useEffect(() => {
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
+
   let TouchableCmp = TouchableOpacity;
+  if (Platform.Version >= 21) {
+    TouchableCmp = TouchableNativeFeedback;
+  }
 
   const onRecipeSearchHandler = () => {
     props.navigation.navigate('FindRecipes');
   };
 
-  if (Platform.Version >= 21) {
-    TouchableCmp = TouchableNativeFeedback;
+  if (isLoading) {
+    return (
+      <View
+        style={{flex: 1, justifyContent: 'center', backgroundColor: 'white'}}>
+        <ActivityIndicator size="large" color={Colors.primaryColor} />
+      </View>
+    );
+  }
+
+  if (!recipes || recipes.length <= 0) {
+    return <ConnectionErrorMessage />;
   }
 
   return (
     <View style={styles.screen}>
       <View style={styles.topControlsContainer}>
-        <Text style={styles.topMessage}>Find recipes based on what you have in your pantry!</Text>
+        <Text style={styles.topMessage}>
+          Find recipes based on what you have in your pantry!
+        </Text>
         <View style={styles.touchable}>
           <TouchableCmp onPress={onRecipeSearchHandler}>
             <View style={styles.buttonContainer}>
@@ -37,6 +119,8 @@ const RecipeHomeScreen = props => {
           </TouchableCmp>
         </View>
       </View>
+
+      <WithOneIngredientPreview />
     </View>
   );
 };
@@ -57,7 +141,7 @@ const styles = StyleSheet.create({
   },
   touchable: {
     borderRadius: 15,
-    overflow: "hidden",
+    overflow: 'hidden',
     width: '100%',
   },
   buttonContainer: {
@@ -73,11 +157,11 @@ const styles = StyleSheet.create({
   buttonLabel: {
     color: 'white',
     fontSize: 18,
-    paddingRight: 12
+    paddingRight: 12,
   },
   topMessage: {
-    color: Colors.primaryColor
-  }
+    color: Colors.primaryColor,
+  },
 });
 
 export default RecipeHomeScreen;

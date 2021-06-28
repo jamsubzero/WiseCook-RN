@@ -64,3 +64,33 @@ export async function getAllSelectedIngredients(allIngsRetrieved) {
 
   allIngsRetrieved(allSelectedIngArr); //parse back to array
 }
+
+export async function getMultipleSelectedIngs(
+  catIdArr,
+  selectedIngredientsRetrieved,
+) {
+  var allSelectedIngArr = [];
+  try {
+    var savedIngredients = await AsyncStorage.multiGet(catIdArr);
+    for (const ingCat of savedIngredients) {
+      for (let i = 1; i < ingCat.length; i++) {
+        var items = ingCat[i];
+        if (items) {
+          var selectedIngs = [];
+          try {
+            selectedIngs = JSON.parse(items);
+          } catch (e) {
+            console.log('JSON parsing error: ' + e);
+          }
+          for (const selected of selectedIngs) {
+            allSelectedIngArr.push(selected);
+          }
+        }
+      }
+    }
+  } catch (e) {
+    console.log('Error getting selected ingredients.');
+  }
+
+  selectedIngredientsRetrieved(allSelectedIngArr); //parse back to array
+}
