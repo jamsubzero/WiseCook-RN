@@ -1,23 +1,20 @@
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
-import {Icon} from 'react-native-elements';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import Colors from '../constants/Colors';
 
-const ConnectionErrorMessage = () => {
+const NoRecipeFound = () => {
   return (
     <View style={styles.messageContainer}>
       <Text style={styles.infoText}>
-        {`Oh no! Something's really wrong here.
-        If it's not you, perhaps WiseCook is down at the moment.
-        Please try again later.`}
+        {`Sorry, this is just how wiser as I could go.
+        Rest assured my creator is adding new recipes
+        everyday so I can get even more wiser.
+
+        Kindly adjust your filters. Thank you.`}
       </Text>
-      <Icon
-        name="coffee-off"
-        size={25}
-        color={Colors.primaryColor}
-        type="material-community"
-      />
+      <MaterialCommunityIcons name="head-question" size={25} color={Colors.primaryColor} />
     </View>
   )
 };
@@ -37,4 +34,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ConnectionErrorMessage;
+export default NoRecipeFound;

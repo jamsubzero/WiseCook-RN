@@ -61,7 +61,7 @@ export default class RecipeItem extends PureComponent {
 const styles = StyleSheet.create({
   cardStyle: {
     marginHorizontal: 8,
-    marginVertical: 5,
+    marginVertical: 3,
     padding: 0,
     height: 150,
     overflow: 'hidden',

@@ -1,5 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, View, ActivityIndicator, FlatList, Button} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  ActivityIndicator,
+  FlatList,
+  Button,
+  Text,
+} from 'react-native';
 import Snackbar from 'react-native-snackbar';
 import {Picker} from '@react-native-picker/picker';
 
@@ -8,12 +15,15 @@ import APIUrls from '../../constants/APIUrls';
 import {getAllSelectedIngredients} from '../../components/asyncStorage/selectedIngredients';
 import RecipeItem from '../../components/RecipeItem';
 import ConnectionErrorMessage from '../../components/ConnectionErrorMessage';
+import FilterItems from '../../constants/FilterItems';
+import NoRecipeFound from '../../components/NoRecipeFound';
 
 const RecipeListScreen = props => {
+  const [isError, setIsError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [recipes, setRecipes] = useState([]);
-  const [selectedMeal, setSelectedMeal] = useState();
-  const [selectedCuisine, setSelectedCuisine] = useState();
+  const [selectedMeal, setSelectedMeal] = useState(0);
+  const [selectedCuisine, setSelectedCuisine] = useState(0);
 
   useEffect(() => {
     getAllSelectedIngredients().then(allSelectIngredientsFromStorage => {
@@ -31,6 +41,7 @@ const RecipeListScreen = props => {
       })
       .catch(error => {
         console.log(error);
+        setIsError(true);
         Snackbar.show({
           text: 'Please check your internet connection',
           duration: Snackbar.LENGTH_INDEFINITE,
@@ -39,6 +50,7 @@ const RecipeListScreen = props => {
             textColor: Colors.primaryColor,
             onPress: () => {
               setIsLoading(true);
+              setIsError(false);
               getRecipeByIngredientsFromWiseCookApi(URL);
             },
           },
@@ -56,16 +68,45 @@ const RecipeListScreen = props => {
     );
   }
 
-  if (!recipes || recipes.length <= 0) {
+  if (isError) {
     return <ConnectionErrorMessage />;
   }
 
   const onRefreshHandler = () => {
+    filterRecipes(selectedMeal, selectedCuisine);
+  };
+
+  const onMealFilter = (mealValue, itemIndex) => {
+    setSelectedMeal(mealValue);
+    filterRecipes(mealValue, selectedCuisine);
+  };
+
+  const onCuisineFilter = (cuisineValue, itemIndex) => {
+    setSelectedCuisine(cuisineValue);
+    filterRecipes(selectedMeal, cuisineValue);
+  };
+
+  const filterRecipes = (meal, cuisine) => {
+    var filters = [];
+    if (meal != 0) {
+      filters.push(FilterItems.MEALS[meal]);
+    }
+
+    if (cuisine != 0) {
+      filters.push(FilterItems.CUISINES[cuisine]);
+    }
+
+    const filtersStr = filters.toString();
+    console.log(meal + ', ' + cuisine);
+    console.log(filters);
+
     setRecipes([]);
     setIsLoading(true);
+
     getAllSelectedIngredients().then(allSelectIngredientsFromStorage => {
       const selectIngsStr = allSelectIngredientsFromStorage.toString();
-      const URL = APIUrls.RECIPE_BY_INGREDIENT_URL + selectIngsStr;
+      const URL = `${APIUrls.RECIPE_SEARCH_WITH_FILTER_URL}${selectIngsStr}&keywords=${filtersStr}`;
+      console.log(URL);
       getRecipeByIngredientsFromWiseCookApi(URL);
     });
   };
@@ -88,74 +129,60 @@ const RecipeListScreen = props => {
       <View style={styles.topControlsContainer}>
         <View style={{flexDirection: 'row'}}>
           <Picker
-            mode="dialog"
             selectedValue={selectedMeal}
-            onValueChange={(itemValue, itemIndex) => setSelectedMeal(itemValue)}
+            onValueChange={onMealFilter}
             dropdownIconColor={Colors.primaryColor}
-            style={{color: Colors.primaryColor, width: '50%'}}>
-            <Picker.Item
-              color={Colors.primaryColor}
-              label="All Meal Type"
-              value="All"
-            />
-            <Picker.Item
-              color={Colors.primaryColor}
-              label="Breakfast"
-              value="Breakfast"
-            />
-            <Picker.Item
-              color={Colors.primaryColor}
-              label="Lunch"
-              value="Lunch"
-            />
-            <Picker.Item
-              color={Colors.primaryColor}
-              label="Dinner"
-              value="Dinner"
-            />
+            style={styles.picker}
+            mode="dialog">
+            {FilterItems.MEALS.map((item, index) => {
+              return (
+                <Picker.Item
+                  label={item}
+                  value={index}
+                  key={index}
+                  color={Colors.primaryColor}
+                />
+              );
+            })}
           </Picker>
 
           <Picker
-            mode="dialog"
             selectedValue={selectedCuisine}
-            onValueChange={(itemValue, itemIndex) =>
-              setSelectedCuisine(itemValue)
-            }
+            onValueChange={onCuisineFilter}
             dropdownIconColor={Colors.primaryColor}
-            style={{color: Colors.primaryColor, width: '50%'}}>
-            <Picker.Item
-              color={Colors.primaryColor}
-              label="All Cuisine"
-              value="All"
-            />
-            <Picker.Item
-              color={Colors.primaryColor}
-              label="Mediterranean"
-              value="Mediterranean"
-            />
-            <Picker.Item
-              color={Colors.primaryColor}
-              label="Asian"
-              value="Asian"
-            />
-            <Picker.Item
-              color={Colors.primaryColor}
-              label="French"
-              value="French"
-            />
+            style={styles.picker}
+            mode="dialog">
+            {FilterItems.CUISINES.map((item, index) => {
+              return (
+                <Picker.Item
+                  label={item}
+                  value={index}
+                  key={index}
+                  color={Colors.primaryColor}
+                />
+              );
+            })}
           </Picker>
-          {/* <Button title="A" /> */}
         </View>
       </View>
 
-      <View style={styles.listContainer}>
-        <FlatList
-          data={recipes}
-          renderItem={renderRecipes}
-          onRefresh={onRefreshHandler}
-          refreshing={isLoading}
-        />
-      </View>
+      {recipes.length > 0 ? (
+        <View style={styles.listContainer}>
+          <Text style={styles.tipMessage}>
+            Wise tip: Pull down to refresh the recipe feed.
+          </Text>
+
+          <FlatList
+            style={styles.flatList}
+            data={recipes}
+            renderItem={renderRecipes}
+            onRefresh={onRefreshHandler}
+            refreshing={isLoading}
+          />
+        </View>
+      ) : (
+        <NoRecipeFound />
+      )}
     </View>
   );
 };
@@ -176,9 +203,23 @@ const styles = StyleSheet.create({
     paddingTop: 2,
     elevation: 4,
   },
+  picker: {
+    color: Colors.primaryColor,
+    width: '50%',
+  },
+  flatList: {
+    width: '100%',
+  },
   listContainer: {
     width: '100%',
-    marginTop: 5,
+    marginTop: 1,
+    alignItems: 'center',
+  },
+  tipMessage: {
+    color: Colors.primaryColor,
+    fontWeight: '200',
+    fontSize: 10,
+    marginBottom: 1,
   },
 });
 
