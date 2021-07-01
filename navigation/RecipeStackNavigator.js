@@ -57,8 +57,16 @@ const RecipeStackNavigator = () => {
           headerTintColor: 'white',
           headerStyle: {backgroundColor: Colors.primaryColor},
           headerTitle: '',
-          headerTitleContainerStyle: {width: '50%',},
-          headerTitleStyle: {fontSize: 16}
+          headerRight: () => (
+            <HeaderButtons style={{alignItems: 'center'}}>
+              <Button
+                icon={
+                  <Ionicons name="ellipsis-vertical" size={20} color="white" />
+                }
+                type="clear"
+              />
+            </HeaderButtons>
+          )
         }}
       />
       <Stack.Screen
