@@ -52,7 +52,7 @@ const PreviewSectionItem = props => {
 
   return (
     <View style={styles.previewContainer}>
-      <Card style={styles.mainCard}>
+      {/* <Card style={styles.mainCard}> */}
         <View style={styles.sectionContainer}>
           <Text style={styles.sectionTitle}>
             Using your {preview.ingredientName}
@@ -92,7 +92,7 @@ const PreviewSectionItem = props => {
           keyExtractor={item => item.id}
           renderItem={renderRest}
         />
-      </Card>
+      {/* </Card> */}
     </View>
   );
 };
@@ -100,9 +100,9 @@ const PreviewSectionItem = props => {
 const styles = StyleSheet.create({
   previewContainer: {
     flex: 1,
-    marginHorizontal: 4,
+    marginHorizontal: 7,
     marginTop: 2,
-    marginBottom: 3,
+    marginBottom: 12,
   },
   mainCard: {
     padding: 5,
@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   firstImageTitle: {
-    fontSize: 18,
+    fontSize: 14,
     color: 'white',
     textAlign: 'left',
     marginLeft: 8,
@@ -160,6 +160,7 @@ const styles = StyleSheet.create({
     height: 100,
     width: 100,
     overflow: 'hidden',
+    elevation: 0,
     borderRadius: 5,
   },
   restImage: {
@@ -170,7 +171,7 @@ const styles = StyleSheet.create({
   },
   restTitle: {
     color: 'white',
-    fontSize: 12,
+    fontSize: 8,
   },
 });
 
