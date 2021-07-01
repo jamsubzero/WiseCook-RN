@@ -18,7 +18,7 @@ import ConnectionErrorMessage from '../../components/ConnectionErrorMessage';
 import FilterItems from '../../constants/FilterItems';
 import NoRecipeFound from '../../components/NoRecipeFound';
 
-const RecipeListScreen = props => {
+const MainRecipeListScreen = props => {
   const [isError, setIsError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [recipes, setRecipes] = useState([]);
@@ -223,4 +223,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default RecipeListScreen;
+export default MainRecipeListScreen;

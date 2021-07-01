@@ -6,7 +6,8 @@ import {HeaderButtons} from 'react-navigation-header-buttons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import RecipeHomeScreen from '../screens/recipeScreens/RecipeHomeScreen';
-import RecipeListScreen from '../screens/recipeScreens/RecipeListScreen';
+import MainRecipeListScreen from '../screens/recipeScreens/MainRecipeListScreen';
+import OneIngredientRecipeListScreen from '../screens/recipeScreens/OneIngredientRecipeListScreen';
 import RecipeViewerScreen from '../screens/recipeScreens/RecipeViewerScreen';
 
 const RecipeStackNavigator = () => {
@@ -15,10 +16,11 @@ const RecipeStackNavigator = () => {
     <Stack.Navigator
       screenOptions={{
         headerRight: () => (
-          <HeaderButtons>
+          <HeaderButtons style={{alignItems: 'center'}}>
             <Button
               title="Remove Ads"
-              titleStyle={{color: 'white'}}
+              titleStyle={{color: 'white', fontSize: 13, alignContent: 'center'}}
+              buttonStyle={{paddingTop: 10}}
               type="clear"
             />
             <Button
@@ -41,11 +43,22 @@ const RecipeStackNavigator = () => {
       />
       <Stack.Screen
         name="FindRecipes"
-        component={RecipeListScreen}
+        component={MainRecipeListScreen}
         options={{
           headerTintColor: 'white',
           headerStyle: {backgroundColor: Colors.primaryColor},
           headerTitle: 'Find Recipes',
+        }}
+      />
+      <Stack.Screen
+        name="OneIngRecipes"
+        component={OneIngredientRecipeListScreen}
+        options={{
+          headerTintColor: 'white',
+          headerStyle: {backgroundColor: Colors.primaryColor},
+          headerTitle: '',
+          headerTitleContainerStyle: {width: '50%',},
+          headerTitleStyle: {fontSize: 16}
         }}
       />
       <Stack.Screen

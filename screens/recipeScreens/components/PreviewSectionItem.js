@@ -30,6 +30,13 @@ const PreviewSectionItem = props => {
     props.navigation.navigate('ViewRecipe', {selectedRecipeId: id});
   };
 
+  const onSeeAllHandler = (ingId, ingName) => {
+    props.navigation.navigate('OneIngRecipes', {
+      oneIngId: ingId,
+      oneIngName: ingName,
+    });
+  };
+
   const renderRest = dataItem => {
     return (
       <Card style={styles.restCard}>
@@ -53,13 +60,20 @@ const PreviewSectionItem = props => {
   return (
     <View style={styles.previewContainer}>
       {/* <Card style={styles.mainCard}> */}
-        <View style={styles.sectionContainer}>
-          <Text style={styles.sectionTitle}>
-            Using your {preview.ingredientName}
-          </Text>
+      <View style={styles.sectionContainer}>
+        <Text style={styles.sectionTitle}>
+          Using your {preview.ingredientName}
+        </Text>
+
+        <TouchableOpacity
+          onPress={onSeeAllHandler.bind(
+            this,
+            preview.ingredientId,
+            preview.ingredientName,
+          )}>
           <View style={styles.seeAllContainer}>
             <Text style={styles.seeAllText}>
-              See all{' '}
+              {`See all `}
               <FontAwesome5Icon
                 name="chevron-right"
                 size={13}
@@ -67,31 +81,33 @@ const PreviewSectionItem = props => {
               />
             </Text>
           </View>
-        </View>
-        <View style={styles.firstImageContainer}>
-          <Card style={styles.firstImageCard}>
-            <TouchableCmp
-              onPress={onSelectRecipeHandler.bind(this, firstRecipe.id)}
-              useForeground={true}>
-              <View>
-                <ImageBackground
-                  source={{uri: firstRecipe.imageUrl}}
-                  style={styles.firstImage}>
-                  <Text style={styles.firstImageTitle} numberOfLines={2}>
-                    {firstRecipe.title}
-                  </Text>
-                </ImageBackground>
-              </View>
-            </TouchableCmp>
-          </Card>
-        </View>
-        <FlatList
-          horizontal={true}
-          showsHorizontalScrollIndicator={false}
-          data={rest}
-          keyExtractor={item => item.id}
-          renderItem={renderRest}
-        />
+        </TouchableOpacity>
+        
+      </View>
+      <View style={styles.firstImageContainer}>
+        <Card style={styles.firstImageCard}>
+          <TouchableCmp
+            onPress={onSelectRecipeHandler.bind(this, firstRecipe.id)}
+            useForeground={true}>
+            <View>
+              <ImageBackground
+                source={{uri: firstRecipe.imageUrl}}
+                style={styles.firstImage}>
+                <Text style={styles.firstImageTitle} numberOfLines={2}>
+                  {firstRecipe.title}
+                </Text>
+              </ImageBackground>
+            </View>
+          </TouchableCmp>
+        </Card>
+      </View>
+      <FlatList
+        horizontal={true}
+        showsHorizontalScrollIndicator={false}
+        data={rest}
+        keyExtractor={item => item.id}
+        renderItem={renderRest}
+      />
       {/* </Card> */}
     </View>
   );
@@ -106,7 +122,7 @@ const styles = StyleSheet.create({
   },
   mainCard: {
     padding: 5,
-    borderRadius: 6
+    borderRadius: 6,
   },
   sectionContainer: {
     flexDirection: 'row',
@@ -161,7 +177,7 @@ const styles = StyleSheet.create({
     width: 100,
     overflow: 'hidden',
     elevation: 0,
-    borderRadius: 5,
+    borderRadius: 4,
   },
   restImage: {
     width: 100,

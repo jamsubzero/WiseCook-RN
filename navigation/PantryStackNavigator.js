@@ -22,7 +22,7 @@ const PantryStackNavigator = () => {
               <HeaderButtons>
                 <Button
                   title="Remove Ads"
-                  titleStyle={{color: 'white'}}
+                  titleStyle={{color: 'white', fontSize: 13}}
                   type="clear"
                 />
                 <Button
