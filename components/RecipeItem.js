@@ -1,5 +1,13 @@
 import React, {PureComponent} from 'react';
-import {StyleSheet, Text, View, Image, TouchableOpacity} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  TouchableOpacity,
+  Platform,
+  TouchableNativeFeedback,
+} from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 import Card from '../components/Card';
@@ -9,9 +17,14 @@ export default class RecipeItem extends PureComponent {
   render() {
     const itemData = this.props.itemData;
 
+    let TouchableCmp = TouchableOpacity;
+    if (Platform.Version >= 21) {
+      TouchableCmp = TouchableNativeFeedback;
+    }
+
     return (
       <Card style={styles.cardStyle}>
-        <TouchableOpacity onPress={this.props.onSelectRecipe}>
+        <TouchableCmp onPress={this.props.onSelectRecipe} useForeground={true}>
           <View style={styles.recipeItemContainer}>
             <Image
               source={{uri: itemData.item.imageUrl}}
@@ -52,7 +65,7 @@ export default class RecipeItem extends PureComponent {
               </View>
             </View>
           </View>
-        </TouchableOpacity>
+        </TouchableCmp>
       </Card>
     );
   }
