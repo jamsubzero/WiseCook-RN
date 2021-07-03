@@ -21,7 +21,7 @@ const RecipeSearchScreen = props => {
   useEffect(() => {
     const URL = APIUrls.RECIPE_SEARCH_BY_NAME_URL + keyword;
     getRecipeByIngredientsFromWiseCookApi(URL);
-  }, [keyword]);
+  }, []);
 
   const getRecipeByIngredientsFromWiseCookApi = URL => {
     return fetch(URL)
@@ -85,6 +85,8 @@ const RecipeSearchScreen = props => {
       setIsLoading(true);
       setRecipes([]);
       setKeyword(searchKey);
+      const URL = APIUrls.RECIPE_SEARCH_BY_NAME_URL + searchKey;
+      getRecipeByIngredientsFromWiseCookApi(URL);
     }
   };
 
