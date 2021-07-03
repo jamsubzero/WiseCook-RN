@@ -4,15 +4,11 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 
 import Colors from '../constants/Colors';
 
-const NoRecipeFound = () => {
+const NoRecipeFound = (props) => {
   return (
     <View style={styles.messageContainer}>
       <Text style={styles.infoText}>
-        {`Sorry, this is just how wiser as I could go.
-        Rest assured my creator is adding new recipes
-        everyday so I can get even more wiser.
-
-        Kindly adjust your filters. Thank you.`}
+        {props.message}
       </Text>
       <MaterialCommunityIcons name="head-question" size={25} color={Colors.primaryColor} />
     </View>

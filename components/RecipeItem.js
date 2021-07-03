@@ -39,20 +39,22 @@ export default class RecipeItem extends PureComponent {
               </View>
 
               <View style={styles.detailsContainer}>
-                <View style={styles.infoItem}>
-                  <FontAwesome5
-                    name="carrot"
-                    size={15}
-                    color={Colors.primaryColor}
-                  />
-                  <Text numberOfLines={1} style={styles.info}>
-                    <Text>Using your </Text>
-                    <Text style={{fontWeight: 'bold'}}>
-                      {itemData.item.hits}
+                {itemData.item.hits ? (
+                  <View style={styles.infoItem}>
+                    <FontAwesome5
+                      name="carrot"
+                      size={15}
+                      color={Colors.primaryColor}
+                    />
+                    <Text numberOfLines={1} style={styles.info}>
+                      <Text>Using your </Text>
+                      <Text style={{fontWeight: 'bold'}}>
+                        {itemData.item.hits}
+                      </Text>
+                      <Text> ingredients</Text>
                     </Text>
-                    <Text> ingredients</Text>
-                  </Text>
-                </View>
+                  </View>
+                ) : null}
 
                 <RecipeInfo
                   iconName="bread-slice-outline"

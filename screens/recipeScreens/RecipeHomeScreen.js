@@ -136,9 +136,12 @@ const RecipeHomeScreen = props => {
     setVisible(!visible);
   };
 
-  const onSearchHandler = (searchKey) => {
-    console.log(searchKey);
-  }
+  const onSearchHandler = searchKey => {
+    if (searchKey.length > 0) {
+      toggleOverlay();
+      props.navigation.navigate('SearchRecipe', {keyword: searchKey});
+    }
+  };
 
   return (
     <View style={styles.screen}>

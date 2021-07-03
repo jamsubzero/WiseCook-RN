@@ -9,6 +9,7 @@ import RecipeHomeScreen from '../screens/recipeScreens/RecipeHomeScreen';
 import MainRecipeListScreen from '../screens/recipeScreens/MainRecipeListScreen';
 import OneIngredientRecipeListScreen from '../screens/recipeScreens/OneIngredientRecipeListScreen';
 import RecipeViewerScreen from '../screens/recipeScreens/RecipeViewerScreen';
+import RecipeSearchScreen from '../screens/recipeScreens/RecipeSearchScreen';
 
 const RecipeStackNavigator = () => {
   const Stack = createStackNavigator();
@@ -19,7 +20,11 @@ const RecipeStackNavigator = () => {
           <HeaderButtons style={{alignItems: 'center'}}>
             <Button
               title="Remove Ads"
-              titleStyle={{color: 'white', fontSize: 13, alignContent: 'center'}}
+              titleStyle={{
+                color: 'white',
+                fontSize: 13,
+                alignContent: 'center',
+              }}
               buttonStyle={{paddingTop: 10}}
               type="clear"
             />
@@ -66,9 +71,30 @@ const RecipeStackNavigator = () => {
                 type="clear"
               />
             </HeaderButtons>
-          )
+          ),
         }}
       />
+
+      <Stack.Screen
+        name="SearchRecipe"
+        component={RecipeSearchScreen}
+        options={{
+          headerTintColor: 'white',
+          headerStyle: {backgroundColor: Colors.primaryColor},
+          headerTitle: 'Search Recipe',
+          headerRight: () => (
+            <HeaderButtons style={{alignItems: 'center'}}>
+              <Button
+                icon={
+                  <Ionicons name="ellipsis-vertical" size={20} color="white" />
+                }
+                type="clear"
+              />
+            </HeaderButtons>
+          ),
+        }}
+      />
+      
       <Stack.Screen
         name="ViewRecipe"
         component={RecipeViewerScreen}
