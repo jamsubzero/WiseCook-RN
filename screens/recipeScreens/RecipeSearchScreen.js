@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, View, ActivityIndicator, FlatList} from 'react-native';
+import {StyleSheet, View, ActivityIndicator, FlatList, Text} from 'react-native';
 import Snackbar from 'react-native-snackbar';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {FAB, Overlay} from 'react-native-elements';
@@ -92,11 +92,10 @@ const RecipeSearchScreen = props => {
     return (
       <View style={styles.screen}>
         <NoRecipeFound
-          message={`Sorry, this is just how wiser as I could go.
-          Rest assured my creator is adding new recipes
-          everyday so I can get even more wiser.
-       
-          Please try another search key words. Thank you.`}
+          message={`Sorry, no results found for '${keyword}'.
+
+          Rest assured, my creator is adding new recipes
+          everyday so I can get even more wiser.`}
         />
         <Overlay
           overlayStyle={styles.searchStyle}
@@ -121,6 +120,7 @@ const RecipeSearchScreen = props => {
   return (
     <View style={styles.screen}>
       <View style={styles.listContainer}>
+        <Text style={styles.searchResultLabel}>{`Search results for '${keyword}'`}</Text>
         <FlatList
           style={styles.flatList}
           data={recipes}
@@ -170,6 +170,7 @@ const styles = StyleSheet.create({
   },
   flatList: {
     width: '100%',
+    marginTop: 5
   },
   listContainer: {
     width: '100%',
@@ -187,6 +188,9 @@ const styles = StyleSheet.create({
     elevation: 0,
     backgroundColor: 'transparent',
   },
+  searchResultLabel: {
+    color: Colors.gray
+  }
 });
 
 export default RecipeSearchScreen;
