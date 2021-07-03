@@ -2,7 +2,6 @@ import React, {useEffect, useRef, useState} from 'react';
 import {
   StyleSheet,
   Text,
-  Button,
   View,
   ActivityIndicator,
   Platform,
@@ -12,6 +11,8 @@ import {
 } from 'react-native';
 import Snackbar from 'react-native-snackbar';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
+import {FAB, Overlay} from 'react-native-elements';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import {getSelectedIngredients} from '../../components/asyncStorage/selectedIngredients';
 import PreviewSectionItem from './components/PreviewSectionItem';
@@ -20,10 +21,12 @@ import APIUrls from '../../constants/APIUrls';
 import Colors from '../../constants/Colors';
 import ConnectionErrorMessage from '../../components/ConnectionErrorMessage';
 import Preferences from '../../constants/Preferences';
+import SearchRecipe from './components/SearchRecipe';
 
 const RecipeHomeScreen = props => {
   const [isLoading, setIsLoading] = useState(true);
   const [homeContents, setHomeContents] = useState([]);
+  const [visible, setVisible] = useState(false);
 
   const mountedRef = useRef(true);
 
@@ -129,6 +132,14 @@ const RecipeHomeScreen = props => {
     getPreviewContents();
   };
 
+  const toggleOverlay = () => {
+    setVisible(!visible);
+  };
+
+  const onSearchHandler = (searchKey) => {
+    console.log(searchKey);
+  }
+
   return (
     <View style={styles.screen}>
       <View style={styles.topControlsContainer}>
@@ -145,7 +156,7 @@ const RecipeHomeScreen = props => {
         </View>
       </View>
       <Text style={styles.tipMessage}>
-        Wise tip: Pull down to refresh the recipe feed.
+        {`Wise tip: Pull down to refresh the recipe feed.`}
       </Text>
 
       <View style={styles.listContainer}>
@@ -157,6 +168,23 @@ const RecipeHomeScreen = props => {
           onRefresh={onRefreshHandler}
         />
       </View>
+
+      <Overlay
+        overlayStyle={styles.searchStyle}
+        isVisible={visible}
+        onBackdropPress={toggleOverlay}>
+        <SearchRecipe onSearch={onSearchHandler} />
+      </Overlay>
+
+      <FAB
+        onPress={toggleOverlay}
+        placement="right"
+        style={{bottom: 8}}
+        color={Colors.blue}
+        containerStyle={{elevation: 25}}
+        size="large"
+        icon={<Ionicons name="search" size={25} color="white" />}
+      />
     </View>
   );
 };
@@ -211,6 +239,11 @@ const styles = StyleSheet.create({
   listContainer: {
     flex: 1,
     width: '100%',
+  },
+  searchStyle: {
+    padding: 0,
+    elevation: 0,
+    backgroundColor: 'transparent',
   },
 });
 
