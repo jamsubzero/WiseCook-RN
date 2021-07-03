@@ -80,8 +80,8 @@ const RecipeSearchScreen = props => {
   };
 
   const onSearchHandler = searchKey => {
+    toggleOverlay();
     if (searchKey.length > 0) {
-      toggleOverlay();
       setIsLoading(true);
       setRecipes([]);
       setKeyword(searchKey);

@@ -34,6 +34,9 @@ const SearchRecipe = props => {
           style={styles.searchField}
           onChangeText={setSearchKey}
           value={searchKey}
+          returnKeyType='search'
+          blurOnSubmit={true}
+          onSubmitEditing={props.onSearch.bind(this, searchKey)}
         />
 
         <Button

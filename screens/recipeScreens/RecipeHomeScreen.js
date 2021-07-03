@@ -137,8 +137,8 @@ const RecipeHomeScreen = props => {
   };
 
   const onSearchHandler = searchKey => {
+    toggleOverlay();
     if (searchKey.length > 0) {
-      toggleOverlay();
       props.navigation.navigate('SearchRecipe', {keyword: searchKey});
     }
   };
