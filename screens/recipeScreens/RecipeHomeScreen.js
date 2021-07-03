@@ -21,6 +21,7 @@ import APIUrls from '../../constants/APIUrls';
 import Colors from '../../constants/Colors';
 import ConnectionErrorMessage from '../../components/ConnectionErrorMessage';
 import Preferences from '../../constants/Preferences';
+import RecipeCategories from '../../constants/RecipeCategories';
 import SearchRecipe from './components/SearchRecipe';
 
 const RecipeHomeScreen = props => {
@@ -59,7 +60,7 @@ const RecipeHomeScreen = props => {
       previewIngs.push(dairyIngs.slice(0, Preferences.FEED_INGS_PER_CATEGORY));
     }
 
-    var URL = `${APIUrls.HOME_CONTENT_URL}${previewIngs.toString()}`;
+    var URL = `${APIUrls.HOME_CONTENT_URL}${previewIngs.toString()}&categories=${RecipeCategories.DEFAULT_CATEGORIES}`;
 
     getRecipeByIngredientsFromWiseCookApi(URL);
   };

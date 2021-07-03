@@ -3,7 +3,6 @@ import {
   View,
   Text,
   StyleSheet,
-  Image,
   FlatList,
   ImageBackground,
   Platform,
@@ -14,6 +13,7 @@ import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 
 import Colors from '../../../constants/Colors';
 import Card from '../../../components/Card';
+import {titleCase} from '../../../utils/StringUtil';
 
 const PreviewSectionItem = props => {
   const preview = props.preview;
@@ -62,7 +62,11 @@ const PreviewSectionItem = props => {
       {/* <Card style={styles.mainCard}> */}
       <View style={styles.sectionContainer}>
         <Text style={styles.sectionTitle}>
-          Using your {preview.ingredientName}
+          {`${
+            preview.ing
+              ? 'Using your ' + preview.ingredientName
+              : titleCase(preview.ingredientName)
+          }`}
         </Text>
 
         <TouchableOpacity
@@ -82,7 +86,6 @@ const PreviewSectionItem = props => {
             </Text>
           </View>
         </TouchableOpacity>
-        
       </View>
       <View style={styles.firstImageContainer}>
         <Card style={styles.firstImageCard}>
