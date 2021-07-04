@@ -5,10 +5,12 @@ import {
   View,
   FlatList,
   ActivityIndicator,
+  TouchableOpacity,
 } from 'react-native';
-import {FAB} from 'react-native-elements';
+import {FAB, Button} from 'react-native-elements';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Snackbar from 'react-native-snackbar';
+import Autocomplete from 'react-native-autocomplete-input';
 
 import IngredientCategory from '../../components/IngredientCategory';
 import IngredientListFooter from '../../components/IngredientListFooter';
@@ -18,7 +20,11 @@ import APIUrls from '../../constants/APIUrls';
 
 const PantryScreen = props => {
   const [isLoading, setIsLoading] = useState(true);
-  const [ingredients, setIngredients] = useState([]);
+  const [ingredients, setIngredients] = useState([]); // array of ingredientCategories
+
+  const [ingredientCodes, setIngredientCodes] = useState([]);
+  const [filteredIngredients, setFilteredIngredients] = useState([]);
+  const [selectedValue, setSelectedValue] = useState({});
 
   useEffect(() => {
     getIngredientsFromWiseCookApi();
@@ -29,6 +35,7 @@ const PantryScreen = props => {
       .then(response => response.json())
       .then(json => {
         setIngredients(json);
+        extractIngCodes(json);
       })
       .catch(error => {
         console.log(error);
@@ -46,6 +53,15 @@ const PantryScreen = props => {
         });
       })
       .finally(() => setIsLoading(false));
+  };
+
+  const extractIngCodes = json => {
+    var ingCodes = [];
+    for (const ingCategory of json) {
+      ingCodes.push(ingCategory.ingredientCodes);
+    }
+
+    setIngredientCodes(Array.prototype.concat.apply([], ingCodes));
   };
 
   const renderIngredient = itemData => {
@@ -68,9 +84,7 @@ const PantryScreen = props => {
   }
 
   if (!ingredients || ingredients.length <= 0) {
-    return (
-      <ConnectionErrorMessage />
-    );
+    return <ConnectionErrorMessage />;
   }
 
   const onRefreshHandler = () => {
@@ -83,8 +97,67 @@ const PantryScreen = props => {
     props.navigation.navigate('Recipe');
   };
 
+  const findIng = query => {
+    // Method called every time when we change the value of the input
+    if (query) {
+      // Making a case insensitive regular expression
+      const regex = new RegExp(`${query.trim()}`, 'i');
+
+      setFilteredIngredients(
+        ingredientCodes.filter(ing => ing.name.search(regex) >= 0),
+      );
+    } else {
+      // If the query is null then return blank
+      setFilteredIngredients([]);
+    }
+  };
+
   return (
     <View style={styles.screen}>
+      {/* <View style={styles.autocompleteContainer}> */}
+      <View style={styles.topControlsContainer}>
+        <Button
+          type="clear"
+          icon={
+            <MaterialCommunityIcons
+              name="microphone"
+              size={25}
+              color={Colors.primaryColor}
+            />
+          }
+        />
+      </View>
+      <Autocomplete
+        autoCorrect={false}
+        style={{color: Colors.primaryColor}}
+        inputContainerStyle={{
+          backgroundColor: 'white',
+          height: 40,
+          width: '100%',
+          borderWidth: 0.5,
+          borderRadius: 10,
+          borderColor: Colors.primaryColor,
+          paddingHorizontal: 5,
+        }}
+        containerStyle={styles.autocompleteContainer}
+        data={filteredIngredients}
+        onChangeText={text => findIng(text)}
+        placeholder="Add ingredient"
+        flatListProps={{
+          keyboardShouldPersistTaps: 'always',
+          keyExtractor: item => item.id,
+          renderItem: ({item}) => (
+            <TouchableOpacity
+              onPress={() => {
+                setSelectedValue(item);
+                setFilteredIngredients([]);
+              }}>
+              <Text style={styles.itemText}>{item.name}</Text>
+            </TouchableOpacity>
+          ),
+        }}
+      />
+
       <FlatList
         data={ingredients}
         renderItem={renderIngredient}
@@ -136,6 +209,36 @@ const styles = StyleSheet.create({
     color: Colors.primaryColor,
     paddingHorizontal: 10,
     paddingVertical: 5,
+  },
+  topControlsContainer: {
+    backgroundColor: 'white',
+    height: 55,
+    width: '100%',
+    alignItems: 'flex-end',
+    justifyContent: 'center',
+    paddingRight: 3,
+    paddingBottom: 0,
+    paddingTop: 2,
+    borderBottomWidth: 0.5,
+    borderBottomColor: Colors.lightGray,
+  },
+  autocompleteContainer: {
+    // Hack required to make the autocomplete
+    // work on Andrdoid
+    right: 0,
+    top: 0,
+    left: 0,
+    flex: 1,
+    position: 'absolute',
+    zIndex: 2,
+
+    width: '90%',
+    paddingHorizontal: 5,
+    paddingVertical: 5,
+  },
+  itemText: {
+    fontSize: 15,
+    margin: 2,
   },
 });
 
