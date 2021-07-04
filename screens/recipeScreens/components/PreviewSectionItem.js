@@ -31,10 +31,17 @@ const PreviewSectionItem = props => {
   };
 
   const onSeeAllHandler = (ingId, ingName) => {
-    props.navigation.navigate('OneIngRecipes', {
-      oneIngId: ingId,
-      oneIngName: ingName,
-    });
+    // note: ingName represents both ingredient name and category
+    if (preview.ing) { // see all: one ingredient ingredients
+      props.navigation.navigate('OneIngRecipes', {
+        oneIngId: ingId,
+        oneIngName: ingName,
+      });
+    } else { // see all: category
+      props.navigation.navigate('CategoryRecipes', {
+        category: ingName,
+      });
+    }
   };
 
   const renderRest = dataItem => {

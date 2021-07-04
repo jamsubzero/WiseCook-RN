@@ -10,6 +10,7 @@ import MainRecipeListScreen from '../screens/recipeScreens/MainRecipeListScreen'
 import OneIngredientRecipeListScreen from '../screens/recipeScreens/OneIngredientRecipeListScreen';
 import RecipeViewerScreen from '../screens/recipeScreens/RecipeViewerScreen';
 import RecipeSearchScreen from '../screens/recipeScreens/RecipeSearchScreen';
+import CategoryRecipeListScreen from '../screens/recipeScreens/CategoryRecipeListScreen';
 
 const RecipeStackNavigator = () => {
   const Stack = createStackNavigator();
@@ -76,6 +77,26 @@ const RecipeStackNavigator = () => {
       />
 
       <Stack.Screen
+        name="CategoryRecipes"
+        component={CategoryRecipeListScreen}
+        options={{
+          headerTintColor: 'white',
+          headerStyle: {backgroundColor: Colors.primaryColor},
+          headerTitle: '',
+          headerRight: () => (
+            <HeaderButtons style={{alignItems: 'center'}}>
+              <Button
+                icon={
+                  <Ionicons name="ellipsis-vertical" size={20} color="white" />
+                }
+                type="clear"
+              />
+            </HeaderButtons>
+          ),
+        }}
+      />
+
+      <Stack.Screen
         name="SearchRecipe"
         component={RecipeSearchScreen}
         options={{
@@ -94,7 +115,7 @@ const RecipeStackNavigator = () => {
           ),
         }}
       />
-      
+
       <Stack.Screen
         name="ViewRecipe"
         component={RecipeViewerScreen}

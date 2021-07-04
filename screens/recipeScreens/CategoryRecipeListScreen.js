@@ -1,27 +1,37 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, View, ActivityIndicator, FlatList} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  ActivityIndicator,
+  FlatList,
+  Text,
+} from 'react-native';
 import Snackbar from 'react-native-snackbar';
 
 import Colors from '../../constants/Colors';
 import APIUrls from '../../constants/APIUrls';
+import {getAllSelectedIngredients} from '../../components/asyncStorage/selectedIngredients';
 import RecipeItem from '../../components/RecipeItem';
 import ConnectionErrorMessage from '../../components/ConnectionErrorMessage';
-import { titleCase } from '../../utils/StringUtil';
+import NoRecipeFound from '../../components/NoRecipeFound';
+import {titleCase} from '../../utils/StringUtil';
 
 const CategoryRecipeListScreen = props => {
   const [isError, setIsError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [recipes, setRecipes] = useState([]);
-  const oneIngId = props.route.params.oneIngId;
-  const ingName = props.route.params.oneIngName;
+  const category = props.route.params.category;
 
   useEffect(() => {
     props.navigation.setOptions({
-      headerTitle: `${titleCase(ingName)} recipes`,
+      headerTitle: `${titleCase(category)} recipes`,
     });
 
-    const URL = APIUrls.RECIPE_BY_INGREDIENT_URL + oneIngId;
-    getRecipeByIngredientsFromWiseCookApi(URL);
+    getAllSelectedIngredients().then(allSelectIngredientsFromStorage => {
+      const selectIngsStr = allSelectIngredientsFromStorage.toString();
+      const URL = `${APIUrls.RECIPE_SEARCH_WITH_FILTER_URL}${selectIngsStr}&keywords=${category}`;
+      getRecipeByIngredientsFromWiseCookApi(URL);
+    });
   }, []);
 
   const getRecipeByIngredientsFromWiseCookApi = URL => {
@@ -63,6 +73,16 @@ const CategoryRecipeListScreen = props => {
     return <ConnectionErrorMessage />;
   }
 
+  const onRefreshHandler = () => {
+    getAllSelectedIngredients().then(allSelectIngredientsFromStorage => {
+      setRecipes([]);
+      setIsLoading(true);
+      const selectIngsStr = allSelectIngredientsFromStorage.toString();
+      const URL = `${APIUrls.RECIPE_SEARCH_WITH_FILTER_URL}${selectIngsStr}&keywords=${category}`;
+      getRecipeByIngredientsFromWiseCookApi(URL);
+    });
+  };
+
   const onSelectRecipeHandler = id => {
     props.navigation.navigate('ViewRecipe', {selectedRecipeId: id});
   };
@@ -78,13 +98,29 @@ const CategoryRecipeListScreen = props => {
 
   return (
     <View style={styles.screen}>
-      <View style={styles.listContainer}>
-        <FlatList
-          style={styles.flatList}
-          data={recipes}
-          renderItem={renderRecipes}
+      {recipes.length > 0 ? (
+        <View style={styles.listContainer}>
+          <Text style={styles.tipMessage}>
+            Wise tip: Pull down to refresh the recipe feed.
+          </Text>
+
+          <FlatList
+            style={styles.flatList}
+            data={recipes}
+            renderItem={renderRecipes}
+            onRefresh={onRefreshHandler}
+            refreshing={isLoading}
+          />
+        </View>
+      ) : (
+        <NoRecipeFound
+          message={`Sorry, this is just how wiser as I could go.
+          Rest assured my creator is adding new recipes
+          everyday so I can get even more wiser.
+       
+          Kindly adjust your ingredients. Thank you.`}
         />
-      </View>
+      )}
     </View>
   );
 };
@@ -114,7 +150,7 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     width: '100%',
-    marginTop: 3,
+    marginTop: 1,
     alignItems: 'center',
   },
   tipMessage: {
