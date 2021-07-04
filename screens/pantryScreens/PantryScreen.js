@@ -139,6 +139,7 @@ const PantryScreen = props => {
           borderColor: Colors.primaryColor,
           paddingHorizontal: 5,
         }}
+        placeholderTextColor={Colors.gray}
         containerStyle={styles.autocompleteContainer}
         data={filteredIngredients}
         onChangeText={text => findIng(text)}
