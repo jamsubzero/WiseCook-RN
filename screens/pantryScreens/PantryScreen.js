@@ -6,9 +6,12 @@ import {
   FlatList,
   ActivityIndicator,
   TouchableOpacity,
+  Keyboard,
+  ToastAndroid
 } from 'react-native';
 import {FAB, Button} from 'react-native-elements';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import Snackbar from 'react-native-snackbar';
 import Autocomplete from 'react-native-autocomplete-input';
 
@@ -25,6 +28,7 @@ const PantryScreen = props => {
   const [ingredientCodes, setIngredientCodes] = useState([]);
   const [filteredIngredients, setFilteredIngredients] = useState([]);
   const [selectedValue, setSelectedValue] = useState({});
+  const [ingSearchKeyword, setIngSearchKeyword] = useState('');
 
   useEffect(() => {
     getIngredientsFromWiseCookApi();
@@ -106,42 +110,60 @@ const PantryScreen = props => {
       setFilteredIngredients(
         ingredientCodes.filter(ing => ing.name.search(regex) >= 0),
       );
+
     } else {
       // If the query is null then return blank
       setFilteredIngredients([]);
     }
+
+    setIngSearchKeyword(query);
   };
 
   return (
     <View style={styles.screen}>
       {/* <View style={styles.autocompleteContainer}> */}
       <View style={styles.topControlsContainer}>
+        <View
+          style={{
+            borderColor: Colors.primaryColor,
+            borderWidth: 0.5,
+            width: '90%',
+            height: 40,
+            justifyContent: 'center',
+            borderRadius: 8,
+            paddingLeft: 7,
+          }}>
+          <Ionicons name="search" size={20} color={Colors.primaryColor} />
+        </View>
         <Button
           type="clear"
           icon={
             <MaterialCommunityIcons
               name="microphone"
-              size={25}
+              size={30}
               color={Colors.primaryColor}
             />
           }
         />
       </View>
+
       <Autocomplete
         autoCorrect={false}
         style={{color: Colors.primaryColor}}
         inputContainerStyle={{
-          backgroundColor: 'white',
-          height: 40,
+          backgroundColor: 'transparent',
+          height: 37,
           width: '100%',
-          borderWidth: 0.5,
-          borderRadius: 10,
+          borderWidth: 0,
+          paddingVertical: 0,
           borderColor: Colors.primaryColor,
           paddingHorizontal: 5,
         }}
         placeholderTextColor={Colors.gray}
         containerStyle={styles.autocompleteContainer}
+        onBlur={() => setFilteredIngredients([])}
         data={filteredIngredients}
+        value={ingSearchKeyword}
         onChangeText={text => findIng(text)}
         placeholder="Add ingredient"
         flatListProps={{
@@ -152,8 +174,13 @@ const PantryScreen = props => {
               onPress={() => {
                 setSelectedValue(item);
                 setFilteredIngredients([]);
+                Keyboard.dismiss();
+                ToastAndroid.show(`Successfully added ${item.name}`, ToastAndroid.LONG);
+                setIngSearchKeyword('');
               }}>
-              <Text style={styles.itemText}>{item.name}</Text>
+              <View style={{paddingVertical: 5, paddingLeft: 5}}>
+                <Text style={styles.itemText}>{item.name}</Text>
+              </View>
             </TouchableOpacity>
           ),
         }}
@@ -194,7 +221,6 @@ const PantryScreen = props => {
         containerStyle={{elevation: 25}}
         size="large"
         icon={<MaterialCommunityIcons name="knife" size={25} color="white" />}
-        //knife, pot, pot mix, pot-steam,pot-steam-outline
       />
     </View>
   );
@@ -212,14 +238,16 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
   },
   topControlsContainer: {
+    flexDirection: 'row',
     backgroundColor: 'white',
     height: 55,
     width: '100%',
-    alignItems: 'flex-end',
-    justifyContent: 'center',
-    paddingRight: 3,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingRight: 4,
+    paddingLeft: 4,
     paddingBottom: 0,
-    paddingTop: 2,
+    paddingTop: 0,
     borderBottomWidth: 0.5,
     borderBottomColor: Colors.lightGray,
   },
@@ -227,19 +255,20 @@ const styles = StyleSheet.create({
     // Hack required to make the autocomplete
     // work on Andrdoid
     right: 0,
-    top: 0,
-    left: 0,
+    top: 12,
+    left: 30,
     flex: 1,
     position: 'absolute',
     zIndex: 2,
 
-    width: '90%',
+    width: '80%',
     paddingHorizontal: 5,
-    paddingVertical: 5,
+    paddingVertical: 0,
   },
   itemText: {
     fontSize: 15,
     margin: 2,
+    color: Colors.gray,
   },
 });
 

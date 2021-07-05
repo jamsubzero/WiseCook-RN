@@ -45,6 +45,7 @@ const BottomTabNavigator = () => {
         tabBarOptions={{
           activeTintColor: Colors.primaryColor,
           inactiveTintColor: Colors.gray,
+          keyboardHidesTabBar: true
         }}>
         <Tab.Screen name="Pantry" component={PantryStackNavigator} />
         <Tab.Screen
