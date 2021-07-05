@@ -7,11 +7,12 @@ import {
   ActivityIndicator,
   TouchableOpacity,
   Keyboard,
-  ToastAndroid
+  ToastAndroid,
 } from 'react-native';
 import {FAB, Button} from 'react-native-elements';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Snackbar from 'react-native-snackbar';
 import Autocomplete from 'react-native-autocomplete-input';
 
@@ -20,6 +21,10 @@ import IngredientListFooter from '../../components/IngredientListFooter';
 import ConnectionErrorMessage from '../../components/ConnectionErrorMessage';
 import Colors from '../../constants/Colors';
 import APIUrls from '../../constants/APIUrls';
+import {
+  saveSelectedIngredients,
+  getAllSelectedIngredients,
+} from '../../components/asyncStorage/selectedIngredients';
 
 const PantryScreen = props => {
   const [isLoading, setIsLoading] = useState(true);
@@ -65,7 +70,23 @@ const PantryScreen = props => {
       ingCodes.push(ingCategory.ingredientCodes);
     }
 
-    setIngredientCodes(Array.prototype.concat.apply([], ingCodes));
+    getAllSelectedIngredients().then(allSelectIngredientsFromStorage => {
+      var allIngCodes = Array.prototype.concat.apply([], ingCodes);
+
+      var ingWithStatus = [];
+      for (var i = 0; i < allIngCodes.length; i++) {
+        var curIng = allIngCodes[i];
+        if (allSelectIngredientsFromStorage.includes(curIng.id)) {
+          curIng.isSelected = true;
+        } else {
+          curIng.isSelected = false;
+        }
+
+        ingWithStatus.push(curIng);
+      }
+
+      setIngredientCodes(ingWithStatus);
+    });
   };
 
   const renderIngredient = itemData => {
@@ -110,7 +131,6 @@ const PantryScreen = props => {
       setFilteredIngredients(
         ingredientCodes.filter(ing => ing.name.search(regex) >= 0),
       );
-
     } else {
       // If the query is null then return blank
       setFilteredIngredients([]);
@@ -170,16 +190,57 @@ const PantryScreen = props => {
           keyboardShouldPersistTaps: 'always',
           keyExtractor: item => item.id,
           renderItem: ({item}) => (
+            // TODO: extract this render item into a function
             <TouchableOpacity
               onPress={() => {
                 setSelectedValue(item);
                 setFilteredIngredients([]);
                 Keyboard.dismiss();
-                ToastAndroid.show(`Successfully added ${item.name}`, ToastAndroid.LONG);
+                ToastAndroid.show(
+                  `Successfully added ${item.name}`,
+                  ToastAndroid.LONG,
+                );
                 setIngSearchKeyword('');
               }}>
-              <View style={{paddingVertical: 5, paddingLeft: 5}}>
-                <Text style={styles.itemText}>{item.name}</Text>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignContent: 'center',
+                  paddingVertical: 5,
+                  paddingHorizontal: 10,
+                  paddingLeft: 10,
+                  paddingRight: 15,
+                }}>
+                {/* TODO Extract this into a separate component */}
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'flex-start',
+                  }}>
+                  {item.isSelected ? (
+                    <FontAwesome5
+                      name="minus-circle"
+                      size={15}
+                      color={Colors.lightRed}
+                    />
+                  ) : (
+                    <FontAwesome5
+                      name="plus-circle"
+                      size={15}
+                      color={Colors.green}
+                    />
+                  )}
+                  <Text
+                    style={{
+                      ...styles.itemText,
+                      ...{color: item.isSelected ? 'green' : Colors.gray},
+                    }}>{`${item.name}`}</Text>
+                </View>
+                {item.isSelected ? (
+                  <Ionicons name="checkmark" size={18} color={Colors.green} />
+                ) : null}
               </View>
             </TouchableOpacity>
           ),
@@ -269,6 +330,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     margin: 2,
     color: Colors.gray,
+    marginLeft: 8,
   },
 });
 
