@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect, useRef, Component} from 'react';
 import {StyleSheet} from 'react-native';
 import {Chip} from 'react-native-elements';
 
@@ -8,72 +8,89 @@ import {
   getSelectedIngredients,
 } from '../components/asyncStorage/selectedIngredients';
 
-const IngredientChip = props => {
-  const [isSelected, setIsSelected] = useState();
-  const mountedRef = useRef(true);
-
-  useEffect(() => {
-    getSelectedIngredients(props.catId).then(selectIngredientsFromStorage => {
-      if (!mountedRef.current) {
-        // so it will return if component is not mounted
-        return null;
-      }
-
-      setIsSelected(selectIngredientsFromStorage.includes(props.id)); // setting the initial
-    });
-  }, []);
-
-  useEffect(() => {
-    return () => {
-      mountedRef.current = false;
-    };
-  }, []);
-
-  const onIngToggleHandler = () => {
-    console.log('=> ' + props.id);
-    getSelectedIngredients(props.catId).then(selectIngredientsFromStorage => {
-      const selectedIngIndex = selectIngredientsFromStorage.indexOf(props.id);
-      if (selectedIngIndex >= 0) {
-        selectIngredientsFromStorage.splice(selectedIngIndex, 1);
-      } else {
-        selectIngredientsFromStorage.push(props.id);
-      }
-
-      saveSelectedIngredients(props.catId, selectIngredientsFromStorage);
-    });
-
-    props.onCountChange(isSelected ? -1 : 1);
-    setIsSelected(!isSelected);
+export default class IngredientChip extends Component {
+  state = {
+    //isSelected: this.props.isSelected,
   };
 
-  if (isSelected) {
+  // componentDidMount() {
+  //   this.setState({isSelected: this.props.isSelected});
+  // }
+
+  // shouldComponentUpdate(nextProps, nextState){
+  //   console.log("==>" + nextProps.isSelected + "--" + nextProps.title )
+  //   return nextProps.isSelected !== this.props.isSelected;
+  // }
+
+  render() {
+    const isSelected = this.props.isSelected;
+
+   // console.log('Refreshed!' + this.props.id);
+    // console.log('here!!' + props.shouldRefresh);
+    //console.log(props.isSelected);
+
+    // useEffect(() => {
+    //   getSelectedIngredients(props.catId).then(selectIngredientsFromStorage => {
+    //     if (!mountedRef.current) {
+    //       // so it will return if component is not mounted
+    //       return null;
+    //     }
+    //     console.log(props.catId + "||==>" + selectIngredientsFromStorage);
+    //     setIsSelected(selectIngredientsFromStorage.includes(props.id)); // setting the initial
+    //   });
+    // }, [shouldRefresh]);
+
+    // useEffect(()=>{
+    //   setIsSelected();
+    // })
+
+    const onIngToggleHandler = () => {
+      console.log('=> ' + this.props.id);
+      getSelectedIngredients(this.props.catId).then(selectIngredientsFromStorage => {
+        const selectedIngIndex = selectIngredientsFromStorage.indexOf(this.props.id);
+        if (selectedIngIndex >= 0) {
+          selectIngredientsFromStorage.splice(selectedIngIndex, 1);
+        } else {
+          selectIngredientsFromStorage.push(this.props.id);
+        }
+
+        saveSelectedIngredients(this.props.catId, selectIngredientsFromStorage);
+      });
+
+      this.props.onCountChange(isSelected ? -1 : 1);
+      //this.setState({isSelected: !isSelected});
+     this.props.onSelectIngredient(this.props.id, !isSelected);
+    };
+
+    if (isSelected) {
+      return (
+        <Chip
+          title={this.props.title}
+          onPress={onIngToggleHandler}
+          containerStyle={styles.containerStyle}
+          buttonStyle={styles.buttonSelectedStyle}
+          titleStyle={styles.titleStyle}
+          icon={{
+            name: 'checkmark',
+            type: 'ionicon',
+            size: 16,
+            color: 'white',
+          }}
+        />
+      );
+    }
+
     return (
       <Chip
-        title={props.title}
+        title={this.props.title}
         onPress={onIngToggleHandler}
         containerStyle={styles.containerStyle}
-        buttonStyle={styles.buttonSelectedStyle}
+        buttonStyle={styles.buttonNotSelectedStyle}
         titleStyle={styles.titleStyle}
-        icon={{
-          name: 'checkmark',
-          type: 'ionicon',
-          size: 16,
-          color: 'white',
-        }}
       />
     );
   }
-
-  return (
-    <Chip
-      title={props.title}
-      onPress={onIngToggleHandler}
-      containerStyle={styles.containerStyle}
-      buttonStyle={styles.buttonNotSelectedStyle}
-      titleStyle={styles.titleStyle}
-    />
-  );
-};
+}
 
 const styles = StyleSheet.create({
   buttonSelectedStyle: {
@@ -91,5 +108,3 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
 });
-
-export default IngredientChip;

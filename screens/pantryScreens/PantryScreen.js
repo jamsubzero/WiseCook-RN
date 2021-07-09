@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   StyleSheet,
   Text,
@@ -24,16 +24,20 @@ import APIUrls from '../../constants/APIUrls';
 import {
   saveSelectedIngredients,
   getAllSelectedIngredients,
+  getSelectedIngredients,
 } from '../../components/asyncStorage/selectedIngredients';
+import {color} from 'react-native-elements/dist/helpers';
 
 const PantryScreen = props => {
   const [isLoading, setIsLoading] = useState(true);
   const [ingredients, setIngredients] = useState([]); // array of ingredientCategories
 
-  const [ingredientCodes, setIngredientCodes] = useState([]);
+  const [searchIngCodes, setSearchIngCodes] = useState([]);
   const [filteredIngredients, setFilteredIngredients] = useState([]);
   const [selectedValue, setSelectedValue] = useState({});
   const [ingSearchKeyword, setIngSearchKeyword] = useState('');
+
+  const [refreshList, setRefreshList] = useState(false); // flatlist extra data to refresh list
 
   useEffect(() => {
     getIngredientsFromWiseCookApi();
@@ -43,10 +47,12 @@ const PantryScreen = props => {
     return fetch(APIUrls.INGREDIENT_LIST_URL)
       .then(response => response.json())
       .then(json => {
-        setIngredients(json);
-        extractIngCodes(json);
+        // setIngredients(json);
+        // extractIngCodes(json);
+        setStatus(json);
       })
       .catch(error => {
+        setIsLoading(false);
         console.log(error);
         Snackbar.show({
           text: 'Please check your internet connection',
@@ -60,34 +66,68 @@ const PantryScreen = props => {
             },
           },
         });
-      })
-      .finally(() => setIsLoading(false));
+      });
+    // .finally(() => setIsLoading(false));
   };
 
-  const extractIngCodes = json => {
-    var ingCodes = [];
-    for (const ingCategory of json) {
-      ingCodes.push(ingCategory.ingredientCodes);
-    }
-
+  const setStatus = json => {
     getAllSelectedIngredients().then(allSelectIngredientsFromStorage => {
-      var allIngCodes = Array.prototype.concat.apply([], ingCodes);
+      for (let i = 0; i < json.length; i++) {
+        let count = 0;
+        for (let j = 0; j < json[i].ingredientCodes.length; j++) {
+          let code = json[i].ingredientCodes[j];
+          if (allSelectIngredientsFromStorage.includes(code.id)) {
+            json[i].ingredientCodes[j].isSelected = true;
+            count = count + 1;
+          } else {
+            json[i].ingredientCodes[j].isSelected = false;
+          }
 
-      var ingWithStatus = [];
-      for (var i = 0; i < allIngCodes.length; i++) {
-        var curIng = allIngCodes[i];
-        if (allSelectIngredientsFromStorage.includes(curIng.id)) {
-          curIng.isSelected = true;
-        } else {
-          curIng.isSelected = false;
+          //console.log(json[i].ingredientCodes[j]);
         }
-
-        ingWithStatus.push(curIng);
+        json[i].selectedCount = count;
       }
 
-      setIngredientCodes(ingWithStatus);
+      // for (let i = 0; i < json.length; i++) {
+      //   console.log(json[i]);
+      //   for (let j = 0; j < json[i].ingredientCodes.length; j++) {
+      //     //console.log(json[i].ingredientCodes[j]);
+      //   }
+      // }
+
+      var ingCodes = [];
+      for (const ingCategory of json) {
+        ingCodes.push(ingCategory.ingredientCodes);
+      }
+      var allIngCodes = Array.prototype.concat.apply([], ingCodes);
+      setSearchIngCodes(allIngCodes);
+
+      setIngredients(json);
+      setIsLoading(false);
     });
   };
+
+  const onSelectIngredientHandler = (catId, id, isSelected) => {
+    console.log('Home' + catId + ' -- ' + id + '--' + isSelected);
+    let ingList = ingredients.slice();
+    const catIndex = ingList.findIndex(cat => cat.id === catId);
+    const ingIndex = ingList[catIndex].ingredientCodes.findIndex(
+      ingCode => ingCode.id === id,
+    );
+    ingList[catIndex].ingredientCodes[ingIndex].isSelected = isSelected;
+    console.log('count: ' + ingList[catIndex].selectedCount);
+
+    if (isSelected) {
+      ingList[catIndex].selectedCount = ingList[catIndex].selectedCount + 1;
+    } else {
+      ingList[catIndex].selectedCount = ingList[catIndex].selectedCount - 1;
+    }
+
+    console.log('count: ' + ingList[catIndex].selectedCount);
+    setIngredients(ingList);
+  };
+
+  // console.log(catIndex + ingCodes);
 
   const renderIngredient = itemData => {
     return (
@@ -95,6 +135,9 @@ const PantryScreen = props => {
         title={itemData.item.name}
         ingredientCodes={itemData.item.ingredientCodes}
         catId={itemData.item.id}
+       // shouldRefresh={refreshList}
+        selectedCount={itemData.item.selectedCount}
+        onSelectIngredient={onSelectIngredientHandler}
       />
     );
   };
@@ -123,20 +166,58 @@ const PantryScreen = props => {
   };
 
   const findIng = query => {
-    // Method called every time when we change the value of the input
     if (query) {
-      // Making a case insensitive regular expression
       const regex = new RegExp(`${query.trim()}`, 'i');
-
       setFilteredIngredients(
-        ingredientCodes.filter(ing => ing.name.search(regex) >= 0),
+        searchIngCodes.filter(ing => ing.name.search(regex) >= 0),
       );
     } else {
-      // If the query is null then return blank
       setFilteredIngredients([]);
     }
 
     setIngSearchKeyword(query);
+  };
+
+  const onSelectSearchHandler = item => {
+    //
+
+    console.log(
+      'index' + codeIndex + ' ' + item.isSelected + ' selected: ' + item.name,
+    );
+    onSelectIngredientHandler(
+      item.ingredientCategory,
+      item.id,
+      item.isSelected,
+    );
+
+    getSelectedIngredients(item.ingredientCategory).then(
+      selectIngredientsFromStorage => {
+        const selectedIngIndex = selectIngredientsFromStorage.indexOf(item.id);
+        if (selectedIngIndex >= 0) {
+          selectIngredientsFromStorage.splice(selectedIngIndex, 1);
+        } else {
+          selectIngredientsFromStorage.push(item.id);
+        }
+
+        saveSelectedIngredients(
+          item.ingredientCategory,
+          selectIngredientsFromStorage,
+        );
+      },
+    );
+
+    let ingCodeList = searchIngCodes.slice();
+    const codeIndex = ingCodeList.findIndex(code => code.id === item.id);
+    ingCodeList[codeIndex].isSelected = !item.isSelected;
+    setSearchIngCodes(ingCodeList);
+
+    Keyboard.dismiss();
+    setFilteredIngredients([]);
+    // setSelectedValue(item);
+
+    ToastAndroid.show(`Successfully added ${item.name}`, ToastAndroid.LONG);
+    setIngSearchKeyword('');
+    setRefreshList(!refreshList);
   };
 
   return (
@@ -191,17 +272,7 @@ const PantryScreen = props => {
           keyExtractor: item => item.id,
           renderItem: ({item}) => (
             // TODO: extract this render item into a function
-            <TouchableOpacity
-              onPress={() => {
-                setSelectedValue(item);
-                setFilteredIngredients([]);
-                Keyboard.dismiss();
-                ToastAndroid.show(
-                  `Successfully added ${item.name}`,
-                  ToastAndroid.LONG,
-                );
-                setIngSearchKeyword('');
-              }}>
+            <TouchableOpacity onPress={onSelectSearchHandler.bind(this, item)}>
               <View
                 style={{
                   flexDirection: 'row',
@@ -259,6 +330,7 @@ const PantryScreen = props => {
         updateCellsBatchingPeriod={30}
         removeClippedSubviews={false}
         onEndReachedThreshold={0.1}
+        extraData={refreshList}
       />
 
       <FAB
