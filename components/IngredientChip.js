@@ -18,8 +18,8 @@ export default class IngredientChip extends Component {
   // }
 
   // shouldComponentUpdate(nextProps, nextState){
-  //   console.log("==>" + nextProps.isSelected + "--" + nextProps.title )
-  //   return nextProps.isSelected !== this.props.isSelected;
+  // //  console.log("==>" + nextProps.isSelected + "--" + nextProps.title )
+  //   return true;
   // }
 
   render() {
@@ -57,7 +57,7 @@ export default class IngredientChip extends Component {
         saveSelectedIngredients(this.props.catId, selectIngredientsFromStorage);
       });
 
-      this.props.onCountChange(isSelected ? -1 : 1);
+      //this.props.onCountChange(isSelected ? -1 : 1);
       //this.setState({isSelected: !isSelected});
      this.props.onSelectIngredient(this.props.id, !isSelected);
     };

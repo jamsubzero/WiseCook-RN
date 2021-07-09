@@ -14,7 +14,6 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Snackbar from 'react-native-snackbar';
-import Autocomplete from 'react-native-autocomplete-input';
 
 import IngredientCategory from '../../components/IngredientCategory';
 import IngredientListFooter from '../../components/IngredientListFooter';
@@ -26,7 +25,8 @@ import {
   getAllSelectedIngredients,
   getSelectedIngredients,
 } from '../../components/asyncStorage/selectedIngredients';
-import {color} from 'react-native-elements/dist/helpers';
+
+import IngredientSearchBar from './components/IngredientSearchBar';
 
 const PantryScreen = props => {
   const [isLoading, setIsLoading] = useState(true);
@@ -117,11 +117,17 @@ const PantryScreen = props => {
     ingList[catIndex].ingredientCodes[ingIndex].isSelected = isSelected;
     console.log('count: ' + ingList[catIndex].selectedCount);
 
-    if (isSelected) {
-      ingList[catIndex].selectedCount = ingList[catIndex].selectedCount + 1;
-    } else {
-      ingList[catIndex].selectedCount = ingList[catIndex].selectedCount - 1;
-    }
+    const size = ingList[catIndex].ingredientCodes.filter(ingCode => ingCode.isSelected).length;
+
+    ingList[catIndex].selectedCount = size;
+
+    // if (isSelected) {
+    //   ingList[catIndex].selectedCount = ingList[catIndex].selectedCount + 1;
+    //   console.log("added!");
+    // } else {
+    //   ingList[catIndex].selectedCount = ingList[catIndex].selectedCount - 1;
+    //   console.log("subtracted!");
+    // }
 
     console.log('count: ' + ingList[catIndex].selectedCount);
     setIngredients(ingList);
@@ -165,31 +171,18 @@ const PantryScreen = props => {
     props.navigation.navigate('Recipe');
   };
 
-  const findIng = query => {
-    if (query) {
-      const regex = new RegExp(`${query.trim()}`, 'i');
-      setFilteredIngredients(
-        searchIngCodes.filter(ing => ing.name.search(regex) >= 0),
-      );
-    } else {
-      setFilteredIngredients([]);
-    }
-
-    setIngSearchKeyword(query);
-  };
+ 
 
   const onSelectSearchHandler = item => {
     //
 
-    console.log(
-      'index' + codeIndex + ' ' + item.isSelected + ' selected: ' + item.name,
-    );
     onSelectIngredientHandler(
       item.ingredientCategory,
       item.id,
       item.isSelected,
     );
 
+    
     getSelectedIngredients(item.ingredientCategory).then(
       selectIngredientsFromStorage => {
         const selectedIngIndex = selectIngredientsFromStorage.indexOf(item.id);
@@ -211,113 +204,18 @@ const PantryScreen = props => {
     ingCodeList[codeIndex].isSelected = !item.isSelected;
     setSearchIngCodes(ingCodeList);
 
-    Keyboard.dismiss();
-    setFilteredIngredients([]);
-    // setSelectedValue(item);
 
-    ToastAndroid.show(`Successfully added ${item.name}`, ToastAndroid.LONG);
-    setIngSearchKeyword('');
-    setRefreshList(!refreshList);
+    // ToastAndroid.show(`Successfully added ${item.name}`, ToastAndroid.LONG);
+    // setIngSearchKeyword('');
+    // setRefreshList(!refreshList);
+    
   };
 
   return (
     <View style={styles.screen}>
       {/* <View style={styles.autocompleteContainer}> */}
-      <View style={styles.topControlsContainer}>
-        <View
-          style={{
-            borderColor: Colors.primaryColor,
-            borderWidth: 0.5,
-            width: '90%',
-            height: 40,
-            justifyContent: 'center',
-            borderRadius: 8,
-            paddingLeft: 7,
-          }}>
-          <Ionicons name="search" size={20} color={Colors.primaryColor} />
-        </View>
-        <Button
-          type="clear"
-          icon={
-            <MaterialCommunityIcons
-              name="microphone"
-              size={30}
-              color={Colors.primaryColor}
-            />
-          }
-        />
-      </View>
-
-      <Autocomplete
-        autoCorrect={false}
-        style={{color: Colors.primaryColor}}
-        inputContainerStyle={{
-          backgroundColor: 'transparent',
-          height: 37,
-          width: '100%',
-          borderWidth: 0,
-          paddingVertical: 0,
-          borderColor: Colors.primaryColor,
-          paddingHorizontal: 5,
-        }}
-        placeholderTextColor={Colors.gray}
-        containerStyle={styles.autocompleteContainer}
-        onBlur={() => setFilteredIngredients([])}
-        data={filteredIngredients}
-        value={ingSearchKeyword}
-        onChangeText={text => findIng(text)}
-        placeholder="Add ingredient"
-        flatListProps={{
-          keyboardShouldPersistTaps: 'always',
-          keyExtractor: item => item.id,
-          renderItem: ({item}) => (
-            // TODO: extract this render item into a function
-            <TouchableOpacity onPress={onSelectSearchHandler.bind(this, item)}>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  alignContent: 'center',
-                  paddingVertical: 5,
-                  paddingHorizontal: 10,
-                  paddingLeft: 10,
-                  paddingRight: 15,
-                }}>
-                {/* TODO Extract this into a separate component */}
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'flex-start',
-                  }}>
-                  {item.isSelected ? (
-                    <FontAwesome5
-                      name="minus-circle"
-                      size={15}
-                      color={Colors.lightRed}
-                    />
-                  ) : (
-                    <FontAwesome5
-                      name="plus-circle"
-                      size={15}
-                      color={Colors.green}
-                    />
-                  )}
-                  <Text
-                    style={{
-                      ...styles.itemText,
-                      ...{color: item.isSelected ? 'green' : Colors.gray},
-                    }}>{`${item.name}`}</Text>
-                </View>
-                {item.isSelected ? (
-                  <Ionicons name="checkmark" size={18} color={Colors.green} />
-                ) : null}
-              </View>
-            </TouchableOpacity>
-          ),
-        }}
-      />
-
+      
+      <IngredientSearchBar onSelectSearch={onSelectSearchHandler} searchIngCodes={searchIngCodes} />
       <FlatList
         data={ingredients}
         renderItem={renderIngredient}
@@ -370,40 +268,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 5,
   },
-  topControlsContainer: {
-    flexDirection: 'row',
-    backgroundColor: 'white',
-    height: 55,
-    width: '100%',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingRight: 4,
-    paddingLeft: 4,
-    paddingBottom: 0,
-    paddingTop: 0,
-    borderBottomWidth: 0.5,
-    borderBottomColor: Colors.lightGray,
-  },
-  autocompleteContainer: {
-    // Hack required to make the autocomplete
-    // work on Andrdoid
-    right: 0,
-    top: 12,
-    left: 30,
-    flex: 1,
-    position: 'absolute',
-    zIndex: 2,
-
-    width: '80%',
-    paddingHorizontal: 5,
-    paddingVertical: 0,
-  },
-  itemText: {
-    fontSize: 15,
-    margin: 2,
-    color: Colors.gray,
-    marginLeft: 8,
-  },
+  
 });
 
 export default PantryScreen;

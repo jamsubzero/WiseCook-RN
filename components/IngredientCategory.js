@@ -12,12 +12,19 @@ import {color} from 'react-native-elements/dist/helpers';
 export default class IngredientCategory extends Component {
   state = {
     isFullList: false,
-    selectionCount: this.props.selectedCount,
+    // selectionCount: this.props.selectedCount,
     selectedIngs: [],
   };
 
+//   constructor(props) {
+//     super(props);
+//     this.state = {
+//       selectionCount: this.props.selectedCount,
+//     };
+// }
+
   componentDidMount() {
-    this.setState({selectionCount: this.props.selectedCount});
+    //this.setState({selectionCount: this.props.selectedCount});
     // getSelectedIngredients(this.props.catId)
     // .then(selectIngredientsFromStorage => {
     //   this.setState({selectionCount: selectIngredientsFromStorage.length});
@@ -31,18 +38,20 @@ export default class IngredientCategory extends Component {
     //console.log(nextState.selectionCount + '--' + this.state.selectionCount);
     //console.log(nextProps.selectedCount + this.state.selectedCount);
     //console.log(nextProps.selectionCount);
-    console.log("on category!" + nextProps.title + "=" +(nextProps.selectedCount  + "" + this.state.selectionCount));
-    return (
-      nextState.selectionCount !== this.state.selectionCount 
-      ||
+  //  console.log("on category!" + nextProps.title + "=" +
+  //  (nextProps.selectedCount  +"-"+ this.state.selectionCount +"-"+ this.props.selectedCount +"-"+ nextState.selectionCount) +"-"+nextState.isFullList );
+  console.log("onCat: " + nextProps.selectedCount +"--"+ this.props.selectedCount +"  ==> " + ( nextProps.selectedCount === this.props.selectedCount) );
+  return(
+      // nextState.selectionCount !== this.state.selectionCount 
+      //  ||
       nextState.isFullList !== this.state.isFullList
       ||
-      typeof nextProps.selectionCount != "undefined"
-      ||
-      ((typeof nextProps.selectedCount != "undefined") && nextProps.selectedCount != this.state.selectionCount)
-      ||
-      ((typeof nextProps.selectedCount != "undefined") && nextProps.selectedCount != this.props.selectedCount)
-    );
+      // typeof nextProps.selectionCount != "undefined"
+      //  ||
+      // (nextProps.selectedCount !== this.state.selectionCount)
+      //  ||
+      (nextProps.selectedCount !== this.props.selectedCount)
+    )
   }
 
   render() {
@@ -59,11 +68,11 @@ export default class IngredientCategory extends Component {
       this.setState({isFullList: !isFullList});
     };
 
-    const onCountChangeHandler = change => {
-      console.log('count change: ' + change);
-      var newCount = this.state.selectionCount + change;
-      this.setState({selectionCount: newCount});
-    };
+    // const onCountChangeHandler = change => {
+    //   console.log('count change: ' + change);
+    //   var newCount = this.state.selectionCount + change;
+    //   this.setState({selectionCount: newCount});
+    // };
 
     const onSelectIngredientHandler = (id, isSelected) => {
       console.log('=>' + id);
@@ -78,7 +87,7 @@ export default class IngredientCategory extends Component {
               {titleCase(this.props.title)}
             </Text>
             <Text style={styles.ingCount}>
-              {this.state.selectionCount}/{ingredientList.length}
+              {this.props.selectedCount}/{ingredientList.length}
             </Text>
           </View>
           <Button
@@ -107,7 +116,7 @@ export default class IngredientCategory extends Component {
               title={ingredient.name}
               key={ingredient.id}
               id={ingredient.id}
-              onCountChange={onCountChangeHandler}
+            //  onCountChange={onCountChangeHandler}
               shouldRefresh={this.props.shouldRefresh}
               // isSelected={this.state.selectedIngs.includes(ingredient.id)}
               isSelected={ingredient.isSelected}
