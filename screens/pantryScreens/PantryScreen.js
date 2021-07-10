@@ -207,7 +207,7 @@ const PantryScreen = props => {
         overlayStyle={styles.dictateStyle}
         isVisible={dictateVisible}
         onBackdropPress={toggleOverlay}>
-        <DictateIngredientsScreen />
+        <DictateIngredientsScreen ingredients={ingredients}/>
       </Overlay>
     </View>
   );
@@ -228,8 +228,8 @@ const styles = StyleSheet.create({
     padding: 0,
     elevation: 0,
     backgroundColor: 'red',
-    width: '80%',
-    height: '50%',
+    width: '90%',
+    height: '60%',
     alignContent: 'center',
     justifyContent: 'center',
     alignItems: 'center',

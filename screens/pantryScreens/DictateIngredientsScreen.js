@@ -26,59 +26,9 @@ class DictateIngredientsScreen extends Component {
     error: '',
     end: '',
     started: '',
-    results: [
-      'sugar',
-      'fish',
-      'american cheese',
-      'cream cheese'
-    ],
+    results: [],
     partialResults: [],
-    // results: [
-    //   'sugar',
-    //   'fish',
-    //   'american cheese',
-    //   'cream cheese',
-    //   'sugar',
-    //   'fish',
-    //   'american cheese',
-    //   'sugar',
-    //   'fish',
-    //   'american cheese',
-    //   'cream cheese',
-    //   'sugar',
-    //   'fish',
-    //   'american cheese',
-    //   'sugar',
-    //   'fish',
-    //   'american cheese',
-    //   'cream cheese',
-    //   'sugar',
-    //   'fish',
-    //   'american cheese',
-    //   'sugar',
-    //   'fish',
-    //   'american cheese',
-    //   'cream cheese',
-    //   'sugar',
-    //   'fish',
-    //   'american cheese',
-    //   'sugar',
-    //   'fish',
-    //   'american cheese',
-    //   'cream cheese',
-    //   'sugar',
-    //   'fish',
-    //   'american cheese',
-    //   'cream cheese',
-    //   'sugar',
-    //   'fish',
-    //   'american cheese',
-    //   'cream cheese',
-    //   'sugar',
-    //   'fish',
-    //   'american cheese',
-    //   'cream cheese',
-    // ],
+    ingCodeList: [],
   };
 
   constructor(props) {
@@ -90,12 +40,25 @@ class DictateIngredientsScreen extends Component {
     Voice.onSpeechResults = this.onSpeechResults;
   }
 
+  static getDerivedStateFromProps(props, state) {
+    var ingCodes = [];
+    for (const ingCategory of props.ingredients) {
+      ingCodes.push(ingCategory.ingredientCodes);
+    }
+
+    var allIngCodes = Array.prototype.concat.apply([], ingCodes);
+
+    return {
+      ingCodeList: allIngCodes,
+    };
+  }
+
   componentWillUnmount() {
     Voice.destroy().then(Voice.removeAllListeners);
   }
 
-  componentDidMount(){
-     this._startRecognizing();
+  componentDidMount() {
+    this._startRecognizing();
   }
 
   onSpeechStart = e => {
@@ -133,9 +96,21 @@ class DictateIngredientsScreen extends Component {
   };
 
   onSpeechResults = e => {
-    console.log('onSpeechResults: ', e);
+    const speechResult = e.value[0].trim();
+    console.log('I heard: ' + speechResult);
+    var resultArr = speechResult.split(/\s+/);
+    console.log('inArr: ' + resultArr);
+    let allIngs = [];
+    for (const word of resultArr) {
+      const regex = new RegExp(
+        `${word.trim().replace(/([.?*+^$[\]\\(){}|-])/g, '\\$1')}`,
+        'i',
+      );
+      allIngs.push(...this.state.ingCodeList.filter(ing => ing.name.search(regex) >= 0))
+    }
+
     this.setState({
-      results: e.value,
+      results: allIngs,
       started: false,
       end: true,
     });
@@ -208,26 +183,25 @@ class DictateIngredientsScreen extends Component {
 
           {this.state.error ? (
             <TouchableOpacity onPress={this._startRecognizing}>
-            <View style={styles.errorMsgContainer}>
-              <Text>
-                No supported ingredient recognized from speech. Please try
-                again.
-              </Text>
-            </View>
+              <View style={styles.errorMsgContainer}>
+                <Text>
+                  No supported ingredient recognized from speech. Please try
+                  again.
+                </Text>
+              </View>
             </TouchableOpacity>
           ) : null}
 
           {this.state.results.length > 0 ? (
-            <View
-              style={styles.resultContainer}>
+            <View style={styles.resultContainer}>
               <Text style={{color: Colors.primaryColor}}>
                 Recognized ingredients
               </Text>
               <View style={styles.resultChipsContainer}>
                 {this.state.results.map((result, index) => (
                   <Chip
-                    key={`result-${index}`}
-                    title={result}
+                    key={`${result.id}-${index}`}
+                    title={result.name}
                     containerStyle={styles.containerStyle}
                     buttonStyle={styles.buttonSelectedStyle}
                     titleStyle={styles.titleStyle}
@@ -247,7 +221,7 @@ class DictateIngredientsScreen extends Component {
             <View style={styles.touchable}>
               <TouchableCmp onPress={() => {}}>
                 <View style={styles.buttonContainer}>
-                <MaterialIcons name="library-add" size={18} color="white" />
+                  <MaterialIcons name="playlist-add" size={20} color="white" />
                   <Text style={styles.buttonLabel}>Add to pantry</Text>
                 </View>
               </TouchableCmp>
@@ -263,7 +237,7 @@ const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
     backgroundColor: 'white',
-    width: '100%'
+    width: '100%',
   },
   container: {
     flex: 1,
@@ -331,6 +305,7 @@ const styles = StyleSheet.create({
   buttonLabel: {
     color: 'white',
     fontSize: 16,
+    marginLeft: 3,
   },
 });
 
