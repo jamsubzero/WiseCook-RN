@@ -14,6 +14,7 @@ import Voice from '@react-native-voice/voice';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {LinearProgress} from 'react-native-elements';
 import {Chip} from 'react-native-elements';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 import Colors from '../../constants/Colors';
 import {TouchableOpacity} from 'react-native';
@@ -26,10 +27,10 @@ class DictateIngredientsScreen extends Component {
     end: '',
     started: '',
     results: [
-      // 'sugar',
-      // 'fish',
-      // 'american cheese',
-      // 'cream cheese'
+      'sugar',
+      'fish',
+      'american cheese',
+      'cream cheese'
     ],
     partialResults: [],
     // results: [
@@ -94,7 +95,7 @@ class DictateIngredientsScreen extends Component {
   }
 
   componentDidMount(){
-    this._startRecognizing();
+     this._startRecognizing();
   }
 
   onSpeechStart = e => {
@@ -185,7 +186,7 @@ class DictateIngredientsScreen extends Component {
             <TouchableOpacity onPress={this._startRecognizing}>
               <Ionicons
                 name="mic-circle-sharp"
-                size={70}
+                size={50}
                 containerStyle={{borderWidth: 1, padding: 0, marginVertical: 0}}
                 color={Colors.primaryColor}
               />
@@ -206,12 +207,14 @@ class DictateIngredientsScreen extends Component {
             }}>{`${this.state.started ? 'Speak now' : `Tap to start`}`}</Text>
 
           {this.state.error ? (
+            <TouchableOpacity onPress={this._startRecognizing}>
             <View style={styles.errorMsgContainer}>
               <Text>
                 No supported ingredient recognized from speech. Please try
                 again.
               </Text>
             </View>
+            </TouchableOpacity>
           ) : null}
 
           {this.state.results.length > 0 ? (
@@ -244,6 +247,7 @@ class DictateIngredientsScreen extends Component {
             <View style={styles.touchable}>
               <TouchableCmp onPress={() => {}}>
                 <View style={styles.buttonContainer}>
+                <MaterialIcons name="library-add" size={18} color="white" />
                   <Text style={styles.buttonLabel}>Add to pantry</Text>
                 </View>
               </TouchableCmp>
@@ -259,10 +263,11 @@ const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
     backgroundColor: 'white',
+    width: '100%'
   },
   container: {
     flex: 1,
-    paddingTop: 10,
+    paddingTop: 5,
     paddingBottom: 8,
     justifyContent: 'center',
     alignItems: 'center',
@@ -292,10 +297,10 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     marginBottom: 10,
     borderWidth: 0.5,
-    width: '85%',
+    width: '90%',
     borderColor: Colors.primaryColor,
-    paddingVertical: 10,
-    paddingHorizontal: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 8,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 8,
@@ -309,9 +314,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   touchable: {
-    borderRadius: 15,
+    borderRadius: 8,
     overflow: 'hidden',
-    width: '40%',
+    width: '50%',
     justifyContent: 'center',
     alignContent: 'center',
   },
@@ -319,13 +324,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Colors.primaryColor,
+    backgroundColor: Colors.blue,
     paddingVertical: 8,
     width: '100%',
   },
   buttonLabel: {
     color: 'white',
-    fontSize: 15,
+    fontSize: 16,
   },
 });
 

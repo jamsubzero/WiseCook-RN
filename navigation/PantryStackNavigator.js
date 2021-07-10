@@ -42,6 +42,7 @@ const PantryStackNavigator = () => {
             ),
           }}
         />
+        {/* TODO remove this later */}
         <Stack.Screen
           name="DictateIngredients"
           component={DictateIngredientsScreen}

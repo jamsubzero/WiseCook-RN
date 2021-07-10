@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {StyleSheet, View, FlatList, ActivityIndicator} from 'react-native';
-import {FAB} from 'react-native-elements';
+import {FAB, Overlay} from 'react-native-elements';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Snackbar from 'react-native-snackbar';
 
@@ -16,10 +16,12 @@ import {
 } from '../../components/asyncStorage/selectedIngredients';
 
 import IngredientSearchBar from './components/IngredientSearchBar';
+import DictateIngredientsScreen from './DictateIngredientsScreen';
 
 const PantryScreen = props => {
   const [isLoading, setIsLoading] = useState(true);
   const [ingredients, setIngredients] = useState([]); // array of ingredientCategories
+  const [dictateVisible, setDictateVisible] = useState(false);
 
   useEffect(() => {
     getIngredientsFromWiseCookApi();
@@ -153,12 +155,17 @@ const PantryScreen = props => {
     props.navigation.navigate('DictateIngredients');
   }
 
+  const toggleOverlay = () => {
+    setDictateVisible(!dictateVisible);
+  };
+
   return (
     <View style={styles.screen}>
       <IngredientSearchBar
         onSelectSearch={onSelectSearchHandler}
         ingredients={ingredients}
         onNavigateToDictate={onNavigateToDictateHandler}
+        onNavigateToDictate={toggleOverlay}
       />
       <FlatList
         data={ingredients}
@@ -195,6 +202,13 @@ const PantryScreen = props => {
         size="large"
         icon={<MaterialCommunityIcons name="knife" size={25} color="white" />}
       />
+
+      <Overlay
+        overlayStyle={styles.dictateStyle}
+        isVisible={dictateVisible}
+        onBackdropPress={toggleOverlay}>
+        <DictateIngredientsScreen />
+      </Overlay>
     </View>
   );
 };
@@ -209,6 +223,19 @@ const styles = StyleSheet.create({
     color: Colors.primaryColor,
     paddingHorizontal: 10,
     paddingVertical: 5,
+  },
+  dictateStyle: {
+    padding: 0,
+    elevation: 0,
+    backgroundColor: 'red',
+    width: '80%',
+    height: '50%',
+    alignContent: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+    overflow:'hidden',
+    borderRadius: 8
+
   },
 });
 
