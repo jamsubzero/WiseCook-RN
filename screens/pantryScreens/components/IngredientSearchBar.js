@@ -1,10 +1,8 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   StyleSheet,
   Text,
   View,
-  FlatList,
-  ActivityIndicator,
   TouchableOpacity,
   Keyboard,
   ToastAndroid,
@@ -18,14 +16,21 @@ import Colors from '../../../constants/Colors';
 
 const IngredientSearchBar = props => {
   const [filteredIngredients, setFilteredIngredients] = useState([]);
-  const [selectedValue, setSelectedValue] = useState({});
   const [ingSearchKeyword, setIngSearchKeyword] = useState('');
+  const [searchIngCodes, setSearchIngCodes] = useState([]);
+
+  useEffect(() => {
+    var ingCodes = [];
+    for (const ingCategory of props.ingredients) {
+      ingCodes.push(ingCategory.ingredientCodes);
+    }
+    var allIngCodes = Array.prototype.concat.apply([], ingCodes);
+    setSearchIngCodes(allIngCodes);
+  }, [props.ingredients]);
 
   const onSelectSearchHandler = item => {
-    //
     Keyboard.dismiss();
     setFilteredIngredients([]);
-    // setSelectedValue(item);
 
     ToastAndroid.show(`Successfully added ${item.name}`, ToastAndroid.LONG);
     setIngSearchKeyword('');
@@ -40,7 +45,7 @@ const IngredientSearchBar = props => {
         'i',
       );
       setFilteredIngredients(
-        props.searchIngCodes.filter(ing => ing.name.search(regex) >= 0),
+        searchIngCodes.filter(ing => ing.name.search(regex) >= 0),
       );
     } else {
       setFilteredIngredients([]);
@@ -99,7 +104,6 @@ const IngredientSearchBar = props => {
           keyboardShouldPersistTaps: 'always',
           keyExtractor: item => item.id,
           renderItem: ({item}) => (
-            // TODO: extract this render item into a function
             <TouchableOpacity onPress={onSelectSearchHandler.bind(this, item)}>
               <View
                 style={{
@@ -111,7 +115,6 @@ const IngredientSearchBar = props => {
                   paddingLeft: 10,
                   paddingRight: 15,
                 }}>
-                {/* TODO Extract this into a separate component */}
                 <View
                   style={{
                     flexDirection: 'row',

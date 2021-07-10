@@ -1,4 +1,4 @@
-import React, {PureComponent, Component} from 'react';
+import React, {Component} from 'react';
 import {View, StyleSheet, Text} from 'react-native';
 import {Button, Icon} from 'react-native-elements';
 import {Chip} from 'react-native-elements';
@@ -7,58 +7,20 @@ import {titleCase} from '../utils/StringUtil';
 import Card from '../components/Card';
 import IngredientChip from '../components/IngredientChip';
 import Colors from '../constants/Colors';
-import {getSelectedIngredients} from '../components/asyncStorage/selectedIngredients';
-import {color} from 'react-native-elements/dist/helpers';
 export default class IngredientCategory extends Component {
   state = {
     isFullList: false,
-    // selectionCount: this.props.selectedCount,
     selectedIngs: [],
   };
 
-//   constructor(props) {
-//     super(props);
-//     this.state = {
-//       selectionCount: this.props.selectedCount,
-//     };
-// }
-
-  componentDidMount() {
-    //this.setState({selectionCount: this.props.selectedCount});
-    // getSelectedIngredients(this.props.catId)
-    // .then(selectIngredientsFromStorage => {
-    //   this.setState({selectionCount: selectIngredientsFromStorage.length});
-    //   this.setState({selectedIngs: selectIngredientsFromStorage});
-    //   console.log(this.props.catId + "==>" + selectIngredientsFromStorage);
-    // });
-  }
-
   shouldComponentUpdate(nextProps, nextState) {
-    // return nextState.selectedCount !== this.state.selectedCount;
-    //console.log(nextState.selectionCount + '--' + this.state.selectionCount);
-    //console.log(nextProps.selectedCount + this.state.selectedCount);
-    //console.log(nextProps.selectionCount);
-  //  console.log("on category!" + nextProps.title + "=" +
-  //  (nextProps.selectedCount  +"-"+ this.state.selectionCount +"-"+ this.props.selectedCount +"-"+ nextState.selectionCount) +"-"+nextState.isFullList );
-  console.log("onCat: " + nextProps.selectedCount +"--"+ this.props.selectedCount +"  ==> " + ( nextProps.selectedCount === this.props.selectedCount) );
-  return(
-      // nextState.selectionCount !== this.state.selectionCount 
-      //  ||
-      nextState.isFullList !== this.state.isFullList
-      ||
-      // typeof nextProps.selectionCount != "undefined"
-      //  ||
-      // (nextProps.selectedCount !== this.state.selectionCount)
-      //  ||
-      (nextProps.selectedCount !== this.props.selectedCount)
-    )
+    return (
+      nextState.isFullList !== this.state.isFullList ||
+      nextProps.selectedCount !== this.props.selectedCount
+    );
   }
 
   render() {
-    console.log('here-!' + this.props.ingredientCodes);
-    for(let i = 0; i < this.props.ingredientCodes.length; i ++){
-      console.log(this.props.ingredientCodes[i]);
-    }
     const ingredientList = this.props.ingredientCodes;
     const partialList = ingredientList.slice(0, 8);
     const {isFullList} = this.state;
@@ -68,14 +30,7 @@ export default class IngredientCategory extends Component {
       this.setState({isFullList: !isFullList});
     };
 
-    // const onCountChangeHandler = change => {
-    //   console.log('count change: ' + change);
-    //   var newCount = this.state.selectionCount + change;
-    //   this.setState({selectionCount: newCount});
-    // };
-
     const onSelectIngredientHandler = (id, isSelected) => {
-      console.log('=>' + id);
       this.props.onSelectIngredient(this.props.catId, id, isSelected);
     };
 
@@ -107,18 +62,13 @@ export default class IngredientCategory extends Component {
         </View>
 
         <View style={styles.chipsContainer}>
-          {/* TODO check here if an ingredient is selected from the asyncstorage or redux.
-              Then add is to the isSelected prop of the chip*/}
-          {/* <IngredientChip title="salt" isSelected={true} /> */}
           {currentList.map(ingredient => (
             <IngredientChip
               catId={this.props.catId}
               title={ingredient.name}
               key={ingredient.id}
               id={ingredient.id}
-            //  onCountChange={onCountChangeHandler}
               shouldRefresh={this.props.shouldRefresh}
-              // isSelected={this.state.selectedIngs.includes(ingredient.id)}
               isSelected={ingredient.isSelected}
               onSelectIngredient={onSelectIngredientHandler}
             />

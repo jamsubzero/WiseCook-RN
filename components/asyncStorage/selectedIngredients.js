@@ -59,7 +59,7 @@ export async function getAllSelectedIngredients() {
     console.log(e);
   }
 
-  console.log(allSelectedIngArr);
+  console.log("All selected Ings: " + allSelectedIngArr);
 
   return allSelectedIngArr;
 }
