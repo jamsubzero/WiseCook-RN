@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {StyleSheet, View, FlatList, ActivityIndicator} from 'react-native';
 import {FAB} from 'react-native-elements';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -149,11 +149,16 @@ const PantryScreen = props => {
 
   const onMyPantryHandler = () => {};
 
+  const onNavigateToDictateHandler = () => {
+    props.navigation.navigate('DictateIngredients');
+  }
+
   return (
     <View style={styles.screen}>
       <IngredientSearchBar
         onSelectSearch={onSelectSearchHandler}
         ingredients={ingredients}
+        onNavigateToDictate={onNavigateToDictateHandler}
       />
       <FlatList
         data={ingredients}

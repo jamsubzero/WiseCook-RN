@@ -32,7 +32,7 @@ const IngredientSearchBar = props => {
     Keyboard.dismiss();
     setFilteredIngredients([]);
 
-    ToastAndroid.show(`Successfully added ${item.name}`, ToastAndroid.LONG);
+    ToastAndroid.show(`Successfully ${item.isSelected ? 'removed' : 'added'} ${item.name}`, ToastAndroid.LONG);
     setIngSearchKeyword('');
 
     props.onSelectSearch(item);
@@ -69,16 +69,15 @@ const IngredientSearchBar = props => {
           }}>
           <Ionicons name="search" size={20} color={Colors.primaryColor} />
         </View>
-        <Button
-          type="clear"
-          icon={
+        <TouchableOpacity
+          onPress={props.onNavigateToDictate}
+          >
             <MaterialCommunityIcons
               name="microphone"
               size={30}
               color={Colors.primaryColor}
             />
-          }
-        />
+        </TouchableOpacity>
       </View>
 
       <Autocomplete
@@ -160,7 +159,7 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingRight: 4,
+    paddingRight: 10,
     paddingLeft: 4,
     paddingBottom: 0,
     paddingTop: 0,
