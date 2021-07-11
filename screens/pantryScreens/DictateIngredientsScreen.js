@@ -3,22 +3,18 @@ import {
   StyleSheet,
   Text,
   View,
-  Image,
-  TouchableHighlight,
+  TouchableOpacity,
   TouchableNativeFeedback,
   Platform,
-  Button,
   ScrollView,
 } from 'react-native';
 import Voice from '@react-native-voice/voice';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {LinearProgress} from 'react-native-elements';
-import {Chip} from 'react-native-elements';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 import Colors from '../../constants/Colors';
-import {TouchableOpacity} from 'react-native';
-
+import DictateMatchList from './components/DictateMatchList';
 class DictateIngredientsScreen extends Component {
   state = {
     recognized: '',
@@ -107,22 +103,90 @@ class DictateIngredientsScreen extends Component {
     console.log('I heard: ' + speechResult);
 
     /** */
+    var previousFirstTwoWords = '';
+    var previousFirstWord = '';
     var allMatch = [];
-    while (speechResult.length != 0) {
+    while (speechResult.length > 0) {
+      // while the dictated sentence has remaining words (> 1 because we include including remaining s)
+
       var remainingWordsArr = speechResult.split(/\s+/);
-      var currentFirstWord = remainingWordsArr[0].toLowerCase();
       console.log('currentSpeech: ' + speechResult);
-      console.log('currentWord: ' + currentFirstWord);
-      const regex = new RegExp(
+
+      // Two words  
+      // TODO: consider plurals for two words
+      if (remainingWordsArr.length > 1) {
+        var currentFirstTwoWords = `${remainingWordsArr[0]} ${remainingWordsArr[1]}`;
+        console.log('currentFirst 2 Words: ' + currentFirstTwoWords);
+
+        if (previousFirstTwoWords === currentFirstTwoWords) {
+          speechResult = speechResult.replace(currentFirstTwoWords, '');
+          speechResult = speechResult.trim();
+          continue;
+        }
+        previousFirstTwoWords = currentFirstTwoWords;
+
+        const regexFirstTwoWords = new RegExp(
+          `${currentFirstTwoWords.replace(/([.?*+^$[\]\\(){}|-])/g, '\\$1')}`,
+          'i',
+        );
+        const twoWordMatches = this.state.ingCodeList.filter(
+          ing => ing.name.search(regexFirstTwoWords) >= 0,
+        );
+
+        var hasMatchTwoWord = false;
+        for (const match of twoWordMatches) {
+          const currentMatchName = match.name.toLowerCase();
+          if (currentMatchName === currentFirstTwoWords) {
+            hasMatchTwoWord = true;
+            allMatch.push(match);
+            break;
+          }
+        }
+        if (hasMatchTwoWord) {
+          speechResult = speechResult.replace(currentFirstTwoWords, '');
+          speechResult = speechResult.trim();
+          continue;
+        }
+      }
+
+      // One word
+      var currentFirstWord = remainingWordsArr[0].toLowerCase();
+      var currentOriginalWord = currentFirstWord;
+      console.log('currentFirst Original Word: ' + currentOriginalWord);
+
+      if(currentFirstWord === 'es' || currentFirstWord === 's' || currentFirstWord === 'ies'){
+        speechResult = speechResult.replace(currentFirstWord, '');
+        speechResult = speechResult.trim();
+        continue;
+      }
+
+      if (currentOriginalWord.slice(-3) === 'ies') { // when user dictated plural with 'ies'
+        currentFirstWord = currentOriginalWord.slice(0, -3);
+      } else if (currentOriginalWord.slice(-2) === 'es') { // when user dictated plural with 'es'
+        currentFirstWord = currentOriginalWord.slice(0, -2);
+      } else if (currentOriginalWord.slice(-1) === 's') { // when user dictated plural with 's'
+        currentFirstWord = currentOriginalWord.slice(0, -1);
+      }
+
+      console.log('currentFirst Word: ' + currentFirstWord);
+
+      if (previousFirstWord === currentOriginalWord) {
+        speechResult = speechResult.replace(currentOriginalWord, '');
+        speechResult = speechResult.trim();
+        continue;
+      }
+      previousFirstWord = currentFirstWord;
+
+      const regexFirstWord = new RegExp(
         `${currentFirstWord.replace(/([.?*+^$[\]\\(){}|-])/g, '\\$1')}`,
         'i',
       );
       const matches = this.state.ingCodeList.filter(
-        ing => ing.name.search(regex) >= 0,
+        ing => ing.name.search(regexFirstWord) >= 0,
       );
 
       if (matches.length <= 0) {
-        speechResult = speechResult.replace(currentFirstWord, '');
+        speechResult = speechResult.replace(currentOriginalWord, '');
         speechResult = speechResult.trim();
         continue;
       }
@@ -140,7 +204,7 @@ class DictateIngredientsScreen extends Component {
 
       if (!hasMatch) {
         allMatch.push(...matches);
-        speechResult = speechResult.replace(currentFirstWord, '');
+        speechResult = speechResult.replace(currentOriginalWord, '');
       }
 
       console.log('has match: ' + hasMatch);
@@ -153,7 +217,7 @@ class DictateIngredientsScreen extends Component {
     this.setState({
       results: allMatch,
       started: false,
-      end: false
+      end: false,
     });
   };
 
@@ -190,138 +254,83 @@ class DictateIngredientsScreen extends Component {
       TouchableCmp = TouchableNativeFeedback;
     }
     return (
-      <ScrollView style={styles.scrollView}>
-        <View style={styles.container}>
-          <View
-            style={{
-              padding: 0,
-              margin: 0,
-              justifyContent: 'center',
-              alignContent: 'center',
-            }}>
-            <TouchableOpacity onPress={this._startRecognizing}>
-              <Ionicons
-                name="mic-circle-sharp"
-                size={50}
-                containerStyle={{borderWidth: 1, padding: 0, marginVertical: 0}}
-                color={Colors.primaryColor}
-              />
-            </TouchableOpacity>
-          </View>
-          {this.state.started ? (
-            <LinearProgress
-              style={{width: '50%'}}
+      <View style={styles.container}>
+        <View
+          style={{
+            padding: 0,
+            margin: 0,
+            justifyContent: 'center',
+            alignContent: 'center',
+          }}>
+          <TouchableOpacity onPress={this._startRecognizing}>
+            <Ionicons
+              name="mic-circle-sharp"
+              size={50}
+              containerStyle={{borderWidth: 1, padding: 0, marginVertical: 0}}
               color={Colors.primaryColor}
-              variant="indeterminate"
             />
-          ) : null}
-          <Text
-            style={{
-              width: '50%',
-              textAlign: 'center',
-              color: Colors.gray,
-            }}>{`${this.state.started ? 'Speak now' : `Tap to start`}`}</Text>
-
-          {(this.state.error 
-          || (this.state.results.length <=0 && (!this.state.started) && (!this.state.end) )) ? (
-            <TouchableOpacity onPress={this._startRecognizing}>
-              <View style={styles.errorMsgContainer}>
-                <Text>
-                  No supported ingredient recognized from speech. Please try
-                  again.
-                </Text>
-              </View>
-            </TouchableOpacity>
-          ) : null}
-
-          {this.state.results.length > 0 ? (
-            <View style={styles.resultContainer}>
-              <Text style={{color: Colors.primaryColor}}>
-                Recognized ingredients
-              </Text>
-              <View style={styles.resultChipsContainer}>
-                {this.state.results.map((result, index) => (
-                  <Chip
-                    key={`${result.id}-${index}`}
-                    title={result.name}
-                    containerStyle={styles.containerStyle}
-                    buttonStyle={styles.buttonSelectedStyle}
-                    titleStyle={styles.titleStyle}
-                    icon={{
-                      name: 'checkmark',
-                      type: 'ionicon',
-                      size: 16,
-                      color: 'white',
-                    }}
-                  />
-                ))}
-              </View>
-            </View>
-          ) : null}
-
-          {/* {this.state.started ? null : null} */}
-
-          {this.state.results.length > 0 ? (
-            <View style={styles.touchable}>
-              <TouchableCmp onPress={() => {}}>
-                <View style={styles.buttonContainer}>
-                  <MaterialIcons name="playlist-add" size={20} color="white" />
-                  <Text style={styles.buttonLabel}>Add to pantry</Text>
-                </View>
-              </TouchableCmp>
-            </View>
-          ) : null}
+          </TouchableOpacity>
         </View>
-      </ScrollView>
+        {this.state.started ? (
+          <LinearProgress
+            style={{width: '50%'}}
+            color={Colors.primaryColor}
+            variant="indeterminate"
+          />
+        ) : null}
+        <Text
+          style={{
+            width: '50%',
+            textAlign: 'center',
+            color: Colors.gray,
+          }}>{`${this.state.started ? 'Speak now' : `Tap to start`}`}</Text>
+
+        {this.state.error ||
+        (this.state.results.length <= 0 &&
+          !this.state.started &&
+          !this.state.end) ? (
+          <TouchableOpacity onPress={this._startRecognizing}>
+            <View style={styles.errorMsgContainer}>
+              <Text>
+                No supported ingredient recognized from speech. Please try
+                again.
+              </Text>
+            </View>
+          </TouchableOpacity>
+        ) : null}
+
+        {this.state.results.length > 0 ? (
+          <DictateMatchList results={this.state.results} />
+        ) : null}
+
+        {/* {this.state.started ? null : null} */}
+
+        {this.state.results.length > 0 ? (
+          <View style={styles.touchable}>
+            <TouchableCmp onPress={() => {}}>
+              <View style={styles.buttonContainer}>
+                <MaterialIcons name="playlist-add" size={20} color="white" />
+                <Text style={styles.buttonLabel}>Add to pantry</Text>
+              </View>
+            </TouchableCmp>
+          </View>
+        ) : null}
+      </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  scrollView: {
-    flex: 1,
-    backgroundColor: 'white',
-    width: '100%',
-  },
   container: {
     flex: 1,
+    width: '100%',
+    height: '100%',
     paddingTop: 5,
     paddingBottom: 8,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: 'center',
     alignContent: 'center',
     backgroundColor: 'white',
-  },
-  buttonSelectedStyle: {
-    backgroundColor: Colors.primaryColor,
-  },
-  titleStyle: {
-    fontSize: 11,
-  },
-  containerStyle: {
-    marginHorizontal: 3,
-    marginVertical: 3,
-    overflow: 'hidden',
-  },
-  resultChipsContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginTop: 3,
-    borderColor: Colors.primaryColor,
-    borderRadius: 8,
-    width: '100%',
-  },
-  resultContainer: {
-    marginVertical: 5,
-    marginBottom: 10,
-    borderWidth: 0.5,
-    width: '90%',
-    borderColor: Colors.primaryColor,
-    paddingVertical: 8,
-    paddingHorizontal: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 8,
   },
   errorMsgContainer: {
     margin: 17,
