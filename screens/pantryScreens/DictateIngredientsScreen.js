@@ -24,7 +24,7 @@ class DictateIngredientsScreen extends Component {
     recognized: '',
     pitch: '',
     error: '',
-    end: '',
+    end: true,
     started: '',
     results: [],
     partialResults: [],
@@ -38,6 +38,7 @@ class DictateIngredientsScreen extends Component {
     Voice.onSpeechEnd = this.onSpeechEnd;
     Voice.onSpeechError = this.onSpeechError;
     Voice.onSpeechResults = this.onSpeechResults;
+    Voice.onSpeechPartialResults = this.onSpeechPartialResults;
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -65,7 +66,6 @@ class DictateIngredientsScreen extends Component {
     console.log('onSpeechStart: ', e);
     this.setState({
       started: true,
-      end: false,
       recognized: false,
       error: false,
     });
@@ -95,24 +95,65 @@ class DictateIngredientsScreen extends Component {
     });
   };
 
+  onSpeechPartialResults = e => {
+    console.log('onSpeechPartialResults: ', e);
+    this.setState({
+      partialResults: e.value,
+    });
+  };
+
   onSpeechResults = e => {
-    const speechResult = e.value[0].trim();
+    var speechResult = e.value[0].trim();
     console.log('I heard: ' + speechResult);
-    var resultArr = speechResult.split(/\s+/);
-    console.log('inArr: ' + resultArr);
-    let allIngs = [];
-    for (const word of resultArr) {
+
+    /** */
+    var allMatch = [];
+    while (speechResult.length != 0) {
+      var remainingWordsArr = speechResult.split(/\s+/);
+      var currentFirstWord = remainingWordsArr[0].toLowerCase();
+      console.log('currentSpeech: ' + speechResult);
+      console.log('currentWord: ' + currentFirstWord);
       const regex = new RegExp(
-        `${word.trim().replace(/([.?*+^$[\]\\(){}|-])/g, '\\$1')}`,
+        `${currentFirstWord.replace(/([.?*+^$[\]\\(){}|-])/g, '\\$1')}`,
         'i',
       );
-      allIngs.push(...this.state.ingCodeList.filter(ing => ing.name.search(regex) >= 0))
+      const matches = this.state.ingCodeList.filter(
+        ing => ing.name.search(regex) >= 0,
+      );
+
+      if (matches.length <= 0) {
+        speechResult = speechResult.replace(currentFirstWord, '');
+        speechResult = speechResult.trim();
+        continue;
+      }
+
+      var hasMatch = false;
+      for (const match of matches) {
+        const currentName = match.name.toLowerCase();
+        if (speechResult.includes(currentName)) {
+          speechResult = speechResult.replace(currentName, '');
+          hasMatch = true;
+          allMatch.push(match);
+          break;
+        }
+      }
+
+      if (!hasMatch) {
+        allMatch.push(...matches);
+        speechResult = speechResult.replace(currentFirstWord, '');
+      }
+
+      console.log('has match: ' + hasMatch);
+
+      speechResult = speechResult.trim();
     }
 
+    console.log('AllMatch:' + allMatch);
+
     this.setState({
-      results: allIngs,
+      results: allMatch,
       started: false,
-      end: true,
+      end: false
     });
   };
 
@@ -124,7 +165,7 @@ class DictateIngredientsScreen extends Component {
       started: '',
       results: [],
       partialResults: [],
-      end: '',
+      end: true,
     });
 
     try {
@@ -181,7 +222,8 @@ class DictateIngredientsScreen extends Component {
               color: Colors.gray,
             }}>{`${this.state.started ? 'Speak now' : `Tap to start`}`}</Text>
 
-          {this.state.error ? (
+          {(this.state.error 
+          || (this.state.results.length <=0 && (!this.state.started) && (!this.state.end) )) ? (
             <TouchableOpacity onPress={this._startRecognizing}>
               <View style={styles.errorMsgContainer}>
                 <Text>
@@ -216,6 +258,8 @@ class DictateIngredientsScreen extends Component {
               </View>
             </View>
           ) : null}
+
+          {/* {this.state.started ? null : null} */}
 
           {this.state.results.length > 0 ? (
             <View style={styles.touchable}>
