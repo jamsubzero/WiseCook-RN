@@ -140,7 +140,7 @@ class DictateIngredientsScreen extends Component {
         var hasMatchTwoWord = false;
         for (const match of twoWordMatches) {
           const currentMatchName = match.name.toLowerCase();
-          if (currentMatchName === currentFirstTwoWords) {
+          if (currentMatchName.includes(currentFirstTwoWords)) {
             hasMatchTwoWord = true;
             allMatch.push(match);
             break;
