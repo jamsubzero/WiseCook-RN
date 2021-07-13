@@ -22,9 +22,10 @@ class DictateIngredientsScreen extends Component {
     error: '',
     end: true,
     started: '',
-    results: [],
+    results: '',
     partialResults: [],
     ingCodeList: [],
+    hasResult: false,
   };
 
   constructor(props) {
@@ -106,13 +107,16 @@ class DictateIngredientsScreen extends Component {
     var previousFirstTwoWords = '';
     var previousFirstWord = '';
     var allMatch = [];
+    var allUnclear = [];
+    var allResult = [];
+    var havingResult = false;
     while (speechResult.length > 0) {
       // while the dictated sentence has remaining words (> 1 because we include including remaining s)
 
       var remainingWordsArr = speechResult.split(/\s+/);
       console.log('currentSpeech: ' + speechResult);
 
-      // Two words  
+      // Two words
       // TODO: consider plurals for two words
       if (remainingWordsArr.length > 1) {
         var currentFirstTwoWords = `${remainingWordsArr[0]} ${remainingWordsArr[1]}`;
@@ -154,17 +158,24 @@ class DictateIngredientsScreen extends Component {
       var currentOriginalWord = currentFirstWord;
       console.log('currentFirst Original Word: ' + currentOriginalWord);
 
-      if(currentFirstWord === 'es' || currentFirstWord === 's' || currentFirstWord === 'ies'){
+      if (
+        currentFirstWord === 'es' ||
+        currentFirstWord === 's' ||
+        currentFirstWord === 'ies'
+      ) {
         speechResult = speechResult.replace(currentFirstWord, '');
         speechResult = speechResult.trim();
         continue;
       }
 
-      if (currentOriginalWord.slice(-3) === 'ies') { // when user dictated plural with 'ies'
+      if (currentOriginalWord.slice(-3) === 'ies') {
+        // when user dictated plural with 'ies'
         currentFirstWord = currentOriginalWord.slice(0, -3);
-      } else if (currentOriginalWord.slice(-2) === 'es') { // when user dictated plural with 'es'
+      } else if (currentOriginalWord.slice(-2) === 'es') {
+        // when user dictated plural with 'es'
         currentFirstWord = currentOriginalWord.slice(0, -2);
-      } else if (currentOriginalWord.slice(-1) === 's') { // when user dictated plural with 's'
+      } else if (currentOriginalWord.slice(-1) === 's') {
+        // when user dictated plural with 's'
         currentFirstWord = currentOriginalWord.slice(0, -1);
       }
 
@@ -203,7 +214,7 @@ class DictateIngredientsScreen extends Component {
       }
 
       if (!hasMatch) {
-        allMatch.push(...matches);
+        allUnclear.push({term: currentOriginalWord, matches: matches});
         speechResult = speechResult.replace(currentOriginalWord, '');
       }
 
@@ -214,10 +225,19 @@ class DictateIngredientsScreen extends Component {
 
     console.log('AllMatch:' + allMatch);
 
+    allResult.match = allMatch;
+
+    allResult.unclear = allUnclear;
+
+    if (allUnclear.length > 0 || allMatch.length > 0) {
+      havingResult = true;
+    }
+
     this.setState({
-      results: allMatch,
+      results: allResult,
       started: false,
       end: false,
+      hasResult: havingResult,
     });
   };
 
@@ -227,9 +247,10 @@ class DictateIngredientsScreen extends Component {
       pitch: '',
       error: '',
       started: '',
-      results: [],
+      results: '',
       partialResults: [],
       end: true,
+      hasResult: false,
     });
 
     try {
@@ -286,7 +307,7 @@ class DictateIngredientsScreen extends Component {
           }}>{`${this.state.started ? 'Speak now' : `Tap to start`}`}</Text>
 
         {this.state.error ||
-        (this.state.results.length <= 0 &&
+        (!this.state.hasResult &&
           !this.state.started &&
           !this.state.end) ? (
           <TouchableOpacity onPress={this._startRecognizing}>
@@ -299,13 +320,13 @@ class DictateIngredientsScreen extends Component {
           </TouchableOpacity>
         ) : null}
 
-        {this.state.results.length > 0 ? (
+        {this.state.hasResult ? (
           <DictateMatchList results={this.state.results} />
         ) : null}
 
         {/* {this.state.started ? null : null} */}
 
-        {this.state.results.length > 0 ? (
+        {this.state.hasResult ? (
           <View style={styles.touchable}>
             <TouchableCmp onPress={() => {}}>
               <View style={styles.buttonContainer}>
@@ -325,8 +346,6 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '100%',
     height: '100%',
-    paddingTop: 5,
-    paddingBottom: 8,
     justifyContent: 'flex-start',
     alignItems: 'center',
     alignContent: 'center',
