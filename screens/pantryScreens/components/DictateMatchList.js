@@ -1,12 +1,21 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {View, StyleSheet, Text, ScrollView} from 'react-native';
-import {Chip} from 'react-native-elements';
 
+import DictateChip from './DictateChip';
 import Colors from '../../../constants/Colors';
 
 const DictateMatchList = props => {
-  const allMatch = props.results.match;
-  const allUnclear = props.results.unclear;
+  const [allMatch, setAllMatch] = useState([]);
+  const [allUnclear, setAllUnclear] = useState(props.results.unclear);
+
+  useEffect(() => {
+    var matches = props.results.match.slice(0);
+    for (var i in matches) {
+      matches[i].isSelected = true;
+    }
+    setAllMatch(matches);
+  }, []);
+
   return (
     <View style={styles.screen}>
       <ScrollView style={styles.scrollView}>
@@ -16,38 +25,29 @@ const DictateMatchList = props => {
           </Text>
           <View style={styles.resultChipsContainer}>
             {allMatch.map((result, index) => (
-              <Chip
-                key={`${result.id}-${index}`}
+              <DictateChip
+                term={'match'}
                 title={result.name}
-                containerStyle={styles.containerStyle}
-                buttonStyle={styles.buttonSelectedStyle}
-                titleStyle={styles.titleStyle}
-                icon={{
-                  name: 'checkmark',
-                  type: 'ionicon',
-                  size: 16,
-                  color: 'white',
-                }}
+                key={result.id}
+                id={result.id}
+                isSelected={result.isSelected}
               />
             ))}
           </View>
           {allUnclear.map((unclearTerm, index) => (
             <View style={styles.unclearContainer} key={unclearTerm.term}>
-              <Text style={styles.specifyTitle}>{`Specify what '${unclearTerm.term}'`}</Text>
+              <Text
+                style={
+                  styles.specifyTitle
+                }>{`Specify what '${unclearTerm.term}'`}</Text>
               <View style={styles.resultChipsContainer}>
                 {unclearTerm.matches.map((matchTerm, index) => (
-                  <Chip
-                    key={`${matchTerm.id}-${index}`}
+                  <DictateChip
+                    term={unclearTerm.term}
                     title={matchTerm.name}
-                    containerStyle={styles.containerStyle}
-                    buttonStyle={styles.buttonSelectedStyle}
-                    titleStyle={styles.titleStyle}
-                    icon={{
-                      name: 'checkmark',
-                      type: 'ionicon',
-                      size: 16,
-                      color: 'white',
-                    }}
+                    key={matchTerm.id}
+                    id={matchTerm.id}
+                    isSelected={matchTerm.isSelected}
                   />
                 ))}
               </View>
@@ -101,12 +101,12 @@ const styles = StyleSheet.create({
     fontSize: 11,
   },
   unclearContainer: {
-    marginTop: 6
+    marginTop: 6,
   },
-  specifyTitle:{
+  specifyTitle: {
     marginLeft: 7,
-    color: Colors.primaryColor
-  }
+    color: Colors.primaryColor,
+  },
 });
 
 export default DictateMatchList;

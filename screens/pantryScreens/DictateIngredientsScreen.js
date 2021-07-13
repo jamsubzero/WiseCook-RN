@@ -46,6 +46,10 @@ class DictateIngredientsScreen extends Component {
 
     var allIngCodes = Array.prototype.concat.apply([], ingCodes);
 
+    for(var i in allIngCodes){ // set all ings not selected
+      allIngCodes[i].isSelected = false;
+    }
+
     return {
       ingCodeList: allIngCodes,
     };
@@ -146,6 +150,7 @@ class DictateIngredientsScreen extends Component {
             break;
           }
         }
+
         if (hasMatchTwoWord) {
           speechResult = speechResult.replace(currentFirstTwoWords, '');
           speechResult = speechResult.trim();
@@ -307,9 +312,7 @@ class DictateIngredientsScreen extends Component {
           }}>{`${this.state.started ? 'Speak now' : `Tap to start`}`}</Text>
 
         {this.state.error ||
-        (!this.state.hasResult &&
-          !this.state.started &&
-          !this.state.end) ? (
+        (!this.state.hasResult && !this.state.started && !this.state.end) ? (
           <TouchableOpacity onPress={this._startRecognizing}>
             <View style={styles.errorMsgContainer}>
               <Text>
