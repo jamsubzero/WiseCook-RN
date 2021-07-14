@@ -6,14 +6,15 @@ import Colors from '../../../constants/Colors';
 
 export default class DictateChip extends Component {
   render() {
-    const isSelected = this.props.isSelected;
-
     const onIngToggleHandler = () => {
-      // TODO
-     //this.props.onSelectIngredient(this.props.id, !isSelected);
+      this.props.toggleSelectedMatch(
+        this.props.term,
+        this.props.id,
+        !this.props.isSelected,
+      );
     };
 
-    if (isSelected) {
+    if (this.props.isSelected) {
       return (
         <Chip
           title={this.props.title}

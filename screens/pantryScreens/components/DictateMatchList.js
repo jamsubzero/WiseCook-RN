@@ -16,6 +16,26 @@ const DictateMatchList = props => {
     setAllMatch(matches);
   }, []);
 
+  const toggleSelectedMatchHandler = (term, id, isSelected) => {
+    if (term === 'match') {
+      var matchList = allMatch.slice();
+      const matchIndex = matchList.findIndex(match => match.id === id);
+      matchList[matchIndex].isSelected = isSelected;
+      setAllMatch(matchList);
+    } else {
+      var unclearList = allUnclear.slice();
+      const unclearTermIndex = unclearList.findIndex(
+        unclearTerm => unclearTerm.term === term,
+      );
+      const unclearIngList = unclearList[unclearTermIndex].matches.findIndex(
+        unclearIng => unclearIng.id === id,
+      );
+      unclearList[unclearTermIndex].matches[unclearIngList].isSelected =
+        isSelected;
+      setAllUnclear(unclearList);
+    }
+  };
+
   return (
     <View style={styles.screen}>
       <ScrollView style={styles.scrollView}>
@@ -31,6 +51,7 @@ const DictateMatchList = props => {
                 key={result.id}
                 id={result.id}
                 isSelected={result.isSelected}
+                toggleSelectedMatch={toggleSelectedMatchHandler}
               />
             ))}
           </View>
@@ -48,6 +69,7 @@ const DictateMatchList = props => {
                     key={matchTerm.id}
                     id={matchTerm.id}
                     isSelected={matchTerm.isSelected}
+                    toggleSelectedMatch={toggleSelectedMatchHandler}
                   />
                 ))}
               </View>
