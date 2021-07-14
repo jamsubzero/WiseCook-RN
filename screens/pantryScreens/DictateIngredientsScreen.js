@@ -11,7 +11,6 @@ import {
 import Voice from '@react-native-voice/voice';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {LinearProgress} from 'react-native-elements';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 import Colors from '../../constants/Colors';
 import DictateMatchList from './components/DictateMatchList';
@@ -46,7 +45,8 @@ class DictateIngredientsScreen extends Component {
 
     var allIngCodes = Array.prototype.concat.apply([], ingCodes);
 
-    for(var i in allIngCodes){ // set all ings not selected
+    for (var i in allIngCodes) {
+      // set all ings not selected
       allIngCodes[i].isSelected = false;
     }
 
@@ -281,35 +281,32 @@ class DictateIngredientsScreen extends Component {
     }
     return (
       <View style={styles.container}>
-        <View
-          style={{
-            padding: 0,
-            margin: 0,
-            justifyContent: 'center',
-            alignContent: 'center',
-          }}>
-          <TouchableOpacity onPress={this._startRecognizing}>
-            <Ionicons
-              name="mic-circle-sharp"
-              size={50}
-              containerStyle={{borderWidth: 1, padding: 0, marginVertical: 0}}
-              color={Colors.primaryColor}
-            />
-          </TouchableOpacity>
+        <View style={styles.topControlsContainer}>
+          <View
+            style={styles.micContainer}>
+            <TouchableOpacity onPress={this._startRecognizing}>
+              <Ionicons
+                name="mic-circle-sharp"
+                size={50}
+                containerStyle={{borderWidth: 1, padding: 0, marginVertical: 0}}
+                color={Colors.primaryColor}
+              />
+            </TouchableOpacity>
+          </View>
+          <Text
+            style={{
+              width: '50%',
+              textAlign: 'center',
+              color: Colors.gray,
+            }}>{`${this.state.started ? 'Speak now' : `Tap to start`}`}</Text>
         </View>
         {this.state.started ? (
           <LinearProgress
-            style={{width: '50%'}}
+            style={{width: '50%', marginTop: 5}}
             color={Colors.primaryColor}
             variant="indeterminate"
           />
         ) : null}
-        <Text
-          style={{
-            width: '50%',
-            textAlign: 'center',
-            color: Colors.gray,
-          }}>{`${this.state.started ? 'Speak now' : `Tap to start`}`}</Text>
 
         {this.state.error ||
         (!this.state.hasResult && !this.state.started && !this.state.end) ? (
@@ -325,19 +322,6 @@ class DictateIngredientsScreen extends Component {
 
         {this.state.hasResult ? (
           <DictateMatchList results={this.state.results} />
-        ) : null}
-
-        {/* {this.state.started ? null : null} */}
-
-        {this.state.hasResult ? (
-          <View style={styles.touchable}>
-            <TouchableCmp onPress={() => {}}>
-              <View style={styles.buttonContainer}>
-                <MaterialIcons name="playlist-add" size={20} color="white" />
-                <Text style={styles.buttonLabel}>Add to pantry</Text>
-              </View>
-            </TouchableCmp>
-          </View>
         ) : null}
       </View>
     );
@@ -362,26 +346,16 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     justifyContent: 'center',
   },
-  touchable: {
-    borderRadius: 8,
-    overflow: 'hidden',
-    width: '50%',
+  topControlsContainer: {
+    alignItems: 'center',
+    height: '15%',
+  },
+  micContainer:{
+    padding: 0,
+    margin: 0,
     justifyContent: 'center',
     alignContent: 'center',
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: Colors.blue,
-    paddingVertical: 8,
-    width: '100%',
-  },
-  buttonLabel: {
-    color: 'white',
-    fontSize: 16,
-    marginLeft: 3,
-  },
+  }
 });
 
 export default DictateIngredientsScreen;

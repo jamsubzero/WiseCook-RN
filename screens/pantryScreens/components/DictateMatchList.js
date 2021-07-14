@@ -1,5 +1,14 @@
 import React, {useState, useEffect} from 'react';
-import {View, StyleSheet, Text, ScrollView} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  Platform,
+  TouchableNativeFeedback,
+} from 'react-native';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 import DictateChip from './DictateChip';
 import Colors from '../../../constants/Colors';
@@ -36,58 +45,82 @@ const DictateMatchList = props => {
     }
   };
 
+  let TouchableCmp = TouchableOpacity;
+  if (Platform.Version >= 21) {
+    TouchableCmp = TouchableNativeFeedback;
+  }
+
   return (
     <View style={styles.screen}>
-      <ScrollView style={styles.scrollView}>
-        <View style={styles.resultContainer}>
-          <Text style={{color: Colors.primaryColor}}>
-            Recognized ingredients
-          </Text>
-          <View style={styles.resultChipsContainer}>
-            {allMatch.map((result, index) => (
-              <DictateChip
-                term={'match'}
-                title={result.name}
-                key={result.id}
-                id={result.id}
-                isSelected={result.isSelected}
-                toggleSelectedMatch={toggleSelectedMatchHandler}
-              />
+      <View style={styles.overAllResultContainer}>
+        <ScrollView style={styles.scrollView}>
+          <View style={styles.resultContainer}>
+            <Text style={{color: Colors.primaryColor}}>
+              Recognized ingredients
+            </Text>
+            <View style={styles.resultChipsContainer}>
+              {allMatch.map((result, index) => (
+                <DictateChip
+                  term={'match'}
+                  title={result.name}
+                  key={result.id}
+                  id={result.id}
+                  isSelected={result.isSelected}
+                  toggleSelectedMatch={toggleSelectedMatchHandler}
+                />
+              ))}
+            </View>
+            {allUnclear.map((unclearTerm, index) => (
+              <View style={styles.unclearContainer} key={unclearTerm.term}>
+                <Text
+                  style={
+                    styles.specifyTitle
+                  }>{`Specify what '${unclearTerm.term}'`}</Text>
+                <View style={styles.resultChipsContainer}>
+                  {unclearTerm.matches.map((matchTerm, index) => (
+                    <DictateChip
+                      term={unclearTerm.term}
+                      title={matchTerm.name}
+                      key={matchTerm.id}
+                      id={matchTerm.id}
+                      isSelected={matchTerm.isSelected}
+                      toggleSelectedMatch={toggleSelectedMatchHandler}
+                    />
+                  ))}
+                </View>
+              </View>
             ))}
           </View>
-          {allUnclear.map((unclearTerm, index) => (
-            <View style={styles.unclearContainer} key={unclearTerm.term}>
-              <Text
-                style={
-                  styles.specifyTitle
-                }>{`Specify what '${unclearTerm.term}'`}</Text>
-              <View style={styles.resultChipsContainer}>
-                {unclearTerm.matches.map((matchTerm, index) => (
-                  <DictateChip
-                    term={unclearTerm.term}
-                    title={matchTerm.name}
-                    key={matchTerm.id}
-                    id={matchTerm.id}
-                    isSelected={matchTerm.isSelected}
-                    toggleSelectedMatch={toggleSelectedMatchHandler}
-                  />
-                ))}
-              </View>
+        </ScrollView>
+      </View>
+      <View style={styles.controlsContainer}>
+        <View style={styles.touchable}>
+          <TouchableCmp onPress={() => {}}>
+            <View style={styles.buttonContainer}>
+              <MaterialIcons name="playlist-add" size={20} color="white" />
+              <Text style={styles.buttonLabel}>Add to pantry</Text>
             </View>
-          ))}
+          </TouchableCmp>
         </View>
-      </ScrollView>
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   screen: {
-    width: '95%',
-    height: '70%',
+    alignItems: 'center',
+    height: '85%',
+    width: '100%',
+    paddingHorizontal: 5,
+    paddingBottom: 0,
+  },
+  overAllResultContainer: {
+    width: '100%',
+    height: '80%',
     borderWidth: 1,
     borderColor: 'black',
-    marginVertical: 10,
+    marginTop: 10,
     justifyContent: 'center',
     alignContent: 'center',
     alignItems: 'center',
@@ -128,6 +161,31 @@ const styles = StyleSheet.create({
   specifyTitle: {
     marginLeft: 7,
     color: Colors.primaryColor,
+  },
+  controlsContainer:{
+    height: '20%',
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 0,
+  },
+  touchable: {
+    borderRadius: 10,
+    overflow: 'hidden',
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    padding: 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Colors.blue,
+    height: 45,
+    width: 150,
+  },
+  buttonLabel: {
+    color: 'white',
+    fontSize: 16,
+    marginLeft: 3,
   },
 });
 
