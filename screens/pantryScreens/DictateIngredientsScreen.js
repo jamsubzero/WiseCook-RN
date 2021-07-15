@@ -159,7 +159,14 @@ class DictateIngredientsScreen extends Component {
       if (
         currentFirstWord === 'es' ||
         currentFirstWord === 's' ||
-        currentFirstWord === 'ies'
+        currentFirstWord === 'ies' ||
+        currentFirstWord === 'of' ||
+        currentFirstWord === 'in' ||
+        currentFirstWord === 'and' ||
+        currentFirstWord === 'or' ||
+        currentFirstWord === 'de' ||
+        currentFirstWord === 'with'||
+        currentFirstWord === 'for'
       ) {
         speechResult = speechResult.replace(currentFirstWord, '');
         speechResult = speechResult.trim();
