@@ -274,6 +274,10 @@ class DictateIngredientsScreen extends Component {
     }
   };
 
+  _onAddToPantryHandler = (selectedDictate) => {
+    this.props.onAddToPantry(selectedDictate);
+  } 
+
   render() {
     let TouchableCmp = TouchableOpacity;
     if (Platform.Version >= 21) {
@@ -321,7 +325,7 @@ class DictateIngredientsScreen extends Component {
         ) : null}
 
         {this.state.hasResult ? (
-          <DictateMatchList results={this.state.results} />
+          <DictateMatchList results={this.state.results} onAddToPantry={this._onAddToPantryHandler} />
         ) : null}
       </View>
     );

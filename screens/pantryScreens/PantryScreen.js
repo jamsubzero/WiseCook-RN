@@ -153,10 +153,34 @@ const PantryScreen = props => {
 
   const onNavigateToDictateHandler = () => {
     props.navigation.navigate('DictateIngredients');
-  }
+  };
 
   const toggleOverlay = () => {
     setDictateVisible(!dictateVisible);
+  };
+
+  const onAddToPantryHandler = selectedDictate => {
+    let ingList = ingredients.slice();
+    for (const selected of selectedDictate) {
+      const catIndex = ingList.findIndex(cat => cat.id === selected.ingredientCategory);
+      const ingIndex = ingList[catIndex].ingredientCodes.findIndex(
+        ingCode => ingCode.id === selected.id,
+      );
+      ingList[catIndex].ingredientCodes[ingIndex].isSelected = true;
+
+      const size = ingList[catIndex].ingredientCodes.filter(
+        ingCode => ingCode.isSelected,
+      ).length;
+
+      ingList[catIndex].selectedCount = size;
+    }
+
+    setIngredients(ingList);
+
+   //TODO save this to the asyncStorage
+   //TODO refresh chips not working 
+   setDictateVisible(false);
+    // console.log(selectedDictate);
   };
 
   return (
@@ -207,7 +231,10 @@ const PantryScreen = props => {
         overlayStyle={styles.dictateStyle}
         isVisible={dictateVisible}
         onBackdropPress={toggleOverlay}>
-        <DictateIngredientsScreen ingredients={ingredients}/>
+        <DictateIngredientsScreen
+          ingredients={ingredients}
+          onAddToPantry={onAddToPantryHandler}
+        />
       </Overlay>
     </View>
   );
@@ -233,9 +260,8 @@ const styles = StyleSheet.create({
     alignContent: 'center',
     justifyContent: 'center',
     alignItems: 'center',
-    overflow:'hidden',
-    borderRadius: 8
-
+    overflow: 'hidden',
+    borderRadius: 8,
   },
 });
 

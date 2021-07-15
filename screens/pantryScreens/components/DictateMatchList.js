@@ -50,6 +50,19 @@ const DictateMatchList = props => {
     TouchableCmp = TouchableNativeFeedback;
   }
 
+  const addToPantryHandler = () => {
+    var allSelected = [];
+    var selectedMatch = allMatch.filter(ing => ing.isSelected === true);
+    allSelected.push(...selectedMatch);
+    for (const term of allUnclear) {
+      var selectedUnclear = term.matches.filter(ing => ing.isSelected === true);
+      allSelected.push(...selectedUnclear);
+    }
+    console.log(allSelected);
+
+    props.onAddToPantry(allSelected);
+  };
+
   return (
     <View style={styles.screen}>
       <View style={styles.overAllResultContainer}>
@@ -95,7 +108,7 @@ const DictateMatchList = props => {
       </View>
       <View style={styles.controlsContainer}>
         <View style={styles.touchable}>
-          <TouchableCmp onPress={() => {}}>
+          <TouchableCmp onPress={addToPantryHandler}>
             <View style={styles.buttonContainer}>
               <MaterialIcons name="playlist-add" size={20} color="white" />
               <Text style={styles.buttonLabel}>Add to pantry</Text>
@@ -162,7 +175,7 @@ const styles = StyleSheet.create({
     marginLeft: 7,
     color: Colors.primaryColor,
   },
-  controlsContainer:{
+  controlsContainer: {
     height: '20%',
     width: '100%',
     justifyContent: 'center',
