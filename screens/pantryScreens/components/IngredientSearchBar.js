@@ -29,10 +29,11 @@ const IngredientSearchBar = props => {
   }, [props.ingredients]);
 
   const onSelectSearchHandler = item => {
+    item.isSelected = !item.isSelected;
     Keyboard.dismiss();
     setFilteredIngredients([]);
 
-    ToastAndroid.show(`Successfully ${item.isSelected ? 'removed' : 'added'} ${item.name}`, ToastAndroid.LONG);
+    ToastAndroid.show(`Successfully ${item.isSelected ? 'added' : 'removed'} ${item.name}`, ToastAndroid.LONG);
     setIngSearchKeyword('');
 
     props.onSelectSearch(item);

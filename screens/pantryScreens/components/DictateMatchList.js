@@ -15,7 +15,7 @@ import Colors from '../../../constants/Colors';
 
 const DictateMatchList = props => {
   const [allMatch, setAllMatch] = useState([]);
-  const [allUnclear, setAllUnclear] = useState(props.results.unclear);
+  const [allUnclear, setAllUnclear] = useState([]);
 
   useEffect(() => {
     var matches = props.results.match.slice(0);
@@ -23,6 +23,15 @@ const DictateMatchList = props => {
       matches[i].isSelected = true;
     }
     setAllMatch(matches);
+
+    var unclears = props.results.unclear.slice(0);
+    for(var i in unclears){
+      for(var j in unclears[i].matches){
+        unclears[i].matches[j].isSelected = false;
+      }
+    }
+    
+    setAllUnclear(unclears);
   }, []);
 
   const toggleSelectedMatchHandler = (term, id, isSelected) => {

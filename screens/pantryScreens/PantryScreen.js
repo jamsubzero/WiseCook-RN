@@ -125,27 +125,27 @@ const PantryScreen = props => {
     props.navigation.navigate('Recipe');
   };
 
-  const onSelectSearchHandler = item => {
+  const onSelectSearchHandler = async item => {
     onSelectIngredientHandler(
       item.ingredientCategory,
       item.id,
-      !item.isSelected,
+      item.isSelected,
     );
 
-    getSelectedIngredients(item.ingredientCategory).then(
-      selectIngredientsFromStorage => {
-        const selectedIngIndex = selectIngredientsFromStorage.indexOf(item.id);
-        if (selectedIngIndex >= 0) {
-          selectIngredientsFromStorage.splice(selectedIngIndex, 1);
-        } else {
-          selectIngredientsFromStorage.push(item.id);
-        }
+    let selectIngredientsFromStorage = await getSelectedIngredients(
+      item.ingredientCategory,
+    );
 
-        saveSelectedIngredients(
-          item.ingredientCategory,
-          selectIngredientsFromStorage,
-        );
-      },
+    const selectedIngIndex = selectIngredientsFromStorage.indexOf(item.id);
+    if (selectedIngIndex >= 0) {
+      selectIngredientsFromStorage.splice(selectedIngIndex, 1);
+    } else {
+      selectIngredientsFromStorage.push(item.id);
+    }
+
+    await saveSelectedIngredients(
+      item.ingredientCategory,
+      selectIngredientsFromStorage,
     );
   };
 
@@ -159,28 +159,11 @@ const PantryScreen = props => {
     setDictateVisible(!dictateVisible);
   };
 
-  const onAddToPantryHandler = selectedDictate => {
-    let ingList = ingredients.slice();
+  const onAddToPantryHandler = async selectedDictate => {
+    setDictateVisible(false);
     for (const selected of selectedDictate) {
-      const catIndex = ingList.findIndex(cat => cat.id === selected.ingredientCategory);
-      const ingIndex = ingList[catIndex].ingredientCodes.findIndex(
-        ingCode => ingCode.id === selected.id,
-      );
-      ingList[catIndex].ingredientCodes[ingIndex].isSelected = true;
-
-      const size = ingList[catIndex].ingredientCodes.filter(
-        ingCode => ingCode.isSelected,
-      ).length;
-
-      ingList[catIndex].selectedCount = size;
+      await onSelectSearchHandler(selected);
     }
-
-    setIngredients(ingList);
-
-   //TODO save this to the asyncStorage
-   //TODO refresh chips not working 
-   setDictateVisible(false);
-    // console.log(selectedDictate);
   };
 
   return (

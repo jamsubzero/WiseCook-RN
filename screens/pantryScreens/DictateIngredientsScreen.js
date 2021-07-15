@@ -40,18 +40,11 @@ class DictateIngredientsScreen extends Component {
   static getDerivedStateFromProps(props, state) {
     var ingCodes = [];
     for (const ingCategory of props.ingredients) {
-      ingCodes.push(ingCategory.ingredientCodes);
-    }
-
-    var allIngCodes = Array.prototype.concat.apply([], ingCodes);
-
-    for (var i in allIngCodes) {
-      // set all ings not selected
-      allIngCodes[i].isSelected = false;
+      ingCodes.push(...ingCategory.ingredientCodes);
     }
 
     return {
-      ingCodeList: allIngCodes,
+      ingCodeList: ingCodes,
     };
   }
 
