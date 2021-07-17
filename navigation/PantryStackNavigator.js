@@ -6,7 +6,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import {createStackNavigator} from '@react-navigation/stack';
 import Colors from '../constants/Colors';
 import PantryScreen from '../screens/pantryScreens/PantryScreen';
-import DictateIngredientsScreen from '../screens/pantryScreens/DictateIngredientsScreen';
+import MyPantryScreen from '../screens/pantryScreens/MyPantryScreen';
 
 const PantryStackNavigator = () => {
   const Stack = createStackNavigator();
@@ -44,12 +44,12 @@ const PantryStackNavigator = () => {
         />
         {/* TODO remove this later */}
         <Stack.Screen
-          name="DictateIngredients"
-          component={DictateIngredientsScreen}
+          name="MyPantry"
+          component={MyPantryScreen}
           options={{
             headerTintColor: 'white',
             headerStyle: {backgroundColor: Colors.primaryColor},
-            headerTitle: 'Dictate ingredients',
+            headerTitle: 'My Pantry',
             headerRight: () => (
               <HeaderButtons style={{alignItems: 'center'}}>
                 <Button

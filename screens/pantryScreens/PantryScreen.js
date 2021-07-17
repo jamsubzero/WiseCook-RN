@@ -149,10 +149,13 @@ const PantryScreen = props => {
     );
   };
 
-  const onMyPantryHandler = () => {};
-
-  const onNavigateToDictateHandler = () => {
-    props.navigation.navigate('DictateIngredients');
+  const onMyPantryHandler = () => {
+    var allSelIngs = [];
+    for(const category of ingredients){
+     var selIngs = category.ingredientCodes.filter(ing => ing.isSelected === true);
+     allSelIngs.push(...selIngs);
+    }
+    props.navigation.navigate('MyPantry', {selectedIngs: allSelIngs});
   };
 
   const toggleOverlay = () => {
@@ -171,7 +174,6 @@ const PantryScreen = props => {
       <IngredientSearchBar
         onSelectSearch={onSelectSearchHandler}
         ingredients={ingredients}
-        onNavigateToDictate={onNavigateToDictateHandler}
         onNavigateToDictate={toggleOverlay}
       />
       <FlatList

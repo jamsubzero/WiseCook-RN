@@ -99,7 +99,6 @@ const RecipeViewerScreen = props => {
 
       <RecipeDirectionList directions={recipe.instructions} />
 
-      
     </ScrollView>
   );
 };
