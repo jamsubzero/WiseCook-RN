@@ -1,13 +1,19 @@
 import React, {useState, useEffect} from 'react';
-import {View, StyleSheet, Text} from 'react-native';
+import {View, StyleSheet, Text, ToastAndroid} from 'react-native';
 
 import Colors from '../constants/Colors';
-import {getAllSelectedIngredients} from './asyncStorage/selectedIngredients';
+import {
+  getAllSelectedIngredients,
+  getShoppingList,
+  saveShoppingList,
+} from './asyncStorage/selectedIngredients';
 import RecipeIngredientItem from './RecipeIngredientItem';
 
 const RecipeIngredientList = props => {
   const ingredients = props.ingredients;
   const [selectedRecipes, setSelectedRecipes] = useState([]);
+  const [shoppingList, setShoppingList] = useState([]);
+
   var ingHits = 0;
   ingredients.map(ingredient => {
     if (selectedRecipes.includes(ingredient.ingredientCode)) {
@@ -16,10 +22,31 @@ const RecipeIngredientList = props => {
   });
 
   useEffect(() => {
-    getAllSelectedIngredients().then(allSelectIngredientsFromStorage => {
-      setSelectedRecipes(allSelectIngredientsFromStorage);
-    });
+    getIngredientStatusOnStorage();
   }, []);
+
+  const getIngredientStatusOnStorage = async () => {
+    var allSelectIngredientsFromStorage = await getAllSelectedIngredients();
+    var shoppingListFromStorage = await getShoppingList();
+
+    setSelectedRecipes(allSelectIngredientsFromStorage);
+    setShoppingList(shoppingListFromStorage);
+  };
+
+  const onToggleShoppingListHandler = async (id) => {
+    var shoppingListFromStorage = await getShoppingList();
+
+    const selectedIngIndex = shoppingListFromStorage.indexOf(id);
+    if (selectedIngIndex < 0) {
+      shoppingListFromStorage.push(id);
+      ToastAndroid.show(`Added to your shopping list`, ToastAndroid.SHORT);
+    } else {
+      shoppingListFromStorage.splice(selectedIngIndex, 1);
+      ToastAndroid.show(`Excluded from your shopping list`, ToastAndroid.SHORT);
+    }
+    await saveShoppingList(shoppingListFromStorage);
+    setShoppingList(shoppingListFromStorage);
+  };
 
   return (
     <View style={styles.ingredientContainer}>
@@ -35,7 +62,9 @@ const RecipeIngredientList = props => {
           key={ingredient.id}
           ingredient={ingredient}
           isOnPantry={selectedRecipes.includes(ingredient.ingredientCode)}
+          isOnShoppingList={shoppingList.includes(ingredient.ingredientCode)}
           ingCode={ingredient.ingredientCode}
+          onToggleShoppingList={onToggleShoppingListHandler}
         />
       ))}
     </View>

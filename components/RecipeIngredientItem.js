@@ -2,16 +2,19 @@ import React from 'react';
 import {View, StyleSheet, Text} from 'react-native';
 
 import Colors from '../constants/Colors';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import IngredientAction from './IngredientAction';
 
 const RecipeIngredientItem = props => {
   const isOnPantry = props.isOnPantry;
+  const isOnShoppingList = props.isOnShoppingList;
   const ingredient = props.ingredient;
   const ingCode = props.ingCode;
   const isSupported = props.ingCode ? true : false;
   const textColor = isOnPantry ? Colors.green : 'black';
+
+  const onToggleShoppingListHandler = () => {
+    props.onToggleShoppingList(ingCode);
+  };
 
   return (
     <View style={styles.ingredientRowContainer}>
@@ -21,7 +24,12 @@ const RecipeIngredientItem = props => {
         <Text>{ingredient.name}</Text>
       </Text>
 
-      <IngredientAction isSupported={isSupported} isOnPantry={isOnPantry} />
+      <IngredientAction
+        isSupported={isSupported}
+        isOnPantry={isOnPantry}
+        isOnShoppingList={isOnShoppingList}
+        onToggleShoppingList={onToggleShoppingListHandler}
+      />
     </View>
   );
 };
