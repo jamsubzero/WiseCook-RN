@@ -193,7 +193,7 @@ const PantryScreen = props => {
       <FAB
         title="My pantry"
         placement="left"
-        style={{bottom: 8}}
+        style={{bottom: 8}}saveSelectedIngredients
         color={Colors.lightBlue}
         containerStyle={{elevation: 25}}
         onPress={onMyPantryHandler}

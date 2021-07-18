@@ -1,27 +1,79 @@
-import React from 'react';
-import {View, Text, StyleSheet, FlatList, TouchableOpacity} from 'react-native';
+import React, {useState} from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+  ToastAndroid,
+} from 'react-native';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 
 import Colors from '../../constants/Colors';
 import {titleCase} from '../../utils/StringUtil';
+import {
+  getShoppingList,
+  saveShoppingList,
+} from '../../components/asyncStorage/selectedIngredients';
 
 const MyPantryScreen = props => {
   const pantryContents = props.route.params.selectedIngs;
+  const [shoppingList, setShoppingList] = useState([]);
+
+  useState(() => {
+    getShoppingList().then(shoppingListFromStorage => {
+      setShoppingList(shoppingListFromStorage);
+    });
+  }, []);
+
+  const onAddToShoppingListHandler = async id => {
+    if (!id) {
+      console.log('Error saving ing to shopping list, id is empty');
+      return;
+    }
+    var shoppingListFromStorage = await getShoppingList();
+
+    const selectedIngIndex = shoppingListFromStorage.indexOf(id);
+    if (selectedIngIndex < 0) {
+      shoppingListFromStorage.push(id);
+      ToastAndroid.show(`Added to your shopping list`, ToastAndroid.SHORT);
+    } else {
+      shoppingListFromStorage.splice(selectedIngIndex, 1);
+      ToastAndroid.show(`Excluded from your shopping list`, ToastAndroid.SHORT);
+    }
+    await saveShoppingList(shoppingListFromStorage);
+    setShoppingList(shoppingListFromStorage);
+  };
 
   const renderIngs = itemData => {
+    const isOnShoppingList =
+      shoppingList.findIndex(ing => ing === itemData.item.id) >= 0;
     return (
       <View style={styles.ingredientContainer}>
         <Text style={{color: Colors.primaryColor}}>
           {titleCase(itemData.item.name)}
         </Text>
-        <TouchableOpacity>
-          <FontAwesome5Icon
-            name="cart-plus"
-            size={16}
-            color='black'
-            style={{marginRight: 10}}
-          />
-        </TouchableOpacity>
+        {isOnShoppingList ? (
+          <TouchableOpacity
+            onPress={onAddToShoppingListHandler.bind(this, itemData.item.id)}>
+            <FontAwesome5Icon
+              name="cart-plus"
+              size={16}
+              color="green"
+              style={{marginRight: 10}}
+            />
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity
+            onPress={onAddToShoppingListHandler.bind(this, itemData.item.id)}>
+            <FontAwesome5Icon
+              name="cart-plus"
+              size={16}
+              color="black"
+              style={{marginRight: 10}}
+            />
+          </TouchableOpacity>
+        )}
       </View>
     );
   };
@@ -60,8 +112,7 @@ const styles = StyleSheet.create({
     height: '5%',
     width: '100%',
     borderBottomWidth: 0.3,
-    borderColor: Colors.primaryColor
- 
+    borderColor: Colors.primaryColor,
   },
   flatList: {
     width: '100%',
@@ -74,7 +125,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
   },
   ingredientContainer: {
-    flexDirection: 'row',  
+    flexDirection: 'row',
     marginHorizontal: 10,
     borderBottomWidth: 0.2,
     borderBottomColor: Colors.gray,

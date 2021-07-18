@@ -5,11 +5,11 @@ import {Icon} from 'react-native-elements';
 
 import Colors from '../constants/Colors';
 
-import ShoppingListScreen from '../screens/ShoppingListScreen';
 import FavoritesScreen from '../screens/FavoritesScreen';
 
 import PantryStackNavigator from './PantryStackNavigator';
 import RecipeStackNavigator from './RecipeStackNavigator';
+import ShoppingListStackNavigator from './ShoppingListStackNavigator';
 
 const BottomTabNavigator = () => {
   const Tab = createBottomTabNavigator();
@@ -20,8 +20,6 @@ const BottomTabNavigator = () => {
           tabBarIcon: ({focused, color, size}) => {
             let iconName;
             let iconType;
-
-            // 'focused' can be use to have icon conditionally (like outline or not)
 
             if (route.name === 'Pantry') {
               iconName = 'carrot';
@@ -53,7 +51,7 @@ const BottomTabNavigator = () => {
           component={RecipeStackNavigator}
           initialParams={{isGo: false}}
         />
-        <Tab.Screen name="Shopping List" component={ShoppingListScreen} />
+        <Tab.Screen name="Shopping List" component={ShoppingListStackNavigator} />
         <Tab.Screen name="Favorites" component={FavoritesScreen} />
       </Tab.Navigator>
     </NavigationContainer>

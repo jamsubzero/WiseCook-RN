@@ -90,3 +90,29 @@ export async function getMultipleSelectedIngs(catIdArr) {
 
  return allSelectedIngArr; //parse back to array
 }
+
+export async function getShoppingList() {
+  try {
+    var savedShoppingStr = await AsyncStorage.getItem('@shopping_list');
+  } catch (e) {
+    console.log('Error getting shopping list.');
+  }
+
+  var selectedIngArr = [];
+
+  if (savedShoppingStr) {
+    selectedIngArr = JSON.parse(savedShoppingStr);
+  }
+
+  return selectedIngArr;
+}
+
+export async function saveShoppingList(selectedIngArr) {
+  try {
+    await AsyncStorage.setItem('@shopping_list',
+      JSON.stringify(selectedIngArr),
+    );
+  } catch (e) {
+    console.log('Error saving shopping list.');
+  }
+}
