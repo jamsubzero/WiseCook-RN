@@ -26,16 +26,18 @@ const MyPantryScreen = props => {
     });
   }, []);
 
-  const onAddToShoppingListHandler = async id => {
+  const onAddToShoppingListHandler = async (id, ingCategory) => {
     if (!id) {
       console.log('Error saving ing to shopping list, id is empty');
       return;
     }
     var shoppingListFromStorage = await getShoppingList();
 
-    const selectedIngIndex = shoppingListFromStorage.findIndex(ing => ing.id === id);
+    const selectedIngIndex = shoppingListFromStorage.findIndex(
+      ing => ing.id === id,
+    );
     if (selectedIngIndex < 0) {
-      shoppingListFromStorage.push({id: id, isChecked: false});
+      shoppingListFromStorage.push({id: id, category: ingCategory, isChecked: false});
       ToastAndroid.show(`Added to your shopping list`, ToastAndroid.SHORT);
     } else {
       shoppingListFromStorage.splice(selectedIngIndex, 1);
@@ -53,27 +55,15 @@ const MyPantryScreen = props => {
         <Text style={{color: Colors.primaryColor}}>
           {titleCase(itemData.item.name)}
         </Text>
-        {isOnShoppingList ? (
-          <TouchableOpacity
-            onPress={onAddToShoppingListHandler.bind(this, itemData.item.id)}>
-            <FontAwesome5Icon
-              name="cart-plus"
-              size={16}
-              color="green"
-              style={{marginRight: 10}}
-            />
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity
-            onPress={onAddToShoppingListHandler.bind(this, itemData.item.id)}>
-            <FontAwesome5Icon
-              name="cart-plus"
-              size={16}
-              color="black"
-              style={{marginRight: 10}}
-            />
-          </TouchableOpacity>
-        )}
+        <TouchableOpacity
+          onPress={onAddToShoppingListHandler.bind(this, itemData.item.id, itemData.item.ingredientCategory)}>
+          <FontAwesome5Icon
+            name="cart-plus"
+            size={16}
+            color={isOnShoppingList ? 'green' : 'black'}
+            style={{marginRight: 10}}
+          />
+        </TouchableOpacity>
       </View>
     );
   };

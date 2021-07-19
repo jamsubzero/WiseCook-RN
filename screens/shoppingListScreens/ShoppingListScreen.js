@@ -21,6 +21,7 @@ import APIUrls from '../../constants/APIUrls';
 import ConnectionErrorMessage from '../../components/ConnectionErrorMessage';
 import Colors from '../../constants/Colors';
 import {titleCase} from '../../utils/StringUtil';
+import NoRecipeFound from '../../components/NoRecipeFound';
 
 const ShoppingListScreen = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -100,6 +101,16 @@ const ShoppingListScreen = () => {
     return <ConnectionErrorMessage />;
   }
 
+  if (!shoppingList || shoppingList.length <= 0) {
+    return (
+      <NoRecipeFound
+        message={`Your shopping list is currently empty.
+You can add some from 'My pantry' or from missing
+ingredients in a recipe.`}
+      />
+    );
+  }
+
   let TouchableCmp = TouchableOpacity;
   if (Platform.Version >= 21) {
     TouchableCmp = TouchableNativeFeedback;
@@ -139,10 +150,9 @@ const ShoppingListScreen = () => {
     setShoppingList(ingList);
   };
 
-
   const onCheckAllToggleHandler = async () => {
     var ingList = shoppingList.slice();
-    for(var ing of ingList){
+    for (var ing of ingList) {
       ing.isChecked = !isAllChecked;
     }
 
@@ -151,7 +161,7 @@ const ShoppingListScreen = () => {
     setShoppingList(ingList);
     setIsAllChecked(!isAllChecked);
     setCheckedCount(isAllChecked ? 0 : ingList.length);
-  }
+  };
 
   const addToPantryHandler = () => {};
 

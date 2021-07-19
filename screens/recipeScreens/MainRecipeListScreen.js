@@ -183,10 +183,10 @@ const MainRecipeListScreen = props => {
       ) : (
         <NoRecipeFound
           message={`Sorry, this is just how wiser as I could go.
-          Rest assured my creator is adding new recipes
-          everyday so I can get even more wiser.
-       
-          Kindly adjust your filters. Thank you.`}
+Rest assured my creator is adding new recipes
+everyday so I can get even more wiser.
+
+Kindly adjust your filters. Thank you.`}
         />
       )}
     </View>

@@ -30,29 +30,16 @@ const IngredientAction = props => {
         />
       );
     } else {
-      if (isOnShoppingList) {
-        return (
-          <TouchableOpacity onPress={onToggleShoppingListHandler}>
-            <FontAwesome5Icon
-              name="cart-plus"
-              size={16}
-              color="green"
-              style={styles.iconStyle}
-            />
-          </TouchableOpacity>
-        );
-      } else {
-        return (
-          <TouchableOpacity onPress={onToggleShoppingListHandler}>
-            <FontAwesome5Icon
-              name="cart-plus"
-              size={16}
-              color="black"
-              style={styles.iconStyle}
-            />
-          </TouchableOpacity>
-        );
-      }
+      return (
+        <TouchableOpacity onPress={onToggleShoppingListHandler}>
+          <FontAwesome5Icon
+            name="cart-plus"
+            size={16}
+            color={isOnShoppingList ? 'green' : 'black'}
+            style={styles.iconStyle}
+          />
+        </TouchableOpacity>
+      );
     }
   } else {
     return null;

@@ -33,12 +33,12 @@ const RecipeIngredientList = props => {
     setShoppingList(shoppingListFromStorage);
   };
 
-  const onToggleShoppingListHandler = async (id) => {
+  const onToggleShoppingListHandler = async (id, ingCategory) => {
     var shoppingListFromStorage = await getShoppingList();
 
     const selectedIngIndex = shoppingListFromStorage.findIndex(ing => ing.id === id);
     if (selectedIngIndex < 0) {
-      shoppingListFromStorage.push({id: id, isChecked: false});
+      shoppingListFromStorage.push({id: id, category: ingCategory, isChecked: false});
       ToastAndroid.show(`Added to your shopping list`, ToastAndroid.SHORT);
     } else {
       shoppingListFromStorage.splice(selectedIngIndex, 1);
@@ -64,6 +64,7 @@ const RecipeIngredientList = props => {
           isOnPantry={selectedRecipes.includes(ingredient.ingredientCode)}
           isOnShoppingList={shoppingList.findIndex(ing => ing.id === ingredient.ingredientCode) >= 0}
           ingCode={ingredient.ingredientCode}
+          ingCategory={ingredient.ingredientCategory}
           onToggleShoppingList={onToggleShoppingListHandler}
         />
       ))}

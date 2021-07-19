@@ -9,11 +9,12 @@ const RecipeIngredientItem = props => {
   const isOnShoppingList = props.isOnShoppingList;
   const ingredient = props.ingredient;
   const ingCode = props.ingCode;
+  const ingCategory = props.ingCategory;
   const isSupported = props.ingCode ? true : false;
   const textColor = isOnPantry ? Colors.green : 'black';
 
   const onToggleShoppingListHandler = () => {
-    props.onToggleShoppingList(ingCode);
+    props.onToggleShoppingList(ingCode, ingCategory);
   };
 
   return (
