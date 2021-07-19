@@ -90,13 +90,20 @@ const ShoppingListScreen = () => {
     getIngredientsFromWiseCookApi();
   };
 
+  const onToggleCheckHandler = async id => {
+    var ingList = shoppingList.slice();
+    const ingIndex = shoppingList.findIndex(ing => ing.id === id);
+    ingList[ingIndex].isChecked = !ingList[ingIndex].isChecked;
+    await saveShoppingList(ingList);
+    setShoppingList(ingList);
+  };
+
   const renderShoppingList = itemData => {
     const ingredient = ingredients.find(ing => ing.id === itemData.item.id);
     if (!ingredient) {
       return null;
     }
     const isChecked = itemData.item.isChecked;
-    const ingTextColor = isChecked ? Colors.green : Colors.primaryColor;
     return (
       <View style={styles.ingredientRowContainer}>
         <View style={styles.deleteIconContainer}>
@@ -105,21 +112,27 @@ const ShoppingListScreen = () => {
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity>
-          <View style={styles.ingredientContainer}>
-            <Text style={{color: ingTextColor, width: '95%'}}>
-              {titleCase(ingredient.name)}
-            </Text>
-            {isChecked ? (
+        <TouchableOpacity
+          onPress={onToggleCheckHandler.bind(this, itemData.item.id)}>
+          {isChecked ? (
+            <View style={styles.ingredientContainer}>
+              <Text style={{color: Colors.green, width: '95%', textDecorationLine: 'line-through'}}>
+                {titleCase(ingredient.name)}
+              </Text>
               <MaterialIcons name="check-box" size={19} color={Colors.green} />
-            ) : (
+            </View>
+          ) : (
+            <View style={styles.ingredientContainer}>
+              <Text style={{color: Colors.gray, width: '95%'}}>
+                {titleCase(ingredient.name)}
+              </Text>
               <MaterialIcons
                 name="check-box-outline-blank"
                 size={19}
                 color={Colors.gray}
               />
-            )}
-          </View>
+            </View>
+          )}
         </TouchableOpacity>
       </View>
     );
