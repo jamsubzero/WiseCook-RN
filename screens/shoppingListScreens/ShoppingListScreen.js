@@ -27,6 +27,7 @@ const ShoppingListScreen = () => {
   const [ingredients, setIngredients] = useState([]); // array of ingredientCategories
   const [shoppingList, setShoppingList] = useState([]);
   const isFocused = useIsFocused();
+  const [checkedCount, setCheckedCount] = useState(0);
 
   useEffect(() => {
     getShoppingList().then(shoppingListFromStorage => {
@@ -40,6 +41,7 @@ const ShoppingListScreen = () => {
       );
       arranged.push(...allChecked);
 
+      setCheckedCount(allChecked.length);
       setShoppingList(arranged);
       console.log(shoppingListFromStorage);
     });
@@ -119,6 +121,7 @@ const ShoppingListScreen = () => {
     var allChecked = ingList.filter(ing => ing.isChecked === true);
     arranged.push(...allChecked);
 
+    setCheckedCount(allChecked.length);
     setShoppingList(arranged);
   };
 
@@ -127,6 +130,9 @@ const ShoppingListScreen = () => {
     const ingIndex = ingList.findIndex(ing => ing.id === id);
     ingList.splice(ingIndex, 1);
     await saveShoppingList(ingList);
+    var allChecked = ingList.filter(ing => ing.isChecked === true);
+
+    setCheckedCount(allChecked.length);
     setShoppingList(ingList);
   };
 
@@ -181,7 +187,7 @@ const ShoppingListScreen = () => {
   return (
     <View style={styles.screen}>
       <View style={styles.topControllerContainer}>
-        <Text style={{color: Colors.gray}}>2/50</Text>
+        <Text style={{color: Colors.gray}}>{`${checkedCount} / ${shoppingList.length}`}</Text>
 
         <View style={{flexDirection: 'row'}}>
           <Text style={{color: Colors.gray}}>{`All `}</Text>
