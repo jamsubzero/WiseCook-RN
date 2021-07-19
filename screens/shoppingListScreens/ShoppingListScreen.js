@@ -28,7 +28,13 @@ const ShoppingListScreen = () => {
 
   useEffect(() => {
     getShoppingList().then(shoppingListFromStorage => {
-      setShoppingList(shoppingListFromStorage);
+      var arranged = [];
+      var allUnChecked = shoppingListFromStorage.filter(ing => ing.isChecked === false);
+      arranged.push(...allUnChecked);
+      var allChecked = shoppingListFromStorage.filter(ing => ing.isChecked === true);
+      arranged.push(...allChecked);
+
+      setShoppingList(arranged);
       console.log(shoppingListFromStorage);
     });
   }, [isFocused]);
@@ -92,11 +98,26 @@ const ShoppingListScreen = () => {
 
   const onToggleCheckHandler = async id => {
     var ingList = shoppingList.slice();
-    const ingIndex = shoppingList.findIndex(ing => ing.id === id);
+    const ingIndex = ingList.findIndex(ing => ing.id === id);
     ingList[ingIndex].isChecked = !ingList[ingIndex].isChecked;
     await saveShoppingList(ingList);
-    setShoppingList(ingList);
+
+    var arranged = [];
+    var allUnChecked = ingList.filter(ing => ing.isChecked === false);
+    arranged.push(...allUnChecked);
+    var allChecked = ingList.filter(ing => ing.isChecked === true);
+    arranged.push(...allChecked);
+
+    setShoppingList(arranged);
   };
+
+  const onDeleteIngInListHandler = async (id) => {
+    var ingList = shoppingList.slice();
+    const ingIndex = ingList.findIndex(ing => ing.id === id);
+    ingList.splice(ingIndex, 1);
+    await saveShoppingList(ingList);
+    setShoppingList(ingList);
+  }
 
   const renderShoppingList = itemData => {
     const ingredient = ingredients.find(ing => ing.id === itemData.item.id);
@@ -107,7 +128,7 @@ const ShoppingListScreen = () => {
     return (
       <View style={styles.ingredientRowContainer}>
         <View style={styles.deleteIconContainer}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={onDeleteIngInListHandler.bind(this, itemData.item.id)}>
             <EvilIcons name="minus" size={21} color={Colors.lightRed} />
           </TouchableOpacity>
         </View>
@@ -116,7 +137,12 @@ const ShoppingListScreen = () => {
           onPress={onToggleCheckHandler.bind(this, itemData.item.id)}>
           {isChecked ? (
             <View style={styles.ingredientContainer}>
-              <Text style={{color: Colors.green, width: '95%', textDecorationLine: 'line-through'}}>
+              <Text
+                style={{
+                  color: Colors.green,
+                  width: '95%',
+                  textDecorationLine: 'line-through',
+                }}>
                 {titleCase(ingredient.name)}
               </Text>
               <MaterialIcons name="check-box" size={19} color={Colors.green} />
