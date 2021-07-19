@@ -91,11 +91,11 @@ const ShoppingListScreen = () => {
   };
 
   const renderShoppingList = itemData => {
-    const ingredient = ingredients.find(ing => ing.id === itemData.item);
+    const ingredient = ingredients.find(ing => ing.id === itemData.item.id);
     if (!ingredient) {
       return null;
     }
-    const isChecked = true;
+    const isChecked = itemData.item.isChecked;
     const ingTextColor = isChecked ? Colors.green : Colors.primaryColor;
     return (
       <View style={styles.ingredientRowContainer}>
@@ -129,7 +129,7 @@ const ShoppingListScreen = () => {
     <View style={styles.screen}>
       <View style={styles.flatListContainer}>
         <FlatList
-          keyExtractor={item => item}
+          keyExtractor={item => item.id}
           style={styles.flatList}
           data={shoppingList}
           renderItem={renderShoppingList}

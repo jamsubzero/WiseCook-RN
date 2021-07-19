@@ -33,9 +33,9 @@ const MyPantryScreen = props => {
     }
     var shoppingListFromStorage = await getShoppingList();
 
-    const selectedIngIndex = shoppingListFromStorage.indexOf(id);
+    const selectedIngIndex = shoppingListFromStorage.findIndex(ing => ing.id === id);
     if (selectedIngIndex < 0) {
-      shoppingListFromStorage.push(id);
+      shoppingListFromStorage.push({id: id, isChecked: false});
       ToastAndroid.show(`Added to your shopping list`, ToastAndroid.SHORT);
     } else {
       shoppingListFromStorage.splice(selectedIngIndex, 1);
@@ -47,7 +47,7 @@ const MyPantryScreen = props => {
 
   const renderIngs = itemData => {
     const isOnShoppingList =
-      shoppingList.findIndex(ing => ing === itemData.item.id) >= 0;
+      shoppingList.findIndex(ing => ing.id === itemData.item.id) >= 0;
     return (
       <View style={styles.ingredientContainer}>
         <Text style={{color: Colors.primaryColor}}>
