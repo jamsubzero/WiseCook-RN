@@ -6,6 +6,8 @@ import {
   FlatList,
   ActivityIndicator,
   TouchableOpacity,
+  Platform,
+  TouchableNativeFeedback,
 } from 'react-native';
 import {useIsFocused} from '@react-navigation/native';
 import Snackbar from 'react-native-snackbar';
@@ -29,9 +31,13 @@ const ShoppingListScreen = () => {
   useEffect(() => {
     getShoppingList().then(shoppingListFromStorage => {
       var arranged = [];
-      var allUnChecked = shoppingListFromStorage.filter(ing => ing.isChecked === false);
+      var allUnChecked = shoppingListFromStorage.filter(
+        ing => ing.isChecked === false,
+      );
       arranged.push(...allUnChecked);
-      var allChecked = shoppingListFromStorage.filter(ing => ing.isChecked === true);
+      var allChecked = shoppingListFromStorage.filter(
+        ing => ing.isChecked === true,
+      );
       arranged.push(...allChecked);
 
       setShoppingList(arranged);
@@ -90,6 +96,11 @@ const ShoppingListScreen = () => {
     return <ConnectionErrorMessage />;
   }
 
+  let TouchableCmp = TouchableOpacity;
+  if (Platform.Version >= 21) {
+    TouchableCmp = TouchableNativeFeedback;
+  }
+
   const onRefreshHandler = () => {
     setIngredients([]);
     setIsLoading(true);
@@ -111,13 +122,15 @@ const ShoppingListScreen = () => {
     setShoppingList(arranged);
   };
 
-  const onDeleteIngInListHandler = async (id) => {
+  const onDeleteIngInListHandler = async id => {
     var ingList = shoppingList.slice();
     const ingIndex = ingList.findIndex(ing => ing.id === id);
     ingList.splice(ingIndex, 1);
     await saveShoppingList(ingList);
     setShoppingList(ingList);
-  }
+  };
+
+  const addToPantryHandler = () => {};
 
   const renderShoppingList = itemData => {
     const ingredient = ingredients.find(ing => ing.id === itemData.item.id);
@@ -128,7 +141,8 @@ const ShoppingListScreen = () => {
     return (
       <View style={styles.ingredientRowContainer}>
         <View style={styles.deleteIconContainer}>
-          <TouchableOpacity onPress={onDeleteIngInListHandler.bind(this, itemData.item.id)}>
+          <TouchableOpacity
+            onPress={onDeleteIngInListHandler.bind(this, itemData.item.id)}>
             <EvilIcons name="minus" size={21} color={Colors.lightRed} />
           </TouchableOpacity>
         </View>
@@ -166,6 +180,18 @@ const ShoppingListScreen = () => {
 
   return (
     <View style={styles.screen}>
+      <View style={styles.topControllerContainer}>
+        <Text style={{color: Colors.gray}}>2/50</Text>
+
+        <View style={{flexDirection: 'row'}}>
+          <Text style={{color: Colors.gray}}>{`All `}</Text>
+          <MaterialIcons
+            name="check-box-outline-blank"
+            size={19}
+            color={Colors.gray}
+          />
+        </View>
+      </View>
       <View style={styles.flatListContainer}>
         <FlatList
           keyExtractor={item => item.id}
@@ -176,6 +202,16 @@ const ShoppingListScreen = () => {
           refreshing={isLoading}
         />
       </View>
+      <View style={styles.bottomControlContainer}>
+        <View style={styles.touchable}>
+          <TouchableCmp onPress={addToPantryHandler}>
+            <View style={styles.buttonContainer}>
+              <MaterialIcons name="playlist-add" size={20} color="white" />
+              <Text style={styles.buttonLabel}>Add to pantry</Text>
+            </View>
+          </TouchableCmp>
+        </View>
+      </View>
     </View>
   );
 };
@@ -185,12 +221,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   flatList: {
-    flex: 1,
     marginTop: 5,
   },
   flatListContainer: {
-    flex: 1,
-    marginBottom: 10,
+    width: '100%',
+    height: '87%',
+    paddingBottom: 5,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 5,
@@ -213,6 +249,43 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     height: 40,
     width: '90%',
+  },
+  topControllerContainer: {
+    flexDirection: 'row',
+    height: '5%',
+    width: '100%',
+    paddingHorizontal: 10,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderBottomWidth: 0.5,
+    borderColor: Colors.primaryColor,
+  },
+  bottomControlContainer: {
+    height: '8%',
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 0,
+    borderTopWidth: 0.5,
+    borderTopColor: Colors.primaryColor,
+  },
+  touchable: {
+    borderRadius: 10,
+    overflow: 'hidden',
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    padding: 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Colors.blue,
+    height: 35,
+    width: 200,
+  },
+  buttonLabel: {
+    color: 'white',
+    fontSize: 18,
+    marginLeft: 3,
   },
 });
 
