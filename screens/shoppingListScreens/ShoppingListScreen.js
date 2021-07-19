@@ -28,6 +28,7 @@ const ShoppingListScreen = () => {
   const [shoppingList, setShoppingList] = useState([]);
   const isFocused = useIsFocused();
   const [checkedCount, setCheckedCount] = useState(0);
+  const [isAllChecked, setIsAllChecked] = useState(false);
 
   useEffect(() => {
     getShoppingList().then(shoppingListFromStorage => {
@@ -43,6 +44,7 @@ const ShoppingListScreen = () => {
 
       setCheckedCount(allChecked.length);
       setShoppingList(arranged);
+      setIsAllChecked(allChecked.length === shoppingListFromStorage.length);
       console.log(shoppingListFromStorage);
     });
   }, [isFocused]);
@@ -121,6 +123,7 @@ const ShoppingListScreen = () => {
     var allChecked = ingList.filter(ing => ing.isChecked === true);
     arranged.push(...allChecked);
 
+    setIsAllChecked(allChecked.length === ingList.length);
     setCheckedCount(allChecked.length);
     setShoppingList(arranged);
   };
@@ -135,6 +138,20 @@ const ShoppingListScreen = () => {
     setCheckedCount(allChecked.length);
     setShoppingList(ingList);
   };
+
+
+  const onCheckAllToggleHandler = async () => {
+    var ingList = shoppingList.slice();
+    for(var ing of ingList){
+      ing.isChecked = !isAllChecked;
+    }
+
+    await saveShoppingList(ingList);
+
+    setShoppingList(ingList);
+    setIsAllChecked(!isAllChecked);
+    setCheckedCount(isAllChecked ? 0 : ingList.length);
+  }
 
   const addToPantryHandler = () => {};
 
@@ -187,16 +204,21 @@ const ShoppingListScreen = () => {
   return (
     <View style={styles.screen}>
       <View style={styles.topControllerContainer}>
-        <Text style={{color: Colors.gray}}>{`${checkedCount} / ${shoppingList.length}`}</Text>
+        <Text
+          style={{
+            color: Colors.gray,
+          }}>{`${checkedCount} / ${shoppingList.length}`}</Text>
 
-        <View style={{flexDirection: 'row'}}>
-          <Text style={{color: Colors.gray}}>{`All `}</Text>
-          <MaterialIcons
-            name="check-box-outline-blank"
-            size={19}
-            color={Colors.gray}
-          />
-        </View>
+        <TouchableOpacity onPress={onCheckAllToggleHandler}>
+          <View style={{flexDirection: 'row'}}>
+            <Text style={{color: Colors.gray}}>{`All `}</Text>
+            <MaterialIcons
+              name={isAllChecked ? 'check-box' : 'check-box-outline-blank'}
+              size={19}
+              color={isAllChecked ? Colors.green : Colors.gray}
+            />
+          </View>
+        </TouchableOpacity>
       </View>
       <View style={styles.flatListContainer}>
         <FlatList
