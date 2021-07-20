@@ -340,11 +340,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 0,
-    borderTopWidth: 0.5,
     borderTopColor: Colors.primaryColor,
   },
   touchable: {
-    borderRadius: 10,
+    borderRadius: 20,
     overflow: 'hidden',
   },
   buttonContainer: {

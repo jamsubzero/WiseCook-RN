@@ -116,3 +116,29 @@ export async function saveShoppingList(selectedIngArr) {
     console.log('Error saving shopping list.');
   }
 }
+
+export async function getHeartedRecipes() {
+  try {
+    var savedHeartedRecipesStr = await AsyncStorage.getItem('@hearted_recipes');
+  } catch (e) {
+    console.log('Error getting recipe list.');
+  }
+
+  var heartedRecipesArr = [];
+
+  if (savedHeartedRecipesStr) {
+    heartedRecipesArr = JSON.parse(savedHeartedRecipesStr);
+  }
+
+  return heartedRecipesArr;
+}
+
+export async function saveHeartedRecipes(heartedRecipesArr) {
+  try {
+    await AsyncStorage.setItem('@hearted_recipes',
+      JSON.stringify(heartedRecipesArr),
+    );
+  } catch (e) {
+    console.log('Error saving hearted recipes.');
+  }
+}

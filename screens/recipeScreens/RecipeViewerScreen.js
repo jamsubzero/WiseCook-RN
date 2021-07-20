@@ -6,8 +6,11 @@ import {
   ActivityIndicator,
   ImageBackground,
   ScrollView,
+  TouchableOpacity,
+  ToastAndroid
 } from 'react-native';
 import Snackbar from 'react-native-snackbar';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 import APIUrls from '../../constants/APIUrls';
 import Colors from '../../constants/Colors';
@@ -15,12 +18,16 @@ import ConnectionErrorMessage from '../../components/ConnectionErrorMessage';
 import RecipeInfo from '../../components/RecipeInfo';
 import RecipeIngredientList from '../../components/RecipeIngredientList';
 import RecipeDirectionList from '../../components/RecipeDirectionList';
-
+import {
+  getHeartedRecipes,
+  saveHeartedRecipes
+} from '../../components/asyncStorage/selectedIngredients';
 const RecipeViewerScreen = props => {
   const {selectedRecipeId} = props.route.params;
   const URL = APIUrls.RECIPE_DETAILS_URL + selectedRecipeId;
   const [isLoading, setIsLoading] = useState(true);
   const [recipe, setRecipe] = useState('');
+  const [isHearted, setIsHearted] = useState(false);
 
   useEffect(() => {
     console.log(selectedRecipeId);
@@ -31,7 +38,7 @@ const RecipeViewerScreen = props => {
     return fetch(URL)
       .then(response => response.json())
       .then(json => {
-        setRecipe(json);
+        initializeRecipe(json);
       })
       .catch(error => {
         console.log(error);
@@ -50,6 +57,15 @@ const RecipeViewerScreen = props => {
       })
       .finally(() => setIsLoading(false));
   };
+
+  const initializeRecipe = async (json) => {
+    var heartedListFromStorage = await getHeartedRecipes();
+    const selectedRecIndex = heartedListFromStorage.findIndex(recId => recId === json.id);
+    if (selectedRecIndex >= 0) {
+      setIsHearted(true);
+    }
+    setRecipe(json);
+  }
 
   if (isLoading) {
     return (
@@ -76,6 +92,23 @@ const RecipeViewerScreen = props => {
     }
   };
 
+  const onToggleHearted = async () => {
+
+    var heartedListFromStorage = await getHeartedRecipes();
+    const selectedRecIndex = heartedListFromStorage.findIndex(recId => recId === recipe.id);
+
+    if (selectedRecIndex < 0) {
+      heartedListFromStorage.push(recipe.id);
+      ToastAndroid.show(`Added to favorites`, ToastAndroid.SHORT);
+    } else {
+      heartedListFromStorage.splice(selectedRecIndex, 1);
+      ToastAndroid.show(`Removed from favorites`, ToastAndroid.SHORT);
+    }
+
+    await saveHeartedRecipes(heartedListFromStorage);
+    setIsHearted(!isHearted);
+  }
+
   return (
     <ScrollView style={styles.screen} onScroll={onScrollHandler}>
       <View style={styles.mealHeader}>
@@ -86,6 +119,13 @@ const RecipeViewerScreen = props => {
             <Text style={styles.title} numberOfLines={1}>
               {recipe.title}
             </Text>
+            <TouchableOpacity onPress={onToggleHearted}>
+              <FontAwesome
+                name={isHearted ? "heart" : "heart-o"}
+                size={25}
+                color={isHearted ? Colors.primaryColor : "white"}
+              />
+            </TouchableOpacity>
           </View>
         </ImageBackground>
       </View>
@@ -98,7 +138,6 @@ const RecipeViewerScreen = props => {
       <RecipeIngredientList ingredients={recipe.ingredients} />
 
       <RecipeDirectionList directions={recipe.instructions} />
-
     </ScrollView>
   );
 };
@@ -124,14 +163,19 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   titleContainer: {
+    flexDirection: 'row',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    paddingVertical: 10,
-    paddingHorizontal: 13,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    height: 40,
+    paddingHorizontal: 5,
+    paddingRight: 10,
   },
   title: {
-    fontSize: 20,
+    fontSize: 18,
     color: 'white',
-    textAlign: 'center',
+    textAlign: 'left',
+    width: '90%',
   },
   mealDetailContainer: {
     flexDirection: 'row',
