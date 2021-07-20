@@ -26,7 +26,7 @@ const MyPantryScreen = props => {
     });
   }, []);
 
-  const onAddToShoppingListHandler = async (id, ingCategory) => {
+  const onAddToShoppingListHandler = async (id) => {
     if (!id) {
       console.log('Error saving ing to shopping list, id is empty');
       return;
@@ -37,7 +37,7 @@ const MyPantryScreen = props => {
       ing => ing.id === id,
     );
     if (selectedIngIndex < 0) {
-      shoppingListFromStorage.push({id: id, category: ingCategory, isChecked: false});
+      shoppingListFromStorage.push({id: id, isChecked: false});
       ToastAndroid.show(`Added to your shopping list`, ToastAndroid.SHORT);
     } else {
       shoppingListFromStorage.splice(selectedIngIndex, 1);
@@ -56,7 +56,7 @@ const MyPantryScreen = props => {
           {titleCase(itemData.item.name)}
         </Text>
         <TouchableOpacity
-          onPress={onAddToShoppingListHandler.bind(this, itemData.item.id, itemData.item.ingredientCategory)}>
+          onPress={onAddToShoppingListHandler.bind(this, itemData.item.id)}>
           <FontAwesome5Icon
             name="cart-plus"
             size={16}

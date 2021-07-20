@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Platform,
   TouchableNativeFeedback,
+  ToastAndroid,
 } from 'react-native';
 import {useIsFocused} from '@react-navigation/native';
 import Snackbar from 'react-native-snackbar';
@@ -16,6 +17,8 @@ import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import {
   getShoppingList,
   saveShoppingList,
+  getSelectedIngredients,
+  saveSelectedIngredients,
 } from '../../components/asyncStorage/selectedIngredients';
 import APIUrls from '../../constants/APIUrls';
 import ConnectionErrorMessage from '../../components/ConnectionErrorMessage';
@@ -163,7 +166,40 @@ ingredients in a recipe.`}
     setCheckedCount(isAllChecked ? 0 : ingList.length);
   };
 
-  const addToPantryHandler = () => {};
+  const addToPantryHandler = async () => {
+    var allChecked = shoppingList.filter(ing => ing.isChecked === true);
+
+    for (const checkedIng of allChecked) {
+      const ingredient = ingredients.find(ing => ing.id === checkedIng.id);
+      if (!ingredient) {
+        console.log(
+          'Something went wrong, ing in shopping list not found in ing list',
+        );
+        return;
+      }
+
+      let selectIngredientsFromStorage = await getSelectedIngredients(
+        ingredient.ingredientCategory,
+      );
+
+      const selectedIngIndex = selectIngredientsFromStorage.indexOf(
+        ingredient.id,
+      );
+      if (selectedIngIndex < 0) {
+        selectIngredientsFromStorage.push(ingredient.id);
+      }
+
+      await saveSelectedIngredients(
+        ingredient.ingredientCategory,
+        selectIngredientsFromStorage,
+      );
+    }
+
+    ToastAndroid.show(
+      `Checked ingredients are added to your pantry`,
+      ToastAndroid.SHORT,
+    );
+  };
 
   const renderShoppingList = itemData => {
     const ingredient = ingredients.find(ing => ing.id === itemData.item.id);
