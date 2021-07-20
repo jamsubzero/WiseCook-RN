@@ -5,7 +5,7 @@ import {Icon} from 'react-native-elements';
 
 import Colors from '../constants/Colors';
 
-import FavoritesScreen from '../screens/FavoritesScreen';
+import FavoritesStackNavigator from './FavoritesStackNavigator';
 
 import PantryStackNavigator from './PantryStackNavigator';
 import RecipeStackNavigator from './RecipeStackNavigator';
@@ -52,7 +52,7 @@ const BottomTabNavigator = () => {
           initialParams={{isGo: false}}
         />
         <Tab.Screen name="Shopping List" component={ShoppingListStackNavigator} />
-        <Tab.Screen name="Favorites" component={FavoritesScreen} />
+        <Tab.Screen name="Favorites" component={FavoritesStackNavigator} />
       </Tab.Navigator>
     </NavigationContainer>
   );

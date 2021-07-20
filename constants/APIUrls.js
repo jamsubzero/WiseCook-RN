@@ -5,5 +5,6 @@ export default {
     HOME_CONTENT_URL: "http://armin.isr.co.jp:8080/recipe/recipe-home?ings=",
     RECIPE_SEARCH_WITH_FILTER_URL: "http://armin.isr.co.jp:8080/recipe/by-ing/with-key?ings=",
     //http://armin.isr.co.jp:8080/recipe/by-ing/with-key?ings=2,4,5&keywords=lunch
-    RECIPE_SEARCH_BY_NAME_URL: "http://armin.isr.co.jp:8080/recipe/by-name?keyword="
+    RECIPE_SEARCH_BY_NAME_URL: "http://armin.isr.co.jp:8080/recipe/by-name?keyword=",
+    FAVORITES_URL: "http://armin.isr.co.jp:8080/recipe/favorites?recIds="
 }
