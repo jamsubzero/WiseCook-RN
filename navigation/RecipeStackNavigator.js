@@ -11,6 +11,7 @@ import OneIngredientRecipeListScreen from '../screens/recipeScreens/OneIngredien
 import RecipeViewerScreen from '../screens/recipeScreens/RecipeViewerScreen';
 import RecipeSearchScreen from '../screens/recipeScreens/RecipeSearchScreen';
 import CategoryRecipeListScreen from '../screens/recipeScreens/CategoryRecipeListScreen';
+import ImageHeader from '../components/ImageHeader';
 
 const RecipeStackNavigator = () => {
   const Stack = createStackNavigator();
@@ -44,7 +45,9 @@ const RecipeStackNavigator = () => {
         options={{
           headerTintColor: 'white',
           headerStyle: {backgroundColor: Colors.primaryColor},
-          headerTitle: 'WiseCook',
+          headerTitle: () => (
+            <ImageHeader />
+          ),
         }}
       />
       <Stack.Screen

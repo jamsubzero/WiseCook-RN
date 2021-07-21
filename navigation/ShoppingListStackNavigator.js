@@ -7,6 +7,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import Colors from '../constants/Colors';
 
 import ShoppingListScreen from '../screens/shoppingListScreens/ShoppingListScreen';
+import ImageHeader from '../components/ImageHeader';
 
 const ShoppingListStackNavigator = () => {
   const Stack = createStackNavigator();
@@ -19,7 +20,9 @@ const ShoppingListStackNavigator = () => {
           options={{
             headerTintColor: 'white',
             headerStyle: {backgroundColor: Colors.primaryColor},
-            headerTitle: 'Shopping List',
+            headerTitle: () => (
+              <ImageHeader />
+            ),
             headerRight: () => (
               <HeaderButtons style={{alignItems: 'center'}}>
                 <Button

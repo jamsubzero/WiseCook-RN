@@ -8,6 +8,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import Colors from '../constants/Colors';
 import FavoritesScreen from '../screens/favoritesScreens/FavoritesScreen';
 import RecipeViewerScreen from '../screens/recipeScreens/RecipeViewerScreen';
+import ImageHeader from '../components/ImageHeader';
 
 const FavoritesStackNavigator = () => {
   const Stack = createStackNavigator();
@@ -41,7 +42,9 @@ const FavoritesStackNavigator = () => {
         options={{
           headerTintColor: 'white',
           headerStyle: {backgroundColor: Colors.primaryColor},
-          headerTitle: 'Favorites'
+          headerTitle: () => (
+            <ImageHeader />
+          ),
         }}
       />
 
