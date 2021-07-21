@@ -54,8 +54,7 @@ const RecipeViewerScreen = props => {
             },
           },
         });
-      })
-      .finally(() => setIsLoading(false));
+      });
   };
 
   const initializeRecipe = async (json) => {
@@ -65,6 +64,7 @@ const RecipeViewerScreen = props => {
       setIsHearted(true);
     }
     setRecipe(json);
+    setIsLoading(false);
   }
 
   if (isLoading) {

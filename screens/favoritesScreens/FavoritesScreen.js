@@ -15,8 +15,9 @@ import APIUrls from '../../constants/APIUrls';
 import NoRecipeFound from '../../components/NoRecipeFound';
 import ConnectionErrorMessage from '../../components/ConnectionErrorMessage';
 import Card from '../../components/Card';
+import RecipeItem from '../../components/RecipeItem';
 
-const FavoritesScreen = () => {
+const FavoritesScreen = (props) => {
   const [isLoading, setIsLoading] = useState(true);
   const [favorites, setFavorites] = useState([]);
 
@@ -77,14 +78,16 @@ Add some by hearting a recipe.`}
     retrieveHeartedList();
   };
 
+  const onSelectRecipeHandler = (id) => {
+    props.navigation.navigate('ViewRecipe', {selectedRecipeId: id});
+  }
+
   const renderFavoriteList = itemData => {
     return (
-      <Card style={styles.cardStyle}>
-        <Image source={{uri: itemData.item.imageUrl}} style={styles.image} />
-        <Text numberOfLines={1} style={styles.recipeTitleStyle}>
-          {itemData.item.title}
-        </Text>
-      </Card>
+      <RecipeItem
+        itemData={itemData}
+        onSelectRecipe={onSelectRecipeHandler.bind(this, itemData.item.id)}
+      />
     );
   };
 
@@ -111,19 +114,19 @@ const styles = StyleSheet.create({
     marginVertical: 2,
     paddingRight: 5,
     padding: 0,
-    height: 50,
+    height: 80,
     borderRadius: 5,
     overflow: 'hidden',
   },
   image: {
-    width: 70,
-    height: 70,
+    width: 90,
+    height: 90,
   },
   recipeTitleStyle: {
-    fontSize: 15,
+    fontSize: 16,
     color: Colors.gray,
     marginHorizontal: 5,
-    width: '80%'
+    width: '80%',
   },
 });
 
