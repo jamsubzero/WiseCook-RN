@@ -1,4 +1,4 @@
-package com.wisecook;
+package com.jamapps.wisecook;
 
 import com.facebook.react.ReactActivity;
 

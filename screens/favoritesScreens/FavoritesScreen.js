@@ -17,7 +17,7 @@ import ConnectionErrorMessage from '../../components/ConnectionErrorMessage';
 import Card from '../../components/Card';
 import RecipeItem from '../../components/RecipeItem';
 
-const FavoritesScreen = (props) => {
+const FavoritesScreen = props => {
   const [isLoading, setIsLoading] = useState(true);
   const [favorites, setFavorites] = useState([]);
 
@@ -57,10 +57,12 @@ const FavoritesScreen = (props) => {
   };
 
   if (!favorites || favorites.length <= 0) {
-    <NoRecipeFound
-      message={`You currently don't have favorite recipe.
+    return (
+      <NoRecipeFound
+        message={`You currently don't have favorite recipes.
 Add some by hearting a recipe.`}
-    />;
+      />
+    );
   }
 
   if (isLoading) {
@@ -78,9 +80,9 @@ Add some by hearting a recipe.`}
     retrieveHeartedList();
   };
 
-  const onSelectRecipeHandler = (id) => {
+  const onSelectRecipeHandler = id => {
     props.navigation.navigate('ViewRecipe', {selectedRecipeId: id});
-  }
+  };
 
   const renderFavoriteList = itemData => {
     return (

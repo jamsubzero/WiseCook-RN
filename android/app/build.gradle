@@ -131,7 +131,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.wisecook"
+        applicationId "com.jamapps.wisecook"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
