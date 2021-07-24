@@ -142,3 +142,26 @@ export async function saveHeartedRecipes(heartedRecipesArr) {
     console.log('Error saving hearted recipes.');
   }
 }
+
+export async function getInterstitialCount() {
+  let count = 1;
+  try {
+    var intersCountStr = await AsyncStorage.getItem('@inters_count');
+    console.log("intersCountStr");
+    console.log(intersCountStr);
+    count = parseInt(intersCountStr);
+  } catch (e) {
+    console.log('Error getting intersCount:', e);
+    count = 1;
+  }
+
+  return count;
+}
+
+export async function saveInterstitialCount(inters_count) {
+  try {
+    await AsyncStorage.setItem('@inters_count', inters_count.toString());
+  } catch (e) {
+    console.log('Error saving inters count.');
+  }
+}

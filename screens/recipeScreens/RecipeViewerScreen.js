@@ -22,7 +22,11 @@ import RecipeDirectionList from '../../components/RecipeDirectionList';
 import {
   getHeartedRecipes,
   saveHeartedRecipes,
+  getInterstitialCount,
+  saveInterstitialCount,
 } from '../../components/asyncStorage/selectedIngredients';
+import Preferences from '../../constants/Preferences';
+
 const RecipeViewerScreen = props => {
   const {selectedRecipeId} = props.route.params;
   const URL = APIUrls.RECIPE_DETAILS_URL + selectedRecipeId;
@@ -36,12 +40,15 @@ const RecipeViewerScreen = props => {
     getRecipeDetailsFromWiseCookApi();
   }, []);
 
-  const showInterstitial = () => {
-    Appodeal.isLoaded(AppodealAdType.INTERSTITIAL, result => {
-      console.log("INTERSTITIAL loaded: " + result)
-      if (result) { // and it's time to show
+  const showInterstitial = async () => {
+    let intersCount = await getInterstitialCount();
+    Appodeal.isLoaded(AppodealAdType.INTERSTITIAL, loaded => {
+      console.log('INTERSTITIAL loaded: ' + loaded);
+      if (loaded && intersCount === Preferences.RECIPE_VIEW_PER_INTERS) {
+        saveInterstitialCount(1);
         Appodeal.show(AppodealAdType.INTERSTITIAL);
-        //TODO record count here
+      } else {
+        saveInterstitialCount((intersCount + 1));
       }
     });
   };
