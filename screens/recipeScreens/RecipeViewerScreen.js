@@ -7,10 +7,11 @@ import {
   ImageBackground,
   ScrollView,
   TouchableOpacity,
-  ToastAndroid
+  ToastAndroid,
 } from 'react-native';
 import Snackbar from 'react-native-snackbar';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import {Appodeal, AppodealAdType} from 'react-native-appodeal';
 
 import APIUrls from '../../constants/APIUrls';
 import Colors from '../../constants/Colors';
@@ -20,7 +21,7 @@ import RecipeIngredientList from '../../components/RecipeIngredientList';
 import RecipeDirectionList from '../../components/RecipeDirectionList';
 import {
   getHeartedRecipes,
-  saveHeartedRecipes
+  saveHeartedRecipes,
 } from '../../components/asyncStorage/selectedIngredients';
 const RecipeViewerScreen = props => {
   const {selectedRecipeId} = props.route.params;
@@ -30,9 +31,20 @@ const RecipeViewerScreen = props => {
   const [isHearted, setIsHearted] = useState(false);
 
   useEffect(() => {
+    showInterstitial();
     console.log(selectedRecipeId);
     getRecipeDetailsFromWiseCookApi();
   }, []);
+
+  const showInterstitial = () => {
+    Appodeal.isLoaded(AppodealAdType.INTERSTITIAL, result => {
+      console.log("INTERSTITIAL loaded: " + result)
+      if (result) { // and it's time to show
+        Appodeal.show(AppodealAdType.INTERSTITIAL);
+        //TODO record count here
+      }
+    });
+  };
 
   const getRecipeDetailsFromWiseCookApi = () => {
     return fetch(URL)
@@ -57,15 +69,17 @@ const RecipeViewerScreen = props => {
       });
   };
 
-  const initializeRecipe = async (json) => {
+  const initializeRecipe = async json => {
     var heartedListFromStorage = await getHeartedRecipes();
-    const selectedRecIndex = heartedListFromStorage.findIndex(recId => recId === json.id);
+    const selectedRecIndex = heartedListFromStorage.findIndex(
+      recId => recId === json.id,
+    );
     if (selectedRecIndex >= 0) {
       setIsHearted(true);
     }
     setRecipe(json);
     setIsLoading(false);
-  }
+  };
 
   if (isLoading) {
     return (
@@ -93,9 +107,10 @@ const RecipeViewerScreen = props => {
   };
 
   const onToggleHearted = async () => {
-
     var heartedListFromStorage = await getHeartedRecipes();
-    const selectedRecIndex = heartedListFromStorage.findIndex(recId => recId === recipe.id);
+    const selectedRecIndex = heartedListFromStorage.findIndex(
+      recId => recId === recipe.id,
+    );
 
     if (selectedRecIndex < 0) {
       heartedListFromStorage.push(recipe.id);
@@ -107,7 +122,7 @@ const RecipeViewerScreen = props => {
 
     await saveHeartedRecipes(heartedListFromStorage);
     setIsHearted(!isHearted);
-  }
+  };
 
   return (
     <ScrollView style={styles.screen} onScroll={onScrollHandler}>
@@ -121,9 +136,9 @@ const RecipeViewerScreen = props => {
             </Text>
             <TouchableOpacity onPress={onToggleHearted}>
               <FontAwesome
-                name={isHearted ? "heart" : "heart-o"}
+                name={isHearted ? 'heart' : 'heart-o'}
                 size={25}
-                color={isHearted ? Colors.primaryColor : "white"}
+                color={isHearted ? Colors.primaryColor : 'white'}
               />
             </TouchableOpacity>
           </View>

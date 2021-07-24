@@ -16,6 +16,8 @@ target 'WiseCook' do
 
   pod 'react-native-voice', :path => '../node_modules/@react-native-voice/voice'
 
+  pod 'RNAppodeal', :path => '../node_modules/react-native-appodeal'
+
   target 'WiseCookTests' do
     inherit! :complete
     # Pods for testing
