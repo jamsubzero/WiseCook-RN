@@ -140,6 +140,7 @@ android {
             javaMaxHeapSize "4g"
         }
         multiDexEnabled true
+        missingDimensionStrategy 'store', 'play'
     }
     splits {
         abi {

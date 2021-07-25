@@ -18,6 +18,8 @@ target 'WiseCook' do
 
   pod 'RNAppodeal', :path => '../node_modules/react-native-appodeal'
 
+  pod 'RNIap', :path => '../node_modules/react-native-iap'
+
   target 'WiseCookTests' do
     inherit! :complete
     # Pods for testing

@@ -8,6 +8,9 @@ import {
   AppodealBanner,
   AppodealBannerEvent,
 } from 'react-native-appodeal';
+import IAP from 'react-native-iap';
+
+const subSkus = ['wisecook_399_1m'];
 
 const App = () => {
   const [initializing, setInitializing] = useState(true);
@@ -38,6 +41,21 @@ const App = () => {
   }, [initializing]);
 
   useEffect(() => {
+    IAP.initConnection()
+      .catch(() => {
+        console.log('error connecting to store...');
+      })
+      .then(() => {
+        IAP.getSubscriptions(subSkus)
+          .catch(() => {
+            console.log('error finding items');
+          })
+          .then(res => {
+            console.log("finding subscriptions");
+           console.log(res);
+          });
+      });
+
     Appodeal.addEventListener(AppodealBannerEvent.LOADED, event => {
       console.log(
         'Banner loaded. Height: ',
