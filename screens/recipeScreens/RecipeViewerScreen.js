@@ -43,7 +43,7 @@ const RecipeViewerScreen = props => {
   const showInterstitial = async () => {
     let intersCount = await getInterstitialCount();
     Appodeal.isLoaded(AppodealAdType.INTERSTITIAL, loaded => {
-      console.log('INTERSTITIAL loaded: ' + loaded);
+      console.log('INTERSTITIAL loaded: ' + loaded + " ,count: "+ intersCount);
       if (loaded && intersCount === Preferences.RECIPE_VIEW_PER_INTERS) {
         saveInterstitialCount(1);
         Appodeal.show(AppodealAdType.INTERSTITIAL);

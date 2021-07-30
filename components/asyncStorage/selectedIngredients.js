@@ -150,6 +150,9 @@ export async function getInterstitialCount() {
     console.log("intersCountStr");
     console.log(intersCountStr);
     count = parseInt(intersCountStr);
+    if(isNaN(count)){
+      count = 1;
+    }
   } catch (e) {
     console.log('Error getting intersCount:', e);
     count = 1;
