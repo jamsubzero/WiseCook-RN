@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import BottomTabNavigator from './navigation/BottomTabNavigator';
+import Purchases from 'react-native-purchases';
 
 import {
   Appodeal,
@@ -8,6 +9,7 @@ import {
   AppodealBanner,
   AppodealBannerEvent,
 } from 'react-native-appodeal';
+import Preferences from './constants/Preferences';
 
 const App = () => {
   const [initializing, setInitializing] = useState(true);
@@ -48,6 +50,11 @@ const App = () => {
     Appodeal.addEventListener(AppodealBannerEvent.FAILED_TO_LOAD, () =>
       setIsBannerLoaded(false),
     );
+  }, []);
+
+  useEffect(() => {
+    Purchases.setDebugLogsEnabled(true);
+    Purchases.setup(Preferences.REVENUE_CAT_API_KEY);
   }, []);
 
   return (

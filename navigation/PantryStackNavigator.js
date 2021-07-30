@@ -9,6 +9,7 @@ import Colors from '../constants/Colors';
 import PantryScreen from '../screens/pantryScreens/PantryScreen';
 import MyPantryScreen from '../screens/pantryScreens/MyPantryScreen';
 import ImageHeader from '../components/ImageHeader';
+import PayWallScreen from '../components/PayWallScreen';
 
 const PantryStackNavigator = () => {
   const Stack = createStackNavigator();
@@ -17,15 +18,14 @@ const PantryStackNavigator = () => {
       <Stack.Screen
         name="PantryHome"
         component={PantryScreen}
-        options={{
+        options={({navigation}) => ({
           headerTintColor: 'white',
           headerStyle: {backgroundColor: Colors.primaryColor},
-          headerTitle: () => (
-            <ImageHeader />
-          ),
+          headerTitle: () => <ImageHeader />,
           headerRight: () => (
             <HeaderButtons style={{alignItems: 'center'}}>
               <Button
+                onPress={() => navigation.navigate('PayWall')}
                 title="Remove Ads"
                 titleStyle={{
                   color: 'white',
@@ -43,7 +43,7 @@ const PantryStackNavigator = () => {
               />
             </HeaderButtons>
           ),
-        }}
+        })}
       />
       {/* TODO remove this later */}
       <Stack.Screen
@@ -63,6 +63,16 @@ const PantryStackNavigator = () => {
               />
             </HeaderButtons>
           ),
+        }}
+      />
+
+      <Stack.Screen
+        name="PayWall"
+        component={PayWallScreen}
+        options={{
+          headerTintColor: 'white',
+          headerStyle: {backgroundColor: Colors.primaryColor},
+          headerTitle: 'Support the app'
         }}
       />
     </Stack.Navigator>
