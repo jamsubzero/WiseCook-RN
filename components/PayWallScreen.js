@@ -1,14 +1,24 @@
 import React, {useEffect, useState} from 'react';
-import {View, StyleSheet, Text, ScrollView} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Text,
+  ScrollView,
+  ActivityIndicator,
+  TouchableNativeFeedback,
+} from 'react-native';
 import Purchases from 'react-native-purchases';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 import Card from './Card';
 import Colors from '../constants/Colors';
+import Preferences from '../constants/Preferences';
+import { Alert } from 'react-native';
 
 const PayWallScreen = props => {
   const [monthlyPackage, setMonthlyPackage] = useState('');
   const [yearlyPackage, setYearlyPackage] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
 
   const benefits = [
     `Ad-free access to the app`,
@@ -36,9 +46,36 @@ const PayWallScreen = props => {
         );
         setYearlyPackage(yearly);
         console.log(yearly);
+        setIsLoading(false);
       }
     } catch (e) {
       console.log(e);
+      setIsLoading(false);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <View
+        style={{flex: 1, justifyContent: 'center', backgroundColor: 'white'}}>
+        <ActivityIndicator size="large" color={Colors.primaryColor} />
+      </View>
+    );
+  }
+
+  const onPurchaseHandler = async selectedPackage => {
+    try {
+      const purchaseMade = await Purchases.purchasePackage(selectedPackage);
+      if (typeof purchaseMade.purchaserInfo.entitlements.active[Preferences.ENTITLEMENT_ID] !== 'undefined') {
+        // Unlock that great "pro" content
+        console.log('Subscribed!');
+        props.navigation.goBack();
+      }
+    } catch (e) {
+      console.log(e);
+      if (!e.userCancelled) {
+        Alert.alert("Can't complete the subscription, please try again.");
+      }
     }
   };
 
@@ -55,8 +92,7 @@ const PayWallScreen = props => {
               color: Colors.gray,
               textAlign: 'center',
             }}>
-            {`No one likes ads, I hate it too. However, it takes money to keep the app running, and these ads help me pay the bills.\n 
-Become a supporter to remove ads.`}
+            {`No one likes ads, I hate it too. However, it takes money to keep the app running, and these ads help me pay the bills.`}
           </Text>
         </View>
         <Card style={styles.cardStyle}>
@@ -96,24 +132,31 @@ Become a supporter to remove ads.`}
             width: '80%',
             justifyContent: 'space-between',
           }}>
-          <View
-            style={{
-              ...styles.subscribeButton,
-              ...{backgroundColor: Colors.gray},
-            }}>
-            <Text
+          <TouchableNativeFeedback
+            onPress={onPurchaseHandler.bind(this, monthlyPackage)}>
+            <View
               style={{
-                color: 'white',
-              }}>{`${monthlyPackage.product.price_string} /month`}</Text>
-          </View>
+                ...styles.subscribeButton,
+                ...{backgroundColor: Colors.gray},
+              }}>
+              <Text
+                style={{
+                  color: 'white',
+                }}>{`${monthlyPackage.product.price_string} /month`}</Text>
+            </View>
+          </TouchableNativeFeedback>
 
-          <View style={styles.subscribeButton}>
-            <Text
-              style={{
-                color: 'white',
-              }}>{`${yearlyPackage.product.price_string} /year`}</Text>
-          </View>
+          <TouchableNativeFeedback
+            onPress={onPurchaseHandler.bind(this, yearlyPackage)}>
+            <View style={styles.subscribeButton}>
+              <Text
+                style={{
+                  color: 'white',
+                }}>{`${yearlyPackage.product.price_string} /year`}</Text>
+            </View>
+          </TouchableNativeFeedback>
         </View>
+        <Text>TODO: restore</Text>
       </View>
     </ScrollView>
   );

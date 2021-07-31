@@ -12,6 +12,7 @@ import {
 import Snackbar from 'react-native-snackbar';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {Appodeal, AppodealAdType} from 'react-native-appodeal';
+import Purchases from 'react-native-purchases';
 
 import APIUrls from '../../constants/APIUrls';
 import Colors from '../../constants/Colors';
@@ -41,14 +42,24 @@ const RecipeViewerScreen = props => {
   }, []);
 
   const showInterstitial = async () => {
+    try {
+      const purchaserInfo = await Purchases.getPurchaserInfo();
+      if (typeof purchaserInfo.entitlements.active[Preferences.ENTITLEMENT_ID] !== 'undefined') {
+        console.log("The user is Pro, DON'T display interstitial!");
+        return;
+      }
+    } catch (e) {
+      console.log("Error fetching purchaser info");
+    }
+    
     let intersCount = await getInterstitialCount();
     Appodeal.isLoaded(AppodealAdType.INTERSTITIAL, loaded => {
-      console.log('INTERSTITIAL loaded: ' + loaded + " ,count: "+ intersCount);
-      if (loaded && intersCount === Preferences.RECIPE_VIEW_PER_INTERS) {
+      console.log('INTERSTITIAL loaded: ' + loaded + ' ,count: ' + intersCount);
+      if (loaded && intersCount >= Preferences.RECIPE_VIEW_PER_INTERS) {
         saveInterstitialCount(1);
         Appodeal.show(AppodealAdType.INTERSTITIAL);
       } else {
-        saveInterstitialCount((intersCount + 1));
+        saveInterstitialCount(intersCount + 1);
       }
     });
   };
