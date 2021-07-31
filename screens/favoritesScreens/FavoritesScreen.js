@@ -8,24 +8,31 @@ import {
   Image,
 } from 'react-native';
 import Snackbar from 'react-native-snackbar';
+import {useIsFocused} from '@react-navigation/native';
 
 import {getHeartedRecipes} from '../../components/asyncStorage/selectedIngredients';
 import Colors from '../../constants/Colors';
 import APIUrls from '../../constants/APIUrls';
 import NoRecipeFound from '../../components/NoRecipeFound';
-import ConnectionErrorMessage from '../../components/ConnectionErrorMessage';
-import Card from '../../components/Card';
 import RecipeItem from '../../components/RecipeItem';
+import {set} from 'react-native-reanimated';
 
 const FavoritesScreen = props => {
   const [isLoading, setIsLoading] = useState(true);
   const [favorites, setFavorites] = useState([]);
+  const [heartedListFromStorage, setHeartedListFromStorage] = useState([]);
+  const isFocused = useIsFocused();
+
+  useEffect(() => {
+    updateHeartedListFromStorage();
+  }, [isFocused]);
 
   useEffect(() => {
     retrieveHeartedList();
-  }, []);
+  }, [heartedListFromStorage]);
 
   const getFavoritesFromWiseCookApi = URL => {
+    console.log('getting from wisecook');
     return fetch(URL)
       .then(response => response.json())
       .then(json => {
@@ -51,9 +58,21 @@ const FavoritesScreen = props => {
   };
 
   const retrieveHeartedList = async () => {
-    var heartedListFromStorage = await getHeartedRecipes();
+    if (heartedListFromStorage.length <= 0) {
+      console.log('No favorites yet');
+      return;
+    }
+    setIsLoading(true);
     var URL = `${APIUrls.FAVORITES_URL}${heartedListFromStorage.toString()}`;
+
     getFavoritesFromWiseCookApi(URL);
+  };
+
+  const updateHeartedListFromStorage = async () => {
+    var listFromStorage = await getHeartedRecipes();
+    if (listFromStorage.length !== heartedListFromStorage.length) {
+      setHeartedListFromStorage(listFromStorage);
+    }
   };
 
   if (!favorites || favorites.length <= 0) {
