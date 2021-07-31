@@ -12,24 +12,20 @@ import {
 import Preferences from './constants/Preferences';
 
 const App = () => {
-  const [initializing, setInitializing] = useState(true);
+  const [initializingAds, setInitializingAds] = useState(true);
+  const [purchasesInitialized, setPurchasesInitialized] = useState(false);
   const [isDisplayBanner, setIsDisplayBanner] = useState(false);
+  const [isASubscriber, setIsASubscriber] = useState(false);
   const adTypes = AppodealAdType.INTERSTITIAL | AppodealAdType.BANNER;
 
-  const initIfNeeded = async () => {
-    try {
-      const purchaserInfo = await Purchases.getPurchaserInfo();
-      if (typeof purchaserInfo.entitlements.active[Preferences.ENTITLEMENT_ID] !== 'undefined') {
-        console.log("The user is Pro, DON'T display banner!");
-        setInitializing(false);
-        return;
-      }
-    } catch (e) {
-      console.log("Error fetching purchaser info");
+  const initializeAds = async () => {
+    if (isASubscriber) {
+      console.log('No need to initialize Ads, this is a subscriber');
+      return;
     }
 
-    console.log(initializing);
-    if (!initializing) {
+    if (!initializeAds) {
+      console.log('Ads already initialized');
       return;
     }
 
@@ -37,23 +33,59 @@ const App = () => {
     Appodeal.disableLocationPermissionCheck();
     Appodeal.disableWriteExternalStoragePermissionCheck();
     Appodeal.initialize(Preferences.APPODEAL_APP_ID, adTypes, true);
+
     Appodeal.addEventListener(AppodealBannerEvent.LOADED, event => {
       console.log(
         'Banner loaded. Height: ',
         event.height + ', precache: ' + event.isPrecache,
       );
-      Appodeal.show(AppodealAdType.BANNER_BOTTOM);
-      setIsDisplayBanner(true);
     });
-    Appodeal.addEventListener(AppodealBannerEvent.FAILED_TO_LOAD, () =>
-      setIsDisplayBanner(false),
-    );
-    setInitializing(false);
+
+    Appodeal.addEventListener(AppodealBannerEvent.FAILED_TO_LOAD, () => {
+      setIsDisplayBanner(false);
+      Appodeal.hide(AppodealAdType.BANNER_BOTTOM);
+    });
+
+    setInitializingAds(false);
   };
 
-  // useEffect(() => {
-  //   initIfNeeded();
-  // }, [initializing]);
+  useEffect(() => {
+    if (!initializingAds && purchasesInitialized && !isASubscriber) {
+      Appodeal.show(AppodealAdType.BANNER_BOTTOM);
+      setIsDisplayBanner(true);
+    }
+  }, [initializingAds]);
+
+  useEffect(() => {
+    if (isASubscriber) {
+      Appodeal.hide(AppodealAdType.BANNER_BOTTOM);
+      setIsDisplayBanner(false);
+    } else {
+      if (purchasesInitialized) {
+        initializeAds();
+      }
+    }
+  }, [isASubscriber, purchasesInitialized]);
+
+  const determineSubscription = async () => {
+    try {
+      const purchaserInfo = await Purchases.getPurchaserInfo();
+      console.log(purchaserInfo);
+      if (
+        typeof purchaserInfo.entitlements.active[Preferences.ENTITLEMENT_ID] !==
+        'undefined'
+      ) {
+        console.log("The user is Pro, DON'T display banner!");
+        setIsASubscriber(true);
+        return;
+      } else {
+        console.log('Not subscribed!');
+      }
+      setPurchasesInitialized(true);
+    } catch (e) {
+      console.log('Error fetching purchaser info');
+    }
+  };
 
   useEffect(() => {
     Purchases.setDebugLogsEnabled(true);
@@ -64,12 +96,13 @@ const App = () => {
         'undefined'
       ) {
         console.log('Listened: Subscribed!');
-        setIsDisplayBanner(false);
-        Appodeal.hide(AppodealAdType.BANNER_BOTTOM);
+        console.log(purchaserInfo);
+
+        setIsASubscriber(true);
       }
     });
 
-    initIfNeeded();
+    determineSubscription();
 
     return () => {
       Purchases.removePurchaserInfoUpdateListener();
@@ -79,7 +112,7 @@ const App = () => {
   return (
     <View style={styles.screen}>
       <BottomTabNavigator />
-      {isDisplayBanner ? (
+      {isDisplayBanner && !isASubscriber ? (
         <View style={{height: 55, backgroundColor: 'white'}} />
       ) : null}
     </View>

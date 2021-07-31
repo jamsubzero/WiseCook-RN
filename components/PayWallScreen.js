@@ -6,14 +6,20 @@ import {
   ScrollView,
   ActivityIndicator,
   TouchableNativeFeedback,
+  TouchableOpacity,
+  Alert,
+  ToastAndroid,
 } from 'react-native';
 import Purchases from 'react-native-purchases';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import {
+  Appodeal,
+  AppodealAdType,
+} from 'react-native-appodeal';
 
 import Card from './Card';
 import Colors from '../constants/Colors';
 import Preferences from '../constants/Preferences';
-import { Alert } from 'react-native';
 
 const PayWallScreen = props => {
   const [monthlyPackage, setMonthlyPackage] = useState('');
@@ -54,6 +60,15 @@ const PayWallScreen = props => {
     }
   };
 
+  if (!monthlyPackage || !yearlyPackage) {
+    return (
+      <View
+        style={{flex: 1, justifyContent: 'center', backgroundColor: 'white'}}>
+        <ActivityIndicator size="large" color={Colors.primaryColor} />
+      </View>
+    );
+  }
+
   if (isLoading) {
     return (
       <View
@@ -66,8 +81,12 @@ const PayWallScreen = props => {
   const onPurchaseHandler = async selectedPackage => {
     try {
       const purchaseMade = await Purchases.purchasePackage(selectedPackage);
-      if (typeof purchaseMade.purchaserInfo.entitlements.active[Preferences.ENTITLEMENT_ID] !== 'undefined') {
-        // Unlock that great "pro" content
+      if (
+        typeof purchaseMade.purchaserInfo.entitlements.active[
+          Preferences.ENTITLEMENT_ID
+        ] !== 'undefined'
+      ) {
+        ToastAndroid.show(`Subscription successful`, ToastAndroid.SHORT);
         console.log('Subscribed!');
         props.navigation.goBack();
       }
@@ -76,6 +95,25 @@ const PayWallScreen = props => {
       if (!e.userCancelled) {
         Alert.alert("Can't complete the subscription, please try again.");
       }
+    }
+  };
+
+  const restorePurchaseHandler = async () => {
+    try {
+      const restoredPurchaserInfo = await Purchases.restoreTransactions();
+      if (
+        typeof restoredPurchaserInfo.entitlements.active[
+          Preferences.ENTITLEMENT_ID
+        ] !== 'undefined'
+      ) {
+        Appodeal.hide(AppodealAdType.BANNER_BOTTOM);
+        console.log('Restored Subscription!');
+        ToastAndroid.show(`Subscription Restored`, ToastAndroid.SHORT);
+        props.navigation.goBack();
+      }
+    } catch (e) {
+      console.log(e);
+      Alert.alert("That didn't work, please try again.");
     }
   };
 
@@ -156,7 +194,20 @@ const PayWallScreen = props => {
             </View>
           </TouchableNativeFeedback>
         </View>
-        <Text>TODO: restore</Text>
+        <View style={{marginTop: 30}}>
+          <TouchableOpacity onPress={restorePurchaseHandler}>
+            <Text>
+              <Text
+                style={{
+                  color: Colors.primaryColor,
+                }}>{`Already a supporter?  `}</Text>
+              <Text
+                style={{color: Colors.blue, textDecorationLine: 'underline'}}>
+                Restore
+              </Text>
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </ScrollView>
   );
