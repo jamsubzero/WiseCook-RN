@@ -97,6 +97,7 @@ const PayWallScreen = props => {
           Preferences.ENTITLEMENT_ID
         ] !== 'undefined'
       ) {
+        Appodeal.hide(AppodealAdType.BANNER_BOTTOM);
         ToastAndroid.show(`Subscription successful`, ToastAndroid.SHORT);
         console.log('Subscribed!');
         props.navigation.goBack();
@@ -104,7 +105,7 @@ const PayWallScreen = props => {
     } catch (e) {
       console.log(e);
       if (!e.userCancelled) {
-        Alert.alert("Can't complete the subscription, please try again.");
+        Alert.alert("Subscription not successful, please try again.");
       }
     }
   };
@@ -121,10 +122,12 @@ const PayWallScreen = props => {
         console.log('Restored Subscription!');
         ToastAndroid.show(`Subscription Restored`, ToastAndroid.SHORT);
         props.navigation.goBack();
+      } else {
+        Alert.alert("That didn't work", "Make sure you have logged in to your Google Play Account.");
       }
     } catch (e) {
       console.log(e);
-      Alert.alert("That didn't work, please try again.");
+      Alert.alert("That didn't work", "Make sure you have logged in to your Google Play Account.");
     }
   };
 

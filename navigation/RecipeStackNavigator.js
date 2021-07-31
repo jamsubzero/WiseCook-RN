@@ -12,15 +12,17 @@ import RecipeViewerScreen from '../screens/recipeScreens/RecipeViewerScreen';
 import RecipeSearchScreen from '../screens/recipeScreens/RecipeSearchScreen';
 import CategoryRecipeListScreen from '../screens/recipeScreens/CategoryRecipeListScreen';
 import ImageHeader from '../components/ImageHeader';
+import PayWallScreen from '../components/PayWallScreen';
 
 const RecipeStackNavigator = () => {
   const Stack = createStackNavigator();
   return (
     <Stack.Navigator
-      screenOptions={{
+      screenOptions={({navigation}) => ({
         headerRight: () => (
           <HeaderButtons style={{alignItems: 'center'}}>
             <Button
+              onPress={() => navigation.navigate('PayWall')}
               title="Support"
               titleStyle={{
                 color: 'white',
@@ -38,16 +40,14 @@ const RecipeStackNavigator = () => {
             />
           </HeaderButtons>
         ),
-      }}>
+      })}>
       <Stack.Screen
         name="RecipeHome"
         component={RecipeHomeScreen}
         options={{
           headerTintColor: 'white',
           headerStyle: {backgroundColor: Colors.primaryColor},
-          headerTitle: () => (
-            <ImageHeader />
-          ),
+          headerTitle: () => <ImageHeader />,
         }}
       />
       <Stack.Screen
@@ -66,16 +66,7 @@ const RecipeStackNavigator = () => {
           headerTintColor: 'white',
           headerStyle: {backgroundColor: Colors.primaryColor},
           headerTitle: '',
-          headerRight: () => (
-            <HeaderButtons style={{alignItems: 'center'}}>
-              <Button
-                icon={
-                  <Ionicons name="ellipsis-vertical" size={20} color="white" />
-                }
-                type="clear"
-              />
-            </HeaderButtons>
-          ),
+          headerRight: null
         }}
       />
 
@@ -86,16 +77,7 @@ const RecipeStackNavigator = () => {
           headerTintColor: 'white',
           headerStyle: {backgroundColor: Colors.primaryColor},
           headerTitle: '',
-          headerRight: () => (
-            <HeaderButtons style={{alignItems: 'center'}}>
-              <Button
-                icon={
-                  <Ionicons name="ellipsis-vertical" size={20} color="white" />
-                }
-                type="clear"
-              />
-            </HeaderButtons>
-          ),
+          headerRight: null
         }}
       />
 
@@ -106,16 +88,7 @@ const RecipeStackNavigator = () => {
           headerTintColor: 'white',
           headerStyle: {backgroundColor: Colors.primaryColor},
           headerTitle: 'Search Recipe',
-          headerRight: () => (
-            <HeaderButtons style={{alignItems: 'center'}}>
-              <Button
-                icon={
-                  <Ionicons name="ellipsis-vertical" size={20} color="white" />
-                }
-                type="clear"
-              />
-            </HeaderButtons>
-          ),
+          headerRight: null
         }}
       />
 
@@ -128,6 +101,17 @@ const RecipeStackNavigator = () => {
           headerShown: true,
           headerTransparent: true,
           headerTitle: '',
+        }}
+      />
+
+      <Stack.Screen
+        name="PayWall"
+        component={PayWallScreen}
+        options={{
+          headerTintColor: 'white',
+          headerStyle: {backgroundColor: Colors.primaryColor},
+          headerTitle: 'Support the app',
+          headerRight: null
         }}
       />
     </Stack.Navigator>
