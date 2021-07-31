@@ -9,13 +9,11 @@ import {
   TouchableOpacity,
   Alert,
   ToastAndroid,
+  Linking
 } from 'react-native';
 import Purchases from 'react-native-purchases';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import {
-  Appodeal,
-  AppodealAdType,
-} from 'react-native-appodeal';
+import {Appodeal, AppodealAdType} from 'react-native-appodeal';
 
 import Card from './Card';
 import Colors from '../constants/Colors';
@@ -25,6 +23,7 @@ const PayWallScreen = props => {
   const [monthlyPackage, setMonthlyPackage] = useState('');
   const [yearlyPackage, setYearlyPackage] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const [isASubscriber, setIsASubscriber] = useState(false);
 
   const benefits = [
     `Ad-free access to the app`,
@@ -40,6 +39,18 @@ const PayWallScreen = props => {
 
   const getPackages = async () => {
     try {
+      const purchaserInfo = await Purchases.getPurchaserInfo();
+      console.log(purchaserInfo);
+      if (
+        typeof purchaserInfo.entitlements.active[Preferences.ENTITLEMENT_ID] !==
+        'undefined'
+      ) {
+        console.log("The user is Pro, DON'T display subscription BUTTONS!");
+        setIsLoading(false);
+        setIsASubscriber(true);
+        return;
+      }
+
       const offerings = await Purchases.getOfferings();
       if (offerings.current !== null) {
         var monthly = offerings.current.availablePackages.find(
@@ -60,7 +71,7 @@ const PayWallScreen = props => {
     }
   };
 
-  if (!monthlyPackage || !yearlyPackage) {
+  if (!isASubscriber && (!monthlyPackage || !yearlyPackage)) {
     return (
       <View
         style={{flex: 1, justifyContent: 'center', backgroundColor: 'white'}}>
@@ -117,31 +128,38 @@ const PayWallScreen = props => {
     }
   };
 
+  const manageSubscriptionHandler = () => {
+    Linking.openURL(`https://play.google.com/store/account/subscriptions`);
+  }
+
   return (
     <ScrollView style={{flex: 1}}>
       <View style={styles.screen}>
-        <View style={styles.topMessages}>
-          <Text style={{fontSize: 16, color: Colors.primaryColor}}>
-            {`Ads help me keep the app free.`}
-          </Text>
-          <Text
-            style={{
-              fontSize: 9,
-              color: Colors.gray,
-              textAlign: 'center',
-            }}>
-            {`No one likes ads, I hate it too. However, it takes money to keep the app running, and these ads help me pay the bills.`}
-          </Text>
-        </View>
+        {isASubscriber ? (
+          <View style={styles.topMessages}>
+            <Text
+              style={
+                styles.titleText
+              }>{`Thank you for supporting WiseCook.`}</Text>
+          </View>
+        ) : (
+          <View style={styles.topMessages}>
+            <Text style={styles.titleText}>
+              {`Ads help me keep the app free.`}
+            </Text>
+            <Text
+              style={{
+                fontSize: 9,
+                color: Colors.gray,
+                textAlign: 'center',
+              }}>
+              {`No one likes ads, I hate it too. However, it takes money to keep the app running, ads help me pay the bills.`}
+            </Text>
+          </View>
+        )}
+
         <Card style={styles.cardStyle}>
-          <View
-            style={{
-              marginBottom: 10,
-              backgroundColor: '#cccccc',
-              borderRadius: 3,
-              paddingLeft: 5,
-              paddingVertical: 7,
-            }}>
+          <View style={styles.cardTitle}>
             <Text
               style={{
                 color: Colors.gray,
@@ -163,51 +181,53 @@ const PayWallScreen = props => {
             );
           })}
         </Card>
-        <View
-          style={{
-            flexDirection: 'row',
-            marginTop: 10,
-            width: '80%',
-            justifyContent: 'space-between',
-          }}>
-          <TouchableNativeFeedback
-            onPress={onPurchaseHandler.bind(this, monthlyPackage)}>
-            <View
-              style={{
-                ...styles.subscribeButton,
-                ...{backgroundColor: Colors.gray},
-              }}>
-              <Text
+        {isASubscriber ? null : (
+          <View style={styles.subscribeButtonsContainer}>
+            <TouchableNativeFeedback
+              onPress={onPurchaseHandler.bind(this, monthlyPackage)}>
+              <View
                 style={{
-                  color: 'white',
-                }}>{`${monthlyPackage.product.price_string} /month`}</Text>
-            </View>
-          </TouchableNativeFeedback>
+                  ...styles.subscribeButton,
+                  ...{backgroundColor: Colors.gray},
+                }}>
+                <Text
+                  style={{
+                    color: 'white',
+                  }}>{`${monthlyPackage.product.price_string} /month`}</Text>
+              </View>
+            </TouchableNativeFeedback>
 
-          <TouchableNativeFeedback
-            onPress={onPurchaseHandler.bind(this, yearlyPackage)}>
-            <View style={styles.subscribeButton}>
-              <Text
-                style={{
-                  color: 'white',
-                }}>{`${yearlyPackage.product.price_string} /year`}</Text>
-            </View>
-          </TouchableNativeFeedback>
-        </View>
-        <View style={{marginTop: 30}}>
-          <TouchableOpacity onPress={restorePurchaseHandler}>
-            <Text>
-              <Text
-                style={{
-                  color: Colors.primaryColor,
-                }}>{`Already a supporter?  `}</Text>
-              <Text
-                style={{color: Colors.blue, textDecorationLine: 'underline'}}>
-                Restore
+            <TouchableNativeFeedback
+              onPress={onPurchaseHandler.bind(this, yearlyPackage)}>
+              <View style={styles.subscribeButton}>
+                <Text
+                  style={{
+                    color: 'white',
+                  }}>{`${yearlyPackage.product.price_string} /year`}</Text>
+              </View>
+            </TouchableNativeFeedback>
+          </View>
+        )}
+
+        {isASubscriber ? (
+          <View style={styles.bottomRestoreMessage}>
+            <TouchableOpacity onPress={manageSubscriptionHandler}>
+              <Text style={styles.linkedText}>{`Manage subscriptions`}</Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <View style={styles.bottomRestoreMessage}>
+            <TouchableOpacity onPress={restorePurchaseHandler}>
+              <Text>
+                <Text
+                  style={{
+                    color: Colors.primaryColor,
+                  }}>{`Already a supporter?  `}</Text>
+                <Text style={styles.linkedText}>{`Restore`}</Text>
               </Text>
-            </Text>
-          </TouchableOpacity>
-        </View>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
     </ScrollView>
   );
@@ -222,9 +242,19 @@ const styles = StyleSheet.create({
   },
   topMessages: {
     marginVertical: 10,
-    //  borderWidth: 0.5,
     alignItems: 'center',
     width: '80%',
+  },
+  titleText: {
+    fontSize: 16,
+    color: Colors.primaryColor,
+  },
+  cardTitle: {
+    marginBottom: 10,
+    backgroundColor: '#cccccc',
+    borderRadius: 3,
+    paddingLeft: 5,
+    paddingVertical: 7,
   },
   cardStyle: {
     width: '80%',
@@ -233,14 +263,26 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: 10,
   },
+  subscribeButtonsContainer: {
+    flexDirection: 'row',
+    marginTop: 10,
+    width: '80%',
+    justifyContent: 'space-between',
+  },
   subscribeButton: {
     backgroundColor: Colors.primaryColor,
     height: 43,
     width: '48%',
-    // marginHorizontal: 5,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 5,
+  },
+  bottomRestoreMessage: {
+    marginTop: 30,
+  },
+  linkedText: {
+    color: Colors.blue,
+    textDecorationLine: 'underline',
   },
 });
 

@@ -26,10 +26,10 @@ const ShoppingListStackNavigator = () => {
             headerRight: () => (
               <HeaderButtons style={{alignItems: 'center'}}>
                 <Button
-                  title="Remove Ads"
+                  title="Support"
                   titleStyle={{
                     color: 'white',
-                    fontSize: 13,
+                    fontSize: 16,
                     alignContent: 'center',
                   }}
                   buttonStyle={{paddingTop: 10}}
