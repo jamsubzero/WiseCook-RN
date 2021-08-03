@@ -5,7 +5,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import Colors from '../constants/Colors';
 
 const RecipeInfo = props => {
-  if (props.info.length <= 0) {
+  if (!props.info || props.info.length <= 0) {
     return null;
   }
 

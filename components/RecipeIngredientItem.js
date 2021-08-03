@@ -20,7 +20,7 @@ const RecipeIngredientItem = props => {
     <View style={styles.ingredientRowContainer}>
       <Text style={{width: '90%', color: textColor}}>
         <Text style={styles.ingredientText}>{ingredient.quantity}</Text>
-        <Text>{ingredient.quantity.length > 0 ? ' ' : ''}</Text>
+        <Text>{(ingredient.quantity && ingredient.quantity.length > 0) ? ' ' : ''}</Text>
         <Text>{ingredient.name}</Text>
       </Text>
 
