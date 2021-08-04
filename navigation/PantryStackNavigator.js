@@ -10,6 +10,7 @@ import PantryScreen from '../screens/pantryScreens/PantryScreen';
 import MyPantryScreen from '../screens/pantryScreens/MyPantryScreen';
 import ImageHeader from '../components/ImageHeader';
 import PayWallScreen from '../components/PayWallScreen';
+import AboutScreen from '../components/AboutScreen';
 
 const PantryStackNavigator = () => {
   const Stack = createStackNavigator();
@@ -36,6 +37,7 @@ const PantryStackNavigator = () => {
                 type="clear"
               />
               <Button
+                onPress={() => navigation.navigate('About')}
                 icon={
                   <Ionicons name="ellipsis-vertical" size={20} color="white" />
                 }
@@ -53,16 +55,6 @@ const PantryStackNavigator = () => {
           headerTintColor: 'white',
           headerStyle: {backgroundColor: Colors.primaryColor},
           headerTitle: 'My Pantry',
-          headerRight: () => (
-            <HeaderButtons style={{alignItems: 'center'}}>
-              <Button
-                icon={
-                  <Ionicons name="ellipsis-vertical" size={20} color="white" />
-                }
-                type="clear"
-              />
-            </HeaderButtons>
-          ),
         }}
       />
 
@@ -72,7 +64,18 @@ const PantryStackNavigator = () => {
         options={{
           headerTintColor: 'white',
           headerStyle: {backgroundColor: Colors.primaryColor},
-          headerTitle: 'Support the app'
+          headerTitle: 'Support the app',
+        }}
+      />
+
+      <Stack.Screen
+        name="About"
+        component={AboutScreen}
+        options={{
+          headerTintColor: 'white',
+          headerStyle: {backgroundColor: Colors.primaryColor},
+          headerTitle: 'About',
+          headerRight: null,
         }}
       />
     </Stack.Navigator>

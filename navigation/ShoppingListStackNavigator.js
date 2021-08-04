@@ -9,6 +9,7 @@ import Colors from '../constants/Colors';
 import ShoppingListScreen from '../screens/shoppingListScreens/ShoppingListScreen';
 import ImageHeader from '../components/ImageHeader';
 import PayWallScreen from '../components/PayWallScreen';
+import AboutScreen from '../components/AboutScreen';
 
 const ShoppingListStackNavigator = () => {
   const Stack = createStackNavigator();
@@ -35,6 +36,7 @@ const ShoppingListStackNavigator = () => {
                 type="clear"
               />
               <Button
+                onPress={() => navigation.navigate('About')}
                 icon={
                   <Ionicons name="ellipsis-vertical" size={20} color="white" />
                 }
@@ -52,6 +54,17 @@ const ShoppingListStackNavigator = () => {
           headerTintColor: 'white',
           headerStyle: {backgroundColor: Colors.primaryColor},
           headerTitle: 'Support the app',
+          headerRight: null,
+        }}
+      />
+
+      <Stack.Screen
+        name="About"
+        component={AboutScreen}
+        options={{
+          headerTintColor: 'white',
+          headerStyle: {backgroundColor: Colors.primaryColor},
+          headerTitle: 'About',
           headerRight: null,
         }}
       />

@@ -10,6 +10,7 @@ import FavoritesScreen from '../screens/favoritesScreens/FavoritesScreen';
 import RecipeViewerScreen from '../screens/recipeScreens/RecipeViewerScreen';
 import ImageHeader from '../components/ImageHeader';
 import PayWallScreen from '../components/PayWallScreen';
+import AboutScreen from '../components/AboutScreen';
 
 const FavoritesStackNavigator = () => {
   const Stack = createStackNavigator();
@@ -30,6 +31,7 @@ const FavoritesStackNavigator = () => {
               type="clear"
             />
             <Button
+              onPress={() => navigation.navigate('About')}
               icon={
                 <Ionicons name="ellipsis-vertical" size={20} color="white" />
               }
@@ -66,6 +68,17 @@ const FavoritesStackNavigator = () => {
           headerTintColor: 'white',
           headerStyle: {backgroundColor: Colors.primaryColor},
           headerTitle: 'Support the app',
+          headerRight: null,
+        }}
+      />
+
+      <Stack.Screen
+        name="About"
+        component={AboutScreen}
+        options={{
+          headerTintColor: 'white',
+          headerStyle: {backgroundColor: Colors.primaryColor},
+          headerTitle: 'About',
           headerRight: null,
         }}
       />

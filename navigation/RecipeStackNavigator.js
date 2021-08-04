@@ -13,6 +13,7 @@ import RecipeSearchScreen from '../screens/recipeScreens/RecipeSearchScreen';
 import CategoryRecipeListScreen from '../screens/recipeScreens/CategoryRecipeListScreen';
 import ImageHeader from '../components/ImageHeader';
 import PayWallScreen from '../components/PayWallScreen';
+import AboutScreen from '../components/AboutScreen';
 
 const RecipeStackNavigator = () => {
   const Stack = createStackNavigator();
@@ -33,6 +34,7 @@ const RecipeStackNavigator = () => {
               type="clear"
             />
             <Button
+              onPress={() => navigation.navigate('About')}
               icon={
                 <Ionicons name="ellipsis-vertical" size={20} color="white" />
               }
@@ -66,7 +68,7 @@ const RecipeStackNavigator = () => {
           headerTintColor: 'white',
           headerStyle: {backgroundColor: Colors.primaryColor},
           headerTitle: '',
-          headerRight: null
+          headerRight: null,
         }}
       />
 
@@ -77,7 +79,7 @@ const RecipeStackNavigator = () => {
           headerTintColor: 'white',
           headerStyle: {backgroundColor: Colors.primaryColor},
           headerTitle: '',
-          headerRight: null
+          headerRight: null,
         }}
       />
 
@@ -88,7 +90,7 @@ const RecipeStackNavigator = () => {
           headerTintColor: 'white',
           headerStyle: {backgroundColor: Colors.primaryColor},
           headerTitle: 'Search Recipe',
-          headerRight: null
+          headerRight: null,
         }}
       />
 
@@ -111,7 +113,18 @@ const RecipeStackNavigator = () => {
           headerTintColor: 'white',
           headerStyle: {backgroundColor: Colors.primaryColor},
           headerTitle: 'Support the app',
-          headerRight: null
+          headerRight: null,
+        }}
+      />
+
+      <Stack.Screen
+        name="About"
+        component={AboutScreen}
+        options={{
+          headerTintColor: 'white',
+          headerStyle: {backgroundColor: Colors.primaryColor},
+          headerTitle: 'About',
+          headerRight: null,
         }}
       />
     </Stack.Navigator>
