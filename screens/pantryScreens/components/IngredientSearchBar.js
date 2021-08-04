@@ -11,7 +11,6 @@ import Autocomplete from 'react-native-autocomplete-input';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import {Button} from 'react-native-elements';
 import Colors from '../../../constants/Colors';
 
 const IngredientSearchBar = props => {
