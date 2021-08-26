@@ -1,13 +1,13 @@
 import React, {useState, useEffect} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import BottomTabNavigator from './navigation/BottomTabNavigator';
 import Purchases from 'react-native-purchases';
 
 import {
   Appodeal,
   AppodealAdType,
-  AppodealBanner,
   AppodealBannerEvent,
+  AppodealBanner,
 } from 'react-native-appodeal';
 import Preferences from './constants/Preferences';
 
@@ -32,6 +32,7 @@ const App = () => {
     Appodeal.setTesting(true);
     Appodeal.disableLocationPermissionCheck();
     Appodeal.disableWriteExternalStoragePermissionCheck();
+    Appodeal.setTabletBanners(false);
     Appodeal.initialize(Preferences.APPODEAL_APP_ID, adTypes, true);
 
     Appodeal.addEventListener(AppodealBannerEvent.LOADED, event => {
@@ -113,7 +114,15 @@ const App = () => {
     <View style={styles.screen}>
       <BottomTabNavigator />
       {isDisplayBanner && !isASubscriber ? (
-        <View style={{height: 55, backgroundColor: 'white'}} />
+        <AppodealBanner
+          style = {styles.banner}
+          adSize ='phone'
+          onAdLoaded = {() => console.log('Banner view did load')}
+          onAdExpired = {() => console.log('Banner view expired')}
+          onAdClicked = {() => console.log('Banner view is clicked')}
+          onAdFailedToLoad = {() => console.log('Banner view is failed to load')}
+          usesSmartSizing
+        />
       ) : null}
     </View>
   );
@@ -123,6 +132,13 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     backgroundColor: 'white',
+  },
+  banner: {
+    marginTop: 5,
+    height: 50,
+    width: '100%',
+    backgroundColor: 'hsl(0, 0%, 97%)',
+    alignContent: 'stretch',
   },
 });
 

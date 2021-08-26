@@ -1,6 +1,6 @@
 export default {
   FEED_INGS_PER_CATEGORY: 3,
-  RECIPE_VIEW_PER_INTERS: 3,
+  RECIPE_VIEW_PER_INTERS: 7,
   GOOGLE_PACKAGE_NAME: 'com.jamapps.wisecook',
   REVENUE_CAT_API_KEY: 'GWNkRscRHUxsoPtASrJJfIPYbqgJvuCC',
   ENTITLEMENT_ID: 'Pro',

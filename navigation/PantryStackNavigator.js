@@ -1,5 +1,4 @@
 import React from 'react';
-import {Text, View, Image} from 'react-native';
 import {Button} from 'react-native-elements';
 import {HeaderButtons} from 'react-navigation-header-buttons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -47,7 +46,7 @@ const PantryStackNavigator = () => {
           ),
         })}
       />
-      {/* TODO remove this later */}
+     
       <Stack.Screen
         name="MyPantry"
         component={MyPantryScreen}

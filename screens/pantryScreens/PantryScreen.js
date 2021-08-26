@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, View, FlatList, ActivityIndicator} from 'react-native';
+import {StyleSheet, View, FlatList, ActivityIndicator, ToastAndroid} from 'react-native';
 import {FAB, Overlay} from 'react-native-elements';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Snackbar from 'react-native-snackbar';
@@ -167,6 +167,7 @@ const PantryScreen = props => {
     for (const selected of selectedDictate) {
       await onSelectSearchHandler(selected);
     }
+    ToastAndroid.show(`Ingredient(s) added to your pantry`, ToastAndroid.SHORT);
   };
 
   return (
